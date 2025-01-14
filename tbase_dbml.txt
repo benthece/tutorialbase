@@ -10,6 +10,7 @@ Table "users" {
   "bg_image_url" VARCHAR(50)
   "bio" VARCHAR(100)
   "privilege_id" TINYINT
+  "wishes" TINYINT [not null, default: 5]
   "last_login" TIMESTAMP [not null]
   "pw_modified_at" TIMESTAMP [default: NULL]
   "created_at" TIMESTAMP [default: `NOW()`]
