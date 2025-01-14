@@ -92,6 +92,21 @@ $$
 DELIMITER ;
 
 CALL get_random_parent_categories(6);
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_random_child_categories(IN quantity MEDIUMINT UNSIGNED)
+BEGIN
+    SELECT name
+    FROM categories
+    WHERE parent_id IN (SELECT id
+                        FROM categories
+                        WHERE parent_id IS NULL)
+    ORDER BY RAND()
+    LIMIT quantity;
+END $$
+DELIMITER ;
+
+CALL get_random_child_categories(100);
 -- primary keyek fix pipa
 -- comments legfrissebbek legyenek elöl pipa
 -- create update delete mindenre
