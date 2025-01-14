@@ -92,6 +92,7 @@ $$
 DELIMITER ;
 
 CALL get_random_parent_categories(6);
+
 -- primary keyek fix pipa
 -- comments legfrissebbek legyenek elöl pipa
 -- create update delete mindenre
