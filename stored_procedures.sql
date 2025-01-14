@@ -67,6 +67,16 @@ DELIMITER ;
 CALL delete_comment(2);
 CALL get_comments(1, 0);
 
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE reset_wish()
+BEGIN
+    UPDATE users SET wishes = 5 WHERE id != 0;
+END;
+$$
+
+CALL reset_wish();
+SELECT * FROM users;
+
 -- primary keyek fix pipa
 -- comments legfrissebbek legyenek elöl pipa
 -- create update delete mindenre
