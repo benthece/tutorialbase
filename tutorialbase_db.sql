@@ -64,7 +64,7 @@ CREATE TABLE `reactions`
 CREATE TABLE `categories`
 (
     `id`        INTEGER UNSIGNED UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    `parent_id` INTEGER UNSIGNED,
+    `parent_id` INTEGER UNSIGNED, -- valszeg csak úgy jó, ha null értéket kap a főkategória
     `name`      VARCHAR(30)
 );
 

@@ -613,7 +613,7 @@ VALUES (1, 1, TRUE, FALSE),
        (20, 19, TRUE, FALSE);
 
 INSERT INTO `categories` (`parent_id`, `name`)
-VALUES (1, 'Technology'),
+VALUES (NULL, 'Technology'),
        (1, 'Programming'),
        (2, 'Web Development'),
        (3, 'Frontend'),
@@ -632,7 +632,16 @@ VALUES (1, 'Technology'),
        (16, 'Docker'),
        (16, 'Kubernetes'),
        (1, 'Cloud Computing'),
-       (19, 'AWS');
+       (19, 'AWS'),
+       (NULL, 'Ruby'),
+       (NULL, 'C++'),
+       (NULL, 'Perl'),
+       (NULL, 'Postgree SQL'),
+       (NULL, 'OOP'),
+       (NULL, 'MVCS Architecture'),
+       (NULL, 'Linux'),
+       (NULL, 'Arduino Programming'),
+       (0, 'PHP');
 
 INSERT INTO `wish` (`text`, `user_id`)
 VALUES ('Learn React.js', 1),
