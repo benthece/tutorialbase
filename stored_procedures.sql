@@ -80,7 +80,25 @@ SELECT *
 FROM users;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_random_parent_categories(IN quantity TINYINT UNSIGNED)
+CREATE OR REPLACE PROCEDURE get_videos_for_subcategory(
+    IN subcat_id INTEGER UNSIGNED,
+    IN offset INTEGER UNSIGNED,
+    IN quantity INTEGER UNSIGNED)
+BEGIN
+    SELECT videos.id, title, url, base_image_url
+    FROM videos
+    INNER JOIN video_category vc on videos.id = vc.video_id
+    INNER JOIN categories c on vc.category_id = c.id
+    WHERE c.id = subcat_id
+    LIMIT offset, quantity;
+END;
+$$
+DELIMITER ;
+
+CALL get_videos_for_subcategory(15, 0, 100);
+
+-- DELIMITER $$
+/*CREATE OR REPLACE PROCEDURE get_random_maincategories(IN quantity TINYINT UNSIGNED)
 BEGIN
     SELECT name
     FROM categories
@@ -88,25 +106,24 @@ BEGIN
     ORDER BY RAND()
     LIMIT quantity;
 END;
+$$ /*
+-- DELIMITER ;
+
+-- CALL get_random_maincategories(6); */
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_firstlevel_subcategories(IN quantity MEDIUMINT UNSIGNED)
+BEGIN
+    SELECT id, name
+    FROM categories
+    WHERE parent_id IS NOT NULL
+    LIMIT quantity;
+END;
 $$
 DELIMITER ;
 
-CALL get_random_parent_categories(6);
+CALL get_firstlevel_subcategories(100);
 
-DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_random_child_categories(IN quantity MEDIUMINT UNSIGNED)
-BEGIN
-    SELECT name
-    FROM categories
-    WHERE parent_id IN (SELECT id
-                        FROM categories
-                        WHERE parent_id IS NULL)
-    ORDER BY RAND()
-    LIMIT quantity;
-END $$
-DELIMITER ;
-
-CALL get_random_child_categories(100);
 -- primary keyek fix pipa
 -- comments legfrissebbek legyenek elöl pipa
 -- create update delete mindenre
