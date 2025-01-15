@@ -6,7 +6,7 @@ CREATE OR REPLACE PROCEDURE get_comments(
     IN offset INTEGER UNSIGNED
 )
 BEGIN
-    SELECT comments.id, username, text
+    SELECT comments.id, username, text, comments.created_at, comments.modified_at
     FROM comments
              INNER JOIN videos
                         ON videos.id = comments.video_id
@@ -80,6 +80,31 @@ SELECT *
 FROM users;
 
 DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_maincategories()
+BEGIN
+    SELECT id, name
+    FROM categories
+    WHERE parent_id IS NULL;
+END;
+$$
+DELIMITER ;
+
+CALL get_maincategories();
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_subcategories(IN quantity MEDIUMINT UNSIGNED)
+BEGIN
+    SELECT id, name
+    FROM categories
+    WHERE parent_id IS NOT NULL
+    LIMIT quantity;
+END;
+$$
+DELIMITER ;
+
+CALL get_subcategories(100);
+
+DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_videos_for_subcategory(
     IN subcat_id INTEGER UNSIGNED,
     IN offset INTEGER UNSIGNED,
@@ -87,8 +112,8 @@ CREATE OR REPLACE PROCEDURE get_videos_for_subcategory(
 BEGIN
     SELECT videos.id, title, url, base_image_url
     FROM videos
-    INNER JOIN video_category vc on videos.id = vc.video_id
-    INNER JOIN categories c on vc.category_id = c.id
+             INNER JOIN video_category vc on videos.id = vc.video_id
+             INNER JOIN categories c on vc.category_id = c.id
     WHERE c.id = subcat_id
     LIMIT offset, quantity;
 END;
@@ -96,6 +121,30 @@ $$
 DELIMITER ;
 
 CALL get_videos_for_subcategory(15, 0, 100);
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_profile_data(IN uid INTEGER UNSIGNED)
+BEGIN
+    SELECT users.id, username, profile_pic_url, bg_image_url, bio
+    FROM users
+    WHERE users.id = uid;
+END;
+$$
+DELIMITER ;
+
+CALL get_profile_data(1);
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_user_uploaded(IN uid INTEGER UNSIGNED)
+BEGIN
+    SELECT id, title, url, base_image_url
+    FROM videos
+    WHERE user_id = uid;
+END;
+$$
+DELIMITER ;
+
+CALL get_user_uploaded(2);
 
 -- DELIMITER $$
 /*CREATE OR REPLACE PROCEDURE get_random_maincategories(IN quantity TINYINT UNSIGNED)
@@ -110,19 +159,6 @@ $$ /*
 -- DELIMITER ;
 
 -- CALL get_random_maincategories(6); */
-
-DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_firstlevel_subcategories(IN quantity MEDIUMINT UNSIGNED)
-BEGIN
-    SELECT id, name
-    FROM categories
-    WHERE parent_id IS NOT NULL
-    LIMIT quantity;
-END;
-$$
-DELIMITER ;
-
-CALL get_firstlevel_subcategories(100);
 
 -- primary keyek fix pipa
 -- comments legfrissebbek legyenek elöl pipa
