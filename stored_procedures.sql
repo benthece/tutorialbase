@@ -115,13 +115,13 @@ BEGIN
              INNER JOIN video_category vc on videos.id = vc.video_id
              INNER JOIN categories c on vc.category_id = c.id
     WHERE c.id = subcat_id
-    LIMIT quantity
-    ORDER BY RANDOM();
+    ORDER BY RAND()
+    LIMIT quantity;
 END;
 $$
 DELIMITER ;
 
-CALL get_videos_for_subcategory(15, 0, 100);
+CALL get_videos_for_subcategory(15, 100);
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_profile_data(IN uid INTEGER UNSIGNED)
