@@ -1,5 +1,5 @@
 -- USE `tutorialbase`;
-
+-- get comments for a video
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_comments(
     IN vid_id INTEGER UNSIGNED,
@@ -107,7 +107,7 @@ CALL get_subcategories(100);
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_videos_for_subcategory(
     IN subcat_id INTEGER UNSIGNED,
-    IN offset INTEGER UNSIGNED,
+    -- IN offset INTEGER UNSIGNED,
     IN quantity INTEGER UNSIGNED)
 BEGIN
     SELECT videos.id, title, url, base_image_url
@@ -115,7 +115,8 @@ BEGIN
              INNER JOIN video_category vc on videos.id = vc.video_id
              INNER JOIN categories c on vc.category_id = c.id
     WHERE c.id = subcat_id
-    LIMIT offset, quantity;
+    LIMIT quantity
+    ORDER BY RANDOM();
 END;
 $$
 DELIMITER ;
@@ -170,3 +171,4 @@ $$ /*
 -- főoldal alkategóriiák random, azon belül videók sorban
 -- profil oldal
 -- video megtekinés oldal video suggestions kommentekkel együtt növekszik (ha beszólnak)
+-- user guid
