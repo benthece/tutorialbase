@@ -7,18 +7,19 @@ USE `tutorialbase`;
 CREATE TABLE `users`
 (
     `id`              INTEGER UNSIGNED UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    `username`        VARCHAR(20)                         NOT NULL,
+    `guid`            CHAR(32)                            NOT NULL UNIQUE DEFAULT UUID(),
+    `username`        VARCHAR(20) UNIQUE                  NOT NULL,
     `email`           VARCHAR(32)                         NOT NULL,
-    `password`        CHAR(32)                         NOT NULL,              -- SHA3-128
+    `password`        CHAR(32)                            NOT NULL,                     -- SHA3-128
     `profile_pic_url` VARCHAR(50),
     `bg_image_url`    VARCHAR(50),
     `bio`             VARCHAR(100)                        NOT NULL,
     `privilege_id`    TINYINT UNSIGNED                    NOT NULL,
-    `wishes`          TINYINT UNSIGNED                    NOT NULL DEFAULT 5,
+    `wishes`          TINYINT UNSIGNED                    NOT NULL        DEFAULT 5,
     `last_login`      TIMESTAMP                           NOT NULL,
-    `pw_modified_at`  TIMESTAMP                           NULL     DEFAULT NULL, -- alapértelmezetten NULL
-    `created_at`      TIMESTAMP                                    DEFAULT NOW(),
-    `is_deleted`      BOOLEAN                             NOT NULL DEFAULT 0
+    `pw_modified_at`  TIMESTAMP                           NULL            DEFAULT NULL, -- alapértelmezetten NULL
+    `created_at`      TIMESTAMP                                           DEFAULT NOW(),
+    `is_deleted`      BOOLEAN                             NOT NULL        DEFAULT 0
 );
 
 CREATE TABLE `user_privileges`
@@ -30,6 +31,7 @@ CREATE TABLE `user_privileges`
 CREATE TABLE `videos`
 (
     `id`             INTEGER UNSIGNED UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    `guid`           CHAR(32) UNIQUE                     NOT NULL DEFAULT UUID(),
     `title`          VARCHAR(32),
     `description`    VARCHAR(100)                        NOT NULL,
     `url`            VARCHAR(50),
@@ -44,6 +46,7 @@ CREATE TABLE `videos`
 CREATE TABLE `comments`
 (
     `id`          INTEGER UNSIGNED UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    `guid`        CHAR(32) UNIQUE                     NOT NULL DEFAULT UUID(),
     `user_id`     INTEGER UNSIGNED,
     `video_id`    INTEGER UNSIGNED,
     `text`        VARCHAR(100),
@@ -64,6 +67,7 @@ CREATE TABLE `reactions`
 CREATE TABLE `categories`
 (
     `id`        INTEGER UNSIGNED UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    `guid`      CHAR(32) UNIQUE                     NOT NULL DEFAULT UUID(),
     `parent_id` INTEGER UNSIGNED, -- valszeg csak úgy jó, ha null értéket kap a főkategória
     `name`      VARCHAR(30)
 );
@@ -71,6 +75,7 @@ CREATE TABLE `categories`
 CREATE TABLE `wish`
 (
     `id`      INTEGER UNSIGNED UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    `guid`    CHAR(32) UNIQUE                     NOT NULL DEFAULT UUID(),
     `text`    VARCHAR(40),
     `user_id` INTEGER UNSIGNED
 );
