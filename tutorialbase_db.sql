@@ -7,13 +7,13 @@ USE `tutorialbase`;
 CREATE TABLE `users`
 (
     `id`              INTEGER UNSIGNED UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    `username`        VARCHAR(20),
-    `email`           VARCHAR(32),
-    `password`        VARCHAR(32),                                               -- SHA3-128
+    `username`        VARCHAR(20)                         NOT NULL,
+    `email`           VARCHAR(32)                         NOT NULL,
+    `password`        CHAR(32)                         NOT NULL,              -- SHA3-128
     `profile_pic_url` VARCHAR(50),
     `bg_image_url`    VARCHAR(50),
-    `bio`             VARCHAR(100),
-    `privilege_id`    TINYINT UNSIGNED,
+    `bio`             VARCHAR(100)                        NOT NULL,
+    `privilege_id`    TINYINT UNSIGNED                    NOT NULL,
     `wishes`          TINYINT UNSIGNED                    NOT NULL DEFAULT 5,
     `last_login`      TIMESTAMP                           NOT NULL,
     `pw_modified_at`  TIMESTAMP                           NULL     DEFAULT NULL, -- alapértelmezetten NULL
@@ -31,11 +31,11 @@ CREATE TABLE `videos`
 (
     `id`             INTEGER UNSIGNED UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
     `title`          VARCHAR(32),
-    `description`    VARCHAR(100),
+    `description`    VARCHAR(100)                        NOT NULL,
     `url`            VARCHAR(50),
     `base_image_url` VARCHAR(50),
     `is_deleted`     BOOLEAN                             NOT NULL DEFAULT 0,
-    `views`          INTEGER UNSIGNED                    NOT NULL,
+    `views`          INTEGER UNSIGNED                    NOT NULL DEFAULT 0,
     `user_id`        INTEGER UNSIGNED,
     `uploaded_at`    TIMESTAMP                                    DEFAULT NOW(),
     `modified_at`    TIMESTAMP                           NULL     DEFAULT NULL -- ez is direkt null
