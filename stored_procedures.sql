@@ -1,60 +1,68 @@
 -- USE `tutorialbase`;
+-- get comments for a video
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_comments(
-    IN vid_id INTEGER UNSIGNED,
-    IN offset INTEGER UNSIGNED
+    IN vid_guid CHAR(32),
+    IN offset_val INTEGER UNSIGNED
 )
 BEGIN
-    SELECT comments.id, username, text
+    DECLARE vid INTEGER UNSIGNED;
+
+    SELECT id INTO vid FROM videos WHERE guid = vid_guid;
+
+    SELECT comments.guid, username, text, comments.created_at, comments.modified_at
     FROM comments
              INNER JOIN videos
                         ON videos.id = comments.video_id
              INNER JOIN users
                         ON users.id = comments.user_id
-    WHERE video_id = vid_id
+    WHERE videos.id = vid
       AND comments.is_deleted = 0
-    ORDER BY 1
-    LIMIT offset, 5;
+    ORDER BY 4
+    LIMIT offset_val, 5;
 END;
 $$
 DELIMITER ;
 
-CALL get_comments(1, 0);
-
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE create_comment(
-    IN usr_id INTEGER UNSIGNED,
-    IN vid_id INTEGER UNSIGNED,
+    IN usr_guid CHAR(32),
+    IN vid_guid CHAR(32),
     IN comm_text VARCHAR(100)
 )
 BEGIN
-    INSERT INTO comments (user_id, video_id, text, created_at)
-    VALUES (usr_id,
-            vid_id,
+    DECLARE uid INTEGER UNSIGNED;
+    DECLARE vid INTEGER UNSIGNED;
+
+    SELECT id INTO uid FROM users WHERE guid = usr_guid;
+    SELECT id INTO vid FROM videos WHERE guid = vid_guid;
+
+    INSERT INTO comments (guid, user_id, video_id, text, created_at)
+    VALUES (uuid_v4s(),
+            uid,
+            vid,
             comm_text,
             NOW());
 END;
 $$
 DELIMITER ;
 
-CALL create_comment(16, 1, 'Hello from another World! 😁');
-CALL get_comments(1, 3);
-
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE modify_comment(
-    IN comm_id INTEGER UNSIGNED,
+    IN comm_guid CHAR(32),
     IN comm_text VARCHAR(100)
 )
 BEGIN
+    DECLARE comm_id INTEGER UNSIGNED;
+
+    SELECT id INTO comm_id FROM comments WHERE guid = comm_guid;
+
     UPDATE comments SET text = comm_text WHERE id = comm_id;
     UPDATE comments SET modified_at = NOW() WHERE id = comm_id;
 END;
 $$
 DELIMITER ;
-
-CALL modify_comment(1, 'The best video I have seen ever!');
-CALL get_comments(1, 0);
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE delete_comment(IN comm_id INTEGER UNSIGNED)
@@ -64,8 +72,71 @@ END;
 $$
 DELIMITER ;
 
-CALL delete_comment(2);
-CALL get_comments(1, 0);
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE reset_wish()
+BEGIN
+    UPDATE users SET wishes = 5 WHERE id != 0;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_maincategories()
+BEGIN
+    SELECT id, name
+    FROM categories
+    WHERE parent_id IS NULL;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_subcategories(IN quantity MEDIUMINT UNSIGNED)
+BEGIN
+    SELECT id, name
+    FROM categories
+    WHERE parent_id IS NOT NULL
+    LIMIT quantity;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_videos_for_subcategory(
+    IN subcat_id INTEGER UNSIGNED,
+    -- IN offset INTEGER UNSIGNED,
+    IN quantity INTEGER UNSIGNED)
+BEGIN
+    SELECT videos.id, title, url, base_image_url
+    FROM videos
+             INNER JOIN video_category vc on videos.id = vc.video_id
+             INNER JOIN categories c on vc.category_id = c.id
+    WHERE c.id = subcat_id
+    ORDER BY RAND()
+    LIMIT quantity;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_profile_data(IN uid INTEGER UNSIGNED)
+BEGIN
+    SELECT users.id, username, profile_pic_url, bg_image_url, bio
+    FROM users
+    WHERE users.id = uid;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_user_uploaded(IN uid INTEGER UNSIGNED)
+BEGIN
+    SELECT id, title, url, base_image_url
+    FROM videos
+    WHERE user_id = uid;
+END;
+$$
+DELIMITER ;
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE reset_wish()
@@ -103,3 +174,4 @@ CALL get_random_parent_categories(6);
 -- főoldal alkategóriiák random, azon belül videók sorban
 -- profil oldal
 -- video megtekinés oldal video suggestions kommentekkel együtt növekszik (ha beszólnak)
+-- user guid
