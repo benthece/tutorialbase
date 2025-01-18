@@ -1,11 +1,11 @@
-DROP DATABASE IF EXISTS `tutorialbase`;
+-- DROP DATABASE IF EXISTS `tutorialbase`;
 
 CREATE DATABASE `tutorialbase`;
 
 USE `tutorialbase`;
 
 DELIMITER $$
-CREATE FUNCTION uuid_v4s()
+CREATE FUNCTION uuid_v4s() -- UUID V4 generáláshoz
     RETURNS CHAR(32)
 BEGIN
     -- 1th and 2nd block are made of 6 random bytes
