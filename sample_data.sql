@@ -754,3 +754,19 @@ VALUES (1, 1),
        (4, 4),
        (5, 5),
        (2, 1);
+
+UPDATE users
+SET guid = uuid_v4s()
+WHERE id != 0;
+UPDATE videos
+SET guid = uuid_v4s()
+WHERE id != 0;
+UPDATE comments
+SET guid = uuid_v4s()
+WHERE id != 0;
+UPDATE categories
+SET guid = uuid_v4s()
+WHERE id != 0;
+UPDATE WISH
+SET guid = uuid_v4s()
+WHERE id != 0;

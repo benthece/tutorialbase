@@ -1,60 +1,68 @@
 -- USE `tutorialbase`;
 -- get comments for a video
+
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_comments(
-    IN vid_id INTEGER UNSIGNED,
-    IN offset INTEGER UNSIGNED
+    IN vid_guid CHAR(32),
+    IN offset_val INTEGER UNSIGNED
 )
 BEGIN
-    SELECT comments.id, username, text, comments.created_at, comments.modified_at
+    DECLARE vid INTEGER UNSIGNED;
+
+    SELECT id INTO vid FROM videos WHERE guid = vid_guid;
+
+    SELECT comments.guid, username, text, comments.created_at, comments.modified_at
     FROM comments
              INNER JOIN videos
                         ON videos.id = comments.video_id
              INNER JOIN users
                         ON users.id = comments.user_id
-    WHERE video_id = vid_id
+    WHERE videos.id = vid
       AND comments.is_deleted = 0
-    ORDER BY 1
-    LIMIT offset, 5;
+    ORDER BY 4
+    LIMIT offset_val, 5;
 END;
 $$
 DELIMITER ;
 
-CALL get_comments(1, 0);
-
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE create_comment(
-    IN usr_id INTEGER UNSIGNED,
-    IN vid_id INTEGER UNSIGNED,
+    IN usr_guid CHAR(32),
+    IN vid_guid CHAR(32),
     IN comm_text VARCHAR(100)
 )
 BEGIN
-    INSERT INTO comments (user_id, video_id, text, created_at)
-    VALUES (usr_id,
-            vid_id,
+    DECLARE uid INTEGER UNSIGNED;
+    DECLARE vid INTEGER UNSIGNED;
+
+    SELECT id INTO uid FROM users WHERE guid = usr_guid;
+    SELECT id INTO vid FROM videos WHERE guid = vid_guid;
+
+    INSERT INTO comments (guid, user_id, video_id, text, created_at)
+    VALUES (uuid_v4s(),
+            uid,
+            vid,
             comm_text,
             NOW());
 END;
 $$
 DELIMITER ;
 
-CALL create_comment(16, 1, 'Hello from another World! 😁');
-CALL get_comments(1, 3);
-
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE modify_comment(
-    IN comm_id INTEGER UNSIGNED,
+    IN comm_guid CHAR(32),
     IN comm_text VARCHAR(100)
 )
 BEGIN
+    DECLARE comm_id INTEGER UNSIGNED;
+
+    SELECT id INTO comm_id FROM comments WHERE guid = comm_guid;
+
     UPDATE comments SET text = comm_text WHERE id = comm_id;
     UPDATE comments SET modified_at = NOW() WHERE id = comm_id;
 END;
 $$
 DELIMITER ;
-
-CALL modify_comment(1, 'The best video I have seen ever!');
-CALL get_comments(1, 0);
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE delete_comment(IN comm_id INTEGER UNSIGNED)
@@ -64,9 +72,6 @@ END;
 $$
 DELIMITER ;
 
-CALL delete_comment(2);
-CALL get_comments(1, 0);
-
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE reset_wish()
 BEGIN
@@ -74,10 +79,6 @@ BEGIN
 END;
 $$
 DELIMITER ;
-
-CALL reset_wish();
-SELECT *
-FROM users;
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_maincategories()
@@ -89,8 +90,6 @@ END;
 $$
 DELIMITER ;
 
-CALL get_maincategories();
-
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_subcategories(IN quantity MEDIUMINT UNSIGNED)
 BEGIN
@@ -101,8 +100,6 @@ BEGIN
 END;
 $$
 DELIMITER ;
-
-CALL get_subcategories(100);
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_videos_for_subcategory(
@@ -121,8 +118,6 @@ END;
 $$
 DELIMITER ;
 
-CALL get_videos_for_subcategory(15, 100);
-
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_profile_data(IN uid INTEGER UNSIGNED)
 BEGIN
@@ -133,8 +128,6 @@ END;
 $$
 DELIMITER ;
 
-CALL get_profile_data(1);
-
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_user_uploaded(IN uid INTEGER UNSIGNED)
 BEGIN
@@ -144,49 +137,6 @@ BEGIN
 END;
 $$
 DELIMITER ;
-
-CALL get_user_uploaded(2);
-
-DELIMITER $$
-CREATE FUNCTION uuid_v4s()
-    RETURNS CHAR(36)
-BEGIN
-    -- 1th and 2nd block are made of 6 random bytes
-    SET @h1 = HEX(RANDOM_BYTES(4));
-    SET @h2 = HEX(RANDOM_BYTES(2));
-
-    -- 3th block will start with a 4 indicating the version, remaining is random
-    SET @h3 = SUBSTR(HEX(RANDOM_BYTES(2)), 2, 3);
-
-    -- 4th block first nibble can only be 8, 9 A or B, remaining is random
-    SET @h4 = CONCAT(HEX(FLOOR(ASCII(RANDOM_BYTES(1)) / 64)+8),
-                SUBSTR(HEX(RANDOM_BYTES(2)), 2, 3));
-
-    -- 5th block is made of 6 random bytes
-    SET @h5 = HEX(RANDOM_BYTES(6));
-
-    -- Build the complete UUID
-    RETURN LOWER(CONCAT(
-        @h1, '-', @h2, '-4', @h3, '-', @h4, '-', @h5
-    ));
-END; $$
-DELIMITER ;
-
-SELECT uuid_v4s();
-
--- DELIMITER $$
-/*CREATE OR REPLACE PROCEDURE get_random_maincategories(IN quantity TINYINT UNSIGNED)
-BEGIN
-    SELECT name
-    FROM categories
-    WHERE parent_id IS NULL
-    ORDER BY RAND()
-    LIMIT quantity;
-END;
-$$ /*
--- DELIMITER ;
-
--- CALL get_random_maincategories(6); */
 
 -- primary keyek fix pipa
 -- comments legfrissebbek legyenek elöl pipa
