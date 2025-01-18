@@ -138,6 +138,32 @@ END;
 $$
 DELIMITER ;
 
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE reset_wish()
+BEGIN
+    UPDATE users SET wishes = 5 WHERE id != 0;
+END;
+$$
+DELIMITER ;
+
+CALL reset_wish();
+SELECT *
+FROM users;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_random_parent_categories(IN quantity TINYINT UNSIGNED)
+BEGIN
+    SELECT name
+    FROM categories
+    WHERE parent_id IS NULL
+    ORDER BY RAND()
+    LIMIT quantity;
+END;
+$$
+DELIMITER ;
+
+CALL get_random_parent_categories(6);
+
 -- primary keyek fix pipa
 -- comments legfrissebbek legyenek elöl pipa
 -- create update delete mindenre
