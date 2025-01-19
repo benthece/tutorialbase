@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="tutorialbase" uuid="d0ee8a99-b561-42f2-93f3-c278be1f43ce">
+    <data-source source="LOCAL" name="tutorialbase" uuid="af94c18f-b698-474a-86b8-95cccce47d47">
       <driver-ref>mariadb</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
