@@ -24,6 +24,7 @@ BEGIN
 END;
 $$
 DELIMITER ;
+
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE create_comment(
     IN usr_guid CHAR(32),
@@ -46,6 +47,7 @@ BEGIN
 END;
 $$
 DELIMITER ;
+
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE modify_comment(
     IN comm_guid CHAR(32),
