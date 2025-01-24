@@ -1,8 +1,8 @@
 -- DROP DATABASE IF EXISTS `tutorialbase`;
 
--- CREATE DATABASE `tutorialbase`;
+CREATE DATABASE `tutorialbase`;
 
--- USE `tutorialbase`;
+USE `tutorialbase`;
 
 DELIMITER $$
 CREATE FUNCTION uuid_v4s() -- UUID V4 generáláshoz
