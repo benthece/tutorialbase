@@ -144,7 +144,7 @@ DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_user_uploaded(IN user_guid INTEGER UNSIGNED)
 BEGIN
     DECLARE var_user_id INTEGER UNSIGNED;
-    
+
     SELECT id INTO var_user_id FROM users WHERE guid = user_guid;
 
     SELECT guid, title, url, base_image_url
