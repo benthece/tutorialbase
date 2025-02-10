@@ -64,12 +64,8 @@ $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE delete_comment(IN comm_guid INTEGER UNSIGNED)
+CREATE OR REPLACE PROCEDURE delete_comment(IN comm_id INTEGER UNSIGNED)
 BEGIN
-    DECLARE comm_id INTEGER UNSIGNED;
-
-    SELECT id INTO comm_id FROM comments WHERE guid = comm_guid;
-
     UPDATE comments SET is_deleted = TRUE WHERE id = comm_id;
 END;
 $$
@@ -86,7 +82,7 @@ DELIMITER ;
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_maincategories()
 BEGIN
-    SELECT guid, name
+    SELECT id, name
     FROM categories
     WHERE parent_id IS NULL;
 END;
@@ -96,7 +92,7 @@ DELIMITER ;
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_subcategories(IN quantity MEDIUMINT UNSIGNED)
 BEGIN
-    SELECT guid, name
+    SELECT id, name
     FROM categories
     WHERE parent_id IS NOT NULL
     LIMIT quantity;
@@ -106,15 +102,11 @@ DELIMITER ;
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_videos_for_subcategory(
-    IN subcat_guid INTEGER UNSIGNED,
+    IN subcat_id INTEGER UNSIGNED,
     -- IN offset INTEGER UNSIGNED,
     IN quantity INTEGER UNSIGNED)
 BEGIN
-    DECLARE subcat_id INTEGER UNSIGNED;
-
-    SELECT id INTO subcat_id FROM categories WHERE guid = subcat_guid;
-
-    SELECT videos.guid, title, url, base_image_url
+    SELECT videos.id, title, url, base_image_url
     FROM videos
              INNER JOIN video_category vc on videos.id = vc.video_id
              INNER JOIN categories c on vc.category_id = c.id
@@ -126,29 +118,21 @@ $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_profile_data(IN user_guid INTEGER UNSIGNED)
+CREATE OR REPLACE PROCEDURE get_profile_data(IN uid INTEGER UNSIGNED)
 BEGIN
-    DECLARE user_id INTEGER UNSIGNED;
-
-    SELECT id INTO user_id FROM users WHERE guid = user_guid;
-
-    SELECT users.guid, username, profile_pic_url, bg_image_url, bio
+    SELECT users.id, username, profile_pic_url, bg_image_url, bio
     FROM users
-    WHERE users.id = user_id;
+    WHERE users.id = uid;
 END;
 $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_user_uploaded(IN user_guid INTEGER UNSIGNED)
+CREATE OR REPLACE PROCEDURE get_user_uploaded(IN uid INTEGER UNSIGNED)
 BEGIN
-    DECLARE var_user_id INTEGER UNSIGNED;
-
-    SELECT id INTO var_user_id FROM users WHERE guid = user_guid;
-
-    SELECT guid, title, url, base_image_url
+    SELECT id, title, url, base_image_url
     FROM videos
-    WHERE user_id = var_user_id;
+    WHERE user_id = uid;
 END;
 $$
 DELIMITER ;
