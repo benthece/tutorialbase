@@ -1,5 +1,4 @@
 USE `tutorialbase`;
--- get comments for a video
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_comments(
@@ -153,6 +152,9 @@ BEGIN
 END;
 $$
 DELIMITER ;
+
+-- TODO
+-- CREATE OR REPLACE PROCEDURE modify_user_profile()
 
 -- primary keyek fix pipa
 -- comments legfrissebbek legyenek elöl pipa
