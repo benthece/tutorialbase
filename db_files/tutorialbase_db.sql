@@ -33,9 +33,9 @@ DELIMITER ;
 CREATE TABLE `users`
 (
     `id`              INTEGER UNSIGNED UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    `guid`            CHAR(32)                            NOT NULL UNIQUE DEFAULT RAND(32),
+    `guid`            CHAR(32)                            NOT NULL UNIQUE DEFAULT '00000000000000000000000000000000',
     `username`        VARCHAR(20) UNIQUE                  NOT NULL,
-    `email`           VARCHAR(32)                         NOT NULL,
+    `email`           VARCHAR(32) UNIQUE                  NOT NULL,
     `password`        CHAR(32)                            NOT NULL,                     -- SHA3-128
     `profile_pic_url` VARCHAR(50),
     `bg_image_url`    VARCHAR(50),
