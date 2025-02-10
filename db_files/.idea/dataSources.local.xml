@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="dataSourceStorageLocal" created-in="DB-243.23654.183">
-    <data-source name="tutorialbase_db" uuid="000629fc-88ed-4f53-b704-b1ae54d47656">
-      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MARIADB" />
-      <schema-mapping />
-    </data-source>
-  </component>
-</project>
