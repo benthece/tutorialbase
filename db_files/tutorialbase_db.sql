@@ -98,7 +98,7 @@ CREATE TABLE `categories`
     `name`      VARCHAR(30)
 );
 
-CREATE TABLE `wish`
+CREATE TABLE `wishes`
 (
     `id`      INTEGER UNSIGNED UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
     `guid`    CHAR(36) UNIQUE                     NOT NULL DEFAULT RAND(32),
@@ -161,7 +161,7 @@ ALTER TABLE `watch_history`
 ALTER TABLE `watch_history`
     ADD FOREIGN KEY (`video_id`) REFERENCES `videos` (`id`);
 
-ALTER TABLE `wish`
+ALTER TABLE `wishes`
     ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 CREATE TABLE `videos_tags`
@@ -189,4 +189,4 @@ ALTER TABLE `users_wish_upvote`
     ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 ALTER TABLE `users_wish_upvote`
-    ADD FOREIGN KEY (`wish_id`) REFERENCES `wish` (`id`);
+    ADD FOREIGN KEY (`wish_id`) REFERENCES `wishes` (`id`);

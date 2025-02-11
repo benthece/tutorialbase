@@ -644,7 +644,7 @@ VALUES (NULL, 'Technology'),
        (10, 'AWS')
 ;
 
-INSERT INTO `wish` (`text`, `user_id`)
+INSERT INTO `wishes` (`text`, `user_id`)
 VALUES ('Learn React.js', 1),
        ('Understand SQL', 2),
        ('Master Python', 3),
@@ -767,6 +767,6 @@ WHERE id != 0;
 UPDATE categories
 SET guid = uuid_v4s()
 WHERE id != 0;
-UPDATE WISH
+UPDATE wishes
 SET guid = uuid_v4s()
 WHERE id != 0;
