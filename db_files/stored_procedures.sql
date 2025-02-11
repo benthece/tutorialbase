@@ -1,8 +1,8 @@
-USE `tutorialbase`;
+-- USE `tutorialbase`;
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_comments(
-    IN vid_guid CHAR(32),
+    IN vid_guid CHAR(36),
     IN offset_val INTEGER UNSIGNED
 )
 BEGIN
@@ -26,8 +26,8 @@ DELIMITER ;
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE create_comment(
-    IN usr_guid CHAR(32),
-    IN vid_guid CHAR(32),
+    IN usr_guid CHAR(36),
+    IN vid_guid CHAR(36),
     IN comm_text VARCHAR(100)
 )
 BEGIN
@@ -49,7 +49,7 @@ DELIMITER ;
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE modify_comment(
-    IN comm_guid CHAR(32),
+    IN comm_guid CHAR(36),
     IN comm_text VARCHAR(100)
 )
 BEGIN
@@ -64,7 +64,7 @@ $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE delete_comment(IN comm_guid INTEGER UNSIGNED)
+CREATE OR REPLACE PROCEDURE delete_comment(IN comm_guid CHAR(36))
 BEGIN
     DECLARE comm_id INTEGER UNSIGNED;
 
@@ -106,7 +106,7 @@ DELIMITER ;
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_videos_for_subcategory(
-    IN subcat_guid INTEGER UNSIGNED,
+    IN subcat_guid CHAR(36),
     -- IN offset INTEGER UNSIGNED,
     IN quantity INTEGER UNSIGNED)
 BEGIN
@@ -126,7 +126,7 @@ $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_profile_data(IN user_guid INTEGER UNSIGNED)
+CREATE OR REPLACE PROCEDURE get_profile_data(IN user_guid CHAR(36))
 BEGIN
     DECLARE user_id INTEGER UNSIGNED;
 
@@ -140,7 +140,7 @@ $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_user_uploaded(IN user_guid INTEGER UNSIGNED)
+CREATE OR REPLACE PROCEDURE get_user_uploaded(IN user_guid CHAR(36))
 BEGIN
     DECLARE var_user_id INTEGER UNSIGNED;
 
