@@ -16,6 +16,10 @@ class VideoController extends Controller
             'video' => $video_data,
             'comments' => $comments
         ];
-        return response()->json($result);
+        return response()->json($result)
+            ->header('Content-Type', 'application/json')
+            ->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods', '*')
+            ->header('Access-Control-Allow-Headers', '*');
     }
 }
