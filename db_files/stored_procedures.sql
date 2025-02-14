@@ -153,6 +153,11 @@ END;
 $$
 DELIMITER ;
 
+CREATE OR REPLACE PROCEDURE modify_user_profile(
+    IN user_guid CHAR(36),
+    IN data JSON
+)
+
 -- TODO
 -- CREATE OR REPLACE PROCEDURE modify_user_profile()
 

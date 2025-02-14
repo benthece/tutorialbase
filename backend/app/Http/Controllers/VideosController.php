@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 
-use Illuminate\Foundation\Application;
+
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use PhpParser\Node\Expr\Cast\Object_;
-use stdClass;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class VideosController extends Controller
