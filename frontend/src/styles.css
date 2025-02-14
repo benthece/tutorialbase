@@ -1,0 +1,7 @@
+body, html {
+    width: 100%;
+    overflow-x: hidden; /* Prevents horizontal scroll issues */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}

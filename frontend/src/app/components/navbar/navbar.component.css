@@ -1,0 +1,175 @@
+.navbar {
+    position: fixed;
+    width: 100%;
+    max-width: 100vw;
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #023047;
+    color: #fff;
+    top: 0;
+    left: 0;
+    box-sizing: border-box;
+    z-index: 1000;
+    justify-content: space-between;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    font-size: 20px;
+}
+
+.hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;    
+    cursor: pointer;
+}
+
+.hamburger svg {
+    width: 30px;
+    height: 30px;
+    transition: transform 0.3s ease;
+}
+
+.hamburger:hover svg {
+    transform: scale(1.1);
+}
+
+.hamburger-menu {
+    position: absolute;
+    top: 68px;
+    left: 5px;
+    width: 200px;
+    height: auto;
+    background-color: #023047;
+    color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px #0000001a;
+    z-index: 1000;
+}
+
+.hamburger-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.hamburger-menu ul li {
+    margin: 10px 0;
+}
+
+.hamburger-menu a {
+    text-decoration: none;
+    color: #fff;
+}
+
+.hamburger-menu ul li:hover {
+    background-color: #023047;
+}
+
+.nav-middle {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.search-field {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 500px;
+    height: 35px;
+    border-radius: 25px;
+    border: 1px solid white;
+    position: relative;
+}
+
+.search-field-input {
+    width: calc(100% - 35px);
+    padding: 8px 10px 8px 14px;
+    border-radius: 25px 0px 0px 25px;
+    border: 0;
+    outline: none;
+    background-color: #023047;
+    color: #fff;
+}
+
+.search-field-icon {
+    border-radius: 50px;
+    width: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-field-icon:hover {
+    background-color: #034769;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+}
+
+.star {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.star svg {
+    width: 25px;
+    height: 25px;
+    fill: #ffb703;
+    color: #ffb703;
+}
+
+.profile .profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 68px;
+    right: 5px;
+    background-color: #023047;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px #0000001a;
+    width: 150px;
+    z-index: 1000;
+}
+
+.dropdown-menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.dropdown-menu ul li {
+    padding: 10px;
+    text-align: left;
+}
+
+.dropdown-menu a {
+    text-decoration: none;
+    color: #fff;
+}
+
+.dropdown-menu ul li:hover {
+    background-color: #023047;
+}
+
