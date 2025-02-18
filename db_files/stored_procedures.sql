@@ -153,10 +153,37 @@ END;
 $$
 DELIMITER ;
 
-CREATE OR REPLACE PROCEDURE modify_user_profile(
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE user_login(
+    IN uname VARCHAR(20),
+    IN pword CHAR(32),
+    OUT is_success CHAR(2)
+)
+BEGIN
+    DECLARE un_success INTEGER DEFAULT NULL;
+
+    SELECT id
+    INTO un_success
+    FROM users
+    WHERE uname IN (username);
+
+    IF un_success IS NULL THEN
+        SET is_success = 'nn';
+    ELSE
+        IF pword = (SELECT password FROM users WHERE id = un_success) THEN
+            SET is_success = 'up';
+        ELSE
+            SET is_success = 'un';
+        END IF;
+    END IF;
+END;
+$$
+DELIMITER ;
+
+/*CREATE OR REPLACE PROCEDURE modify_user_profile(
     IN user_guid CHAR(36),
     IN data JSON
-)
+)*/
 
 -- TODO
 -- CREATE OR REPLACE PROCEDURE modify_user_profile()
