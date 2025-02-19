@@ -16,7 +16,6 @@ export class RegisterComponent {
   confirmPassword = '';
 
   @Output() close = new EventEmitter<void>();
-  /*@Output() loginClick = new EventEmitter<void>();*/
 
   onSubmit() {
     if (this.password !== this.confirmPassword) {
@@ -27,14 +26,11 @@ export class RegisterComponent {
     this.close.emit();
   }
 
-  /*login() {
-    this.loginClick.emit();
-  }*/
-
   onBackdropClick(event: MouseEvent) {
     if (event.target === event.currentTarget) {
       this.close.emit();
     }
   }
+
 }
 

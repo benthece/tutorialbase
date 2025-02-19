@@ -7,7 +7,7 @@
                 <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
         </div>      
-        <div class="logo">TutorialBase</div>
+        <a href="/" class="logo-link"><div class="logo">TutorialBase</div></a>
     </div>
 
     <div class="nav-middle">
@@ -23,10 +23,7 @@
         </div>
 
         <div class="star">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
-                <polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8" />
-            </svg>
+            <img src="/assets/star.png" class="star-img">
         </div>
     </div>
 
@@ -34,11 +31,11 @@
         <img src="assets/profilepic.jpg" alt="profile picture" class="profile-pic" (click)="toggleDropdown()" />
         <div *ngIf="dropdownVisible" class="dropdown-menu">
             <ul>
-                <a href="/profile"><li>Profil</li></a>
-                <a href="/upload"><li>Videó feltöltés</li></a>
-                <a href="/history"><li>Előzmények</li></a>
-                <a href="/settings"><li>Beállítások</li></a>
-                <a href="/"><li>Kijelentkezés</li></a>
+                <a [routerLink]="['/profile']" (click)="close()"><li>Profil</li></a>
+                <a [routerLink]="['/upload']" (click)="close()"><li>Videó feltöltés</li></a>
+                <a [routerLink]="['/history']" (click)="close()"><li>Előzmények</li></a>
+                <a [routerLink]="['/settings']" (click)="close()"><li>Beállítások</li></a>
+                <a [routerLink]="['/login']" (click)="onLoginClick($event)"><li>Bejelentkezés</li></a>
             </ul>
         </div>
     </div>
@@ -46,9 +43,9 @@
 
 <div *ngIf="hamburgerMenuVisible" class="hamburger-menu">
     <ul>
-        <a href="/home"><li>Home</li></a>
-        <a href="/about"><li>About</li></a>
-        <a href="/services"><li>Services</li></a>
-        <a href="/contact"><li>Contact</li></a>
+        <a href="/category1"><li>Kategória1</li></a>
+        <a href="/category2"><li>Kategória2</li></a>
+        <a href="/category3"><li>Kategória3</li></a>
+        <a href="/category4"><li>Kategória4</li></a>
     </ul>
 </div>

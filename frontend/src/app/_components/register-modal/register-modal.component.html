@@ -6,19 +6,19 @@
                 <input type="email" [(ngModel)]="email" name="email" placeholder="Email" required>
             </div>
             <div class="form-group">
-                <input type="text" [(ngModel)]="username" name="username" placeholder="Username" required>
+                <input type="text" [(ngModel)]="username" name="username" placeholder="Felhasználónév" required>
             </div>
             <div class="form-group">
-                <input type="password" [(ngModel)]="password" name="password" placeholder="Password" required>
+                <input type="password" [(ngModel)]="password" name="password" placeholder="Jelszó" required>
             </div>
             <div class="form-group">
-                <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Password again"
+                <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Jelszó újra"
                     required>
             </div>
-            <button type="submit" class="signup-button">Sign Up</button>
+            <button type="submit" class="signup-button">Regisztráció</button>
         </form>
         <div class="login-link">
-            Already have an account? <a>Log In</a> <!-- <a (click)="login()">Log In</a> -->
+            <a href="/login">Már van fiókod? Jelentkezz be</a>
         </div>
     </div>
 </div>

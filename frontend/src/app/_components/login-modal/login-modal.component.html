@@ -1,0 +1,24 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+    <div class="modal-content">
+        <button class="close-button" (click)="closeAndNavigate()">&times;</button>
+        <h2>Login</h2>
+        <form (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <input type="text" [(ngModel)]="username" name="username" placeholder="Felhasználónév" required>
+            </div>
+            <div class="form-group">
+                <input type="password" [(ngModel)]="password" name="password" placeholder="Jelszó" required>
+            </div>
+            <button type="submit" class="login-button" (click)="onSubmit()">Bejelentkezés</button>
+        </form>
+        <div class="links">
+            <div class="link-group">
+                <a href="/pwchange">Elfelejtett jelszó?</a>
+            </div>
+            <div class="link-group">
+                <a href="/sigup">Új vagy a TutorialBase-n? Regisztrálj</a>
+            </div>
+        </div>
+    </div>
+</div>
+
