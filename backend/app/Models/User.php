@@ -3,9 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -45,7 +47,19 @@ class User extends Authenticatable
         ];
     }
 
-    public function addUser($data) {
-        
+    public static function login(array $data): string
+    {
+        $result = null;
+
+        try {
+            $proc = DB::select("call user_login(?, ?, ?)", [$data['username'], $data['password'], '@is_succ']);
+            if (isset($proc)) {
+                $resp = DB::select("select @is_succ as success");
+                $result = $resp["success"];
+            }
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+        return $result;
     }
 }
