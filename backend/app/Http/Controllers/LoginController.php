@@ -10,8 +10,12 @@ class LoginController extends Controller
 {
     public function userLogin(Request $request): JsonResponse
     {
-        $credentials = $request->only('username', 'password');
-        $db_response = User::login($credentials);
+        $validated = $request->validate([
+            "username" => "required|string|max:20",
+            "password" => "required|string"
+        ]);
+
+        $db_response = User::login($validated);
         $status = null;
         $result = [];
 
