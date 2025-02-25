@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
@@ -36,6 +37,10 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'remember_token',
     ];
+
+    public function __construct(array $attributes = []) {
+        parent::__construct($attributes);
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -72,5 +77,14 @@ class User extends Authenticatable implements JWTSubject
             return $e->getMessage();
         }
         return $result;
+    }
+
+    public function create(array $data): User {
+        return new User([
+            'username' => $data['username'],
+            'email' => $data['email'],
+            'password' => $data['password'],
+        ]);
+
     }
 }
