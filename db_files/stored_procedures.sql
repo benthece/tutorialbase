@@ -1,8 +1,8 @@
-USE `tutorialbase`;
+-- USE `tutorialbase`;
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_comments(
-    IN vid_guid CHAR(32),
+    IN vid_guid CHAR(36),
     IN offset_val INTEGER UNSIGNED
 )
 BEGIN
@@ -26,8 +26,8 @@ DELIMITER ;
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE create_comment(
-    IN usr_guid CHAR(32),
-    IN vid_guid CHAR(32),
+    IN usr_guid CHAR(36),
+    IN vid_guid CHAR(36),
     IN comm_text VARCHAR(100)
 )
 BEGIN
@@ -49,7 +49,7 @@ DELIMITER ;
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE modify_comment(
-    IN comm_guid CHAR(32),
+    IN comm_guid CHAR(36),
     IN comm_text VARCHAR(100)
 )
 BEGIN
@@ -64,7 +64,7 @@ $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE delete_comment(IN comm_id INTEGER UNSIGNED)
+CREATE OR REPLACE PROCEDURE delete_comment(IN comm_guid CHAR(36))
 BEGIN
     UPDATE comments SET is_deleted = TRUE WHERE id = comm_id;
 END;
@@ -102,7 +102,7 @@ DELIMITER ;
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_videos_for_subcategory(
-    IN subcat_id INTEGER UNSIGNED,
+    IN subcat_guid CHAR(36),
     -- IN offset INTEGER UNSIGNED,
     IN quantity INTEGER UNSIGNED)
 BEGIN
@@ -118,7 +118,7 @@ $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_profile_data(IN uid INTEGER UNSIGNED)
+CREATE OR REPLACE PROCEDURE get_profile_data(IN user_guid CHAR(36))
 BEGIN
     SELECT users.id, username, profile_pic_url, bg_image_url, bio
     FROM users
@@ -128,7 +128,7 @@ $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_user_uploaded(IN uid INTEGER UNSIGNED)
+CREATE OR REPLACE PROCEDURE get_user_uploaded(IN user_guid CHAR(36))
 BEGIN
     SELECT id, title, url, base_image_url
     FROM videos
@@ -136,6 +136,38 @@ BEGIN
 END;
 $$
 DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE user_login(
+    IN uname VARCHAR(20),
+    IN pword CHAR(32),
+    OUT is_success CHAR(2)
+)
+BEGIN
+    DECLARE un_success INTEGER DEFAULT NULL;
+
+    SELECT id
+    INTO un_success
+    FROM users
+    WHERE uname IN (username);
+
+    IF un_success IS NULL THEN
+        SET is_success = 'nn';
+    ELSE
+        IF pword = (SELECT password FROM users WHERE id = un_success) THEN
+            SET is_success = 'up';
+        ELSE
+            SET is_success = 'un';
+        END IF;
+    END IF;
+END;
+$$
+DELIMITER ;
+
+/*CREATE OR REPLACE PROCEDURE modify_user_profile(
+    IN user_guid CHAR(36),
+    IN data JSON
+)*/
 
 -- TODO
 -- CREATE OR REPLACE PROCEDURE modify_user_profile()
