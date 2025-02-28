@@ -1,24 +1,79 @@
 <div class="modal-backdrop" (click)="onBackdropClick($event)">
     <div class="modal-content">
-        <h2>Sign Up</h2>
-        <form (ngSubmit)="onSubmit()">
+        <button class="close-button" (click)="closeModal()">&times;</button>
+        <h2>Regisztráció</h2>
+        <form [formGroup]="registerForm" (ngSubmit)="registerAction()">
             <div class="form-group">
-                <input type="email" [(ngModel)]="email" name="email" placeholder="Email" required>
+                <label for="email">
+                    Email
+                </label>
+                <input type="email" formControlName="email" id="email" name="email" placeholder="Email"
+                    [class.invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
             </div>
+            @if(registerForm.get('email')?.invalid && registerForm.get('email')?.touched){
+                <span class="error">Email is required</span>
+            }
+            
             <div class="form-group">
-                <input type="text" [(ngModel)]="username" name="username" placeholder="Felhasználónév" required>
+                <label for="name">
+                    Felhasználónév
+                </label>
+                <input type="text" formControlName="name" id="name" name="name"
+                    placeholder="Felhasználónév"
+                    [class.invalid]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
             </div>
+            @if(registerForm.get('name')?.invalid && registerForm.get('name')?.touched){
+                <span class="error">Username is required</span>
+            }
+            
             <div class="form-group">
-                <input type="password" [(ngModel)]="password" name="password" placeholder="Jelszó" required>
+                <label for="password">
+                    Jelszó
+                </label>
+                <div class="password-container">
+                    <input [type]="showPassword ? 'text' : 'password'" formControlName="password" id="password" name="password" placeholder="Jelszó"
+                        [class.invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+                    <button type="button" class="toggle-password-inside" (click)="togglePassword()">
+                        <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                    </button>
+                </div>
             </div>
+            @if(registerForm.get('password')?.invalid && registerForm.get('password')?.touched){
+                <span class="error">Password is required</span>
+            }
+            
             <div class="form-group">
-                <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Jelszó újra"
-                    required>
+                <label for="confirmPassword">
+                    Jelszó újra
+                </label>
+                <div class="password-container">
+                    <input [type]="showConfirmPassword ? 'text' : 'password'" id="confirmPassword" formControlName="confirmPassword" name="confirmPassword"
+                        placeholder="Jelszó újra"
+                        [class.invalid]="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched">
+                    <button type="button" class="toggle-password-inside" (click)="toggleConfirmPassword()">
+                        <i [class]="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                    </button>
+                </div>
             </div>
-            <button type="submit" class="signup-button">Regisztráció</button>
+            @if(registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched){
+                <span class="error">Confirm password is required</span>
+            }
+            
+            @if(registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched){
+                <span class="error">A megadott jelszavak nem egyeznek</span>
+            }
+            
+            @if(validationErrors.length > 0){
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{validationErrors}}
+                </div>
+            }
+            
+            <button type="submit" class="signup-button" [disabled]="!registerForm.valid || isSubmitting">Regisztráció</button>
         </form>
         <div class="login-link">
-            <a href="/login">Már van fiókod? Jelentkezz be</a>
+            <a (click)="switchToLogin()">Már van fiókod? Jelentkezz be</a>
         </div>
     </div>
 </div>

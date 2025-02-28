@@ -6,7 +6,6 @@ export const routes: Routes = [
     //alapértelmezett útvonal
     {path: '',redirectTo: '/home', pathMatch: 'full'},
     {path: 'home', component: HomeComponent},
-
-    {path: 'upload', component: VideoUploadComponent},
+    {path: 'upload', component: VideoUploadComponent}
 
 ];

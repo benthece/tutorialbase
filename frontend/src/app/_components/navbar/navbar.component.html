@@ -1,13 +1,16 @@
 <nav class="navbar">
     <div class="nav-left">
         <div class="hamburger" (click)="toggleHamburgerMenu()">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <line x1="3" y1="6" x2="21" y2="6"></line>
                 <line x1="3" y1="12" x2="21" y2="12"></line>
                 <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
-        </div>      
-        <a href="/" class="logo-link"><div class="logo">TutorialBase</div></a>
+        </div>
+        <a href="/" class="logo-link">
+            <div class="logo">TutorialBase</div>
+        </a>
     </div>
 
     <div class="nav-middle">
@@ -31,11 +34,28 @@
         <img src="assets/profilepic.jpg" alt="profile picture" class="profile-pic" (click)="toggleDropdown()" />
         <div *ngIf="dropdownVisible" class="dropdown-menu">
             <ul>
-                <a [routerLink]="['/profile']" (click)="close()"><li>Profil</li></a>
-                <a [routerLink]="['/upload']" (click)="close()"><li>Videó feltöltés</li></a>
-                <a [routerLink]="['/history']" (click)="close()"><li>Előzmények</li></a>
-                <a [routerLink]="['/settings']" (click)="close()"><li>Beállítások</li></a>
-                <a [routerLink]="['/login']" (click)="onLoginClick($event)"><li>Bejelentkezés</li></a>
+                <a [routerLink]="['/profile']" (click)="close()">
+                    <li>Profil</li>
+                </a>
+                <a [routerLink]="['/upload']" (click)="close()">
+                    <li>Videó feltöltés</li>
+                </a>
+                <a [routerLink]="['/history']" (click)="close()">
+                    <li>Előzmények</li>
+                </a>
+                <a [routerLink]="['/settings']" (click)="close()">
+                    <li>Beállítások</li>
+                </a>                
+                <div *ngIf="!isLoggedIn">
+                    <a (click)="onLoginClick($event)">
+                        <li>Bejelentkezés</li>
+                    </a>
+                </div>
+                <div *ngIf="isLoggedIn">
+                    <a (click)="onLogoutClick()">
+                        <li>Kijelentkezés</li>
+                    </a>
+                </div>
             </ul>
         </div>
     </div>
@@ -43,9 +63,17 @@
 
 <div *ngIf="hamburgerMenuVisible" class="hamburger-menu">
     <ul>
-        <a href="/category1"><li>Kategória1</li></a>
-        <a href="/category2"><li>Kategória2</li></a>
-        <a href="/category3"><li>Kategória3</li></a>
-        <a href="/category4"><li>Kategória4</li></a>
+        <a href="/category1">
+            <li>Kategória1</li>
+        </a>
+        <a href="/category2">
+            <li>Kategória2</li>
+        </a>
+        <a href="/category3">
+            <li>Kategória3</li>
+        </a>
+        <a href="/category4">
+            <li>Kategória4</li>
+        </a>
     </ul>
 </div>

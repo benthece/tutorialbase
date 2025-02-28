@@ -1,13 +1,13 @@
 <div class="video-card">
     <div class="thumbnail-container">
-        <img class="thumbnail" src="./assets/images.jpg" alt="title">
-        <div class="timestamp">duration</div>
+        <img class="thumbnail" [src]="thumbnailSrc" [alt]="title">
+        <div class="timestamp">{{duration}}</div>
     </div>
     <div class="content">
-        <img class="uploader-avatar" src="./assets/profilepic.jpg" alt="uploaderName">
+        <img class="uploader-avatar" [src]="avatarSrc" [alt]="uploaderName">
         <div class="info">
-            <h3 class="title">title</h3>
-            <p class="uploader-name">uploader name</p>
+            <h3 class="title">{{title}}</h3>
+            <p class="uploader-name">{{uploaderName}}</p>
         </div>
     </div>
 </div>

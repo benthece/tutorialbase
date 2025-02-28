@@ -1,4 +1,6 @@
 
-<app-navbar (showLoginModal)="showLoginModal()"></app-navbar>
-<app-login-modal *ngIf="isLoginModalVisible" (close)="hideLoginModal()"></app-login-modal>
+<app-navbar (showLoginModal)="showLoginModal()" (showRegisterModal)="showRegisterModal()"></app-navbar>
+<app-login-modal *ngIf="isLoginModalVisible" (close)="hideLoginModal()" (openSignup)="openSignupModal()"></app-login-modal>
+<app-register-modal *ngIf="isRegisterModalVisible" (close)="hideRegisterModal()" (openLogin)="openLoginModal()"></app-register-modal>
+<br><br><br><br><br><br>
 <router-outlet></router-outlet>
