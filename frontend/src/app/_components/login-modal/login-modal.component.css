@@ -22,7 +22,7 @@
 }
 
 .close-button {
-    position: relative  ;
+    position: relative;
     left: 160px;
     background: none;
     border: none;
@@ -38,7 +38,7 @@ h2 {
     font-weight: normal;
 }
 
-form{
+form {
     margin-bottom: 30px;
 }
 
@@ -46,7 +46,7 @@ form{
     margin-bottom: 10px;
 }
 
-label{
+label {
     display: block;
     color: #ffffff;
     font-size: 0.85rem;
@@ -66,9 +66,9 @@ input {
     transition: all 0.3s ease;
 }
 
-input:focus{
+input:focus {
     outline: none;
-    border-color: #e8e8e8e7; 
+    border-color: #e8e8e8e7;
 }
 
 .password-container {
@@ -89,13 +89,13 @@ input:focus{
     z-index: 10;
 }
 
-.error{
+.error {
     display: block;
     color: #fc8181;
     font-size: 0.75rem;
 }
 
-.error-message{
+.error-message {
     background-color: #e8e8e8e7;
     color: #c53030;
     padding: 10px;
@@ -106,7 +106,7 @@ input:focus{
     gap: 10px;
 }
 
-input.invalid{
+input.invalid {
     border-color: #fc8181;
 }
 
@@ -123,11 +123,11 @@ input.invalid{
     transition: all 0.2s;
 }
 
-.login-button:hover{
+.login-button:hover {
     background-color: #a0ea93e7;
 }
 
-.links{
+.links {
     text-align: left;
     margin-top: 50px;
 }
@@ -144,6 +144,6 @@ input.invalid{
     cursor: pointer;
 }
 
-.link-group:hover{
+.link-group:hover {
     text-decoration: underline;
 }

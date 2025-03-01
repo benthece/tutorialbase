@@ -1,15 +1,13 @@
 .upload-container {
     max-width: 1100px;
-    margin: 80px 190px 20px;
+    margin: 0px 190px 20px;
     padding: 20px;
     background-color: #495057;
     border-radius: 15px;
     border: 2px solid grey;
-/*     position: relative;
-    top: 60px; */
 }
 
-.outer-border { 
+.outer-border {
     border-radius: 12px;
     padding: 20px;
 }
@@ -70,7 +68,7 @@ button {
     min-width: 100px;
 }
 
-.select-image-btn{
+.select-image-btn {
     position: absolute;
     bottom: 20px;
     left: 50%;
@@ -100,7 +98,7 @@ button {
 
 input[type="file"] {
     display: none;
-  }
+}
 
 .upload-btn {
     width: 100%;

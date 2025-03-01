@@ -1,0 +1,42 @@
+.page-container {
+    display: flex;
+    gap: 8px;
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.main-content {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.section-title {
+    color: white;
+    margin: 0px 0px 20px 0px;
+    font-size: 18px;
+}
+
+.video-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* responsive layout */
+@media (max-width: 1200px) {
+    .page-container {
+        flex-direction: column;
+    }
+
+    .recommended-videos {
+        width: 100%;
+    }
+
+    .video-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    }
+}

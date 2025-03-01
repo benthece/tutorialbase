@@ -1,9 +1,59 @@
-<div class="video-section">
-  <h2 class="section-title">Recommended Videos</h2>
-  <div class="video-container">
-    <div class="video-row" #videoRow>
-      <div *ngFor="let video of videos" class="video-card-wrapper">
-        <app-video-card></app-video-card>
+<div class="home-container">
+  <div class="banner-container">
+    <img class="banner-image" src="./assets/test.jpg" alt="Banner">
+    <div class="banner-content">
+      <h1>Welcome to Your Video Platform</h1>
+      <p>Discover amazing videos curated just for you</p>
+    </div>
+  </div>
+
+  <div class="video-section">
+    <h2 class="section-title">Kategória1</h2>
+    <div class="video-container">
+      <div class="video-row" #category1Row>
+        <div *ngFor="let video of category1Videos" class="video-card-wrapper">
+          <app-video-card
+            [title]="video.title"
+            [uploaderName]="video.uploaderName"
+            [duration]="video.duration"
+            [thumbnailSrc]="video.thumbnailSrc"
+            [avatarSrc]="video.avatarSrc">
+          </app-video-card>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-section">
+    <h2 class="section-title">Kategória2</h2>
+    <div class="video-container">
+      <div class="video-row" #category2Row>
+        <div *ngFor="let video of category2Videos" class="video-card-wrapper">
+          <app-video-card
+            [title]="video.title"
+            [uploaderName]="video.uploaderName"
+            [duration]="video.duration"
+            [thumbnailSrc]="video.thumbnailSrc"
+            [avatarSrc]="video.avatarSrc">
+          </app-video-card>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-section">
+    <h2 class="section-title">Kategória3</h2>
+    <div class="video-container">
+      <div class="video-row" #category3Row>
+        <div *ngFor="let video of category3Videos" class="video-card-wrapper">
+          <app-video-card
+            [title]="video.title"
+            [uploaderName]="video.uploaderName"
+            [duration]="video.duration"
+            [thumbnailSrc]="video.thumbnailSrc"
+            [avatarSrc]="video.avatarSrc">
+          </app-video-card>
+        </div>
       </div>
     </div>
   </div>

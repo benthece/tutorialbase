@@ -1,14 +1,14 @@
 body, html {
     width: 100%;
-    overflow-x: hidden; /* Prevents horizontal scroll issues */
+    overflow-x: hidden;
     margin: 0;
+    margin-top: 50px;
     padding: 0;
     box-sizing: border-box;
     background-color: #212529;
     font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Allow horizontal scrolling in specific containers */
 .video-row {
     overflow-x: scroll !important;
   }
@@ -18,7 +18,7 @@ body, html {
     overflow-x: hidden;
   }
   
-  /* Create a wrapper to isolate the scrolling behavior */
+  /* wrapper to isolate the scrolling behavior */
   .video-container {
     overflow: visible !important;
     max-width: 100%;

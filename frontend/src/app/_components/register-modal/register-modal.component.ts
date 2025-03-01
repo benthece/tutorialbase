@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   templateUrl: './register-modal.component.html',
   styleUrls: ['./register-modal.component.css']
 })
-export class RegisterComponentModal implements OnInit{
+export class RegisterComponentModal implements OnInit {
 
   registerForm: FormGroup;
   name: string = ''
@@ -34,16 +34,16 @@ export class RegisterComponentModal implements OnInit{
       name: ['', Validators.required],
       password: ['', [Validators.required]],
       confirmPassword: ['', [Validators.required]]
-    },{ 
-      validators: this.passwordMatchValidator 
+    }, {
+      validators: this.passwordMatchValidator
     });
   }
 
   passwordMatchValidator(control: FormGroup) {
     const password = control.get('password')?.value;
     const confirmPassword = control.get('confirmPassword')?.value;
-    
-    return password && confirmPassword && password !== confirmPassword ? 
+
+    return password && confirmPassword && password !== confirmPassword ?
       { 'passwordMismatch': true } : null;
   }
 
@@ -63,7 +63,7 @@ export class RegisterComponentModal implements OnInit{
         password: this.registerForm.get('password')?.value,
         confirmPassword: this.registerForm.get('confirmPassword')?.value
       }
-  
+
       this.userAuthService.register(payload)
         .then(({ data }) => {
           localStorage.setItem('token', data.token)
@@ -82,7 +82,7 @@ export class RegisterComponentModal implements OnInit{
   togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
-  
+
   toggleConfirmPassword(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
   }

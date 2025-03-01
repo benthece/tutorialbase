@@ -1,15 +1,16 @@
-<div class="video-container">
+<div class="video-container" *ngIf="video">
     <div class="video-player">
-        <video controls width="900" src="./assets/SampleVideo_1280x720_1mb.mp4"
-        >Your browser does not support the video tag.</video>
+        <video controls width="900" [src]="video.videoSrc">
+            Your browser does not support the video tag.
+        </video>
     </div>
 
     <div class="video-info">
         <div class="profile-section">
-            <div class="profile-pic"></div>
+            <img [src]="video.avatarSrc" class="profile-pic" />
             <div class="title-views">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h2 class="video-title">Video címmmmmmmm</h2>
+                    <h2 class="video-title">{{ video.title }}</h2>
                     <div class="like-dislike">
                         <div class="counter">
                             <button (click)="incrementLikes()">👍</button>
@@ -21,17 +22,13 @@
                         </div>
                     </div>
                 </div>
-                <span class="view-count">30000000 views</span>
+                <span class="view-count">{{ video.views?.toLocaleString() || 0 }} views</span>
             </div>
         </div>
 
         <div class="description-container">
             <p class="description-text" [class.expanded]="isExpanded">
-                Leírás: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-                labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
-                ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-                labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
-                ut aliquip ex ea commodo consequat.
+                {{ video.description || 'No description available' }}
             </p>
             <button class="expand-button" (click)="toggleDescription()">
                 {{ isExpanded ? 'Show less' : 'Show more' }}

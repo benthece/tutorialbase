@@ -1,13 +1,15 @@
 <div class="video-card">
-    <div class="thumbnail-container">
-        <img class="thumbnail" [src]="thumbnailSrc" [alt]="title">
+    <div class="thumbnail-container" (click)="navigateToVideo()">
+        <img [src]="thumbnailSrc" alt="Video Thumbnail" class="thumbnail">
         <div class="timestamp">{{duration}}</div>
     </div>
     <div class="content">
-        <img class="uploader-avatar" [src]="avatarSrc" [alt]="uploaderName">
+        <div>
+            <img class="uploader-avatar" [src]="avatarSrc" alt="Channel Avatar">
+        </div>
         <div class="info">
-            <h3 class="title">{{title}}</h3>
-            <p class="uploader-name">{{uploaderName}}</p>
+            <div class="title" (click)="navigateToVideo()">{{title}}</div>
+            <div class="uploader-name">{{uploaderName}}</div>
         </div>
     </div>
 </div>

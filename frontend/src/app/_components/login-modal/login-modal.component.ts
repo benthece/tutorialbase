@@ -38,12 +38,12 @@ export class LoginComponent implements OnInit {
   loginAction() {
     if (this.loginForm.valid) {
       this.isSubmitting = true;
-      
+
       const payload = {
         email: this.loginForm.get('email')?.value,
         password: this.loginForm.get('password')?.value,
       };
-      
+
       this.userAuthService.login(payload)
         .then(({ data }) => {
           localStorage.setItem('token', data.token);

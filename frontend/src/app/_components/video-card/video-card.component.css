@@ -3,15 +3,16 @@
     background-color: #495057;
     padding: 20px;
     border: 2px solid #808080;
-    border-radius: 15px;
+    border-radius: 8px;
 }
 
 .thumbnail-container {
     position: relative;
     width: 100%;
     height: 202px;
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .thumbnail {
@@ -34,7 +35,8 @@
 
 .content {
     display: flex;
-    padding: 12px 0;
+    padding-top: 12px;
+    padding-bottom: 0px;
     gap: 12px;
 }
 
@@ -56,9 +58,9 @@
     color: #ffffff;
     line-height: 1.4;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .uploader-name {

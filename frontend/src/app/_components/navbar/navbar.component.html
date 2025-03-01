@@ -1,6 +1,6 @@
 <nav class="navbar">
     <div class="nav-left">
-        <div class="hamburger" (click)="toggleHamburgerMenu()">
+        <div class="hamburger" #hamburgerButton (click)="toggleHamburgerMenu($event)">
             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -31,8 +31,9 @@
     </div>
 
     <div class="profile">
-        <img src="assets/profilepic.jpg" alt="profile picture" class="profile-pic" (click)="toggleDropdown()" />
-        <div *ngIf="dropdownVisible" class="dropdown-menu">
+        <img src="assets/profilepic.jpg" alt="profile picture" class="profile-pic" #dropdownButton
+            (click)="toggleDropdown($event)" />
+        <div *ngIf="dropdownVisible" class="dropdown-menu" #dropdownMenu>
             <ul>
                 <a [routerLink]="['/profile']" (click)="close()">
                     <li>Profil</li>
@@ -45,7 +46,7 @@
                 </a>
                 <a [routerLink]="['/settings']" (click)="close()">
                     <li>Beállítások</li>
-                </a>                
+                </a>
                 <div *ngIf="!isLoggedIn">
                     <a (click)="onLoginClick($event)">
                         <li>Bejelentkezés</li>
@@ -61,7 +62,7 @@
     </div>
 </nav>
 
-<div *ngIf="hamburgerMenuVisible" class="hamburger-menu">
+<div *ngIf="hamburgerMenuVisible" class="hamburger-menu" #hamburgerMenu>
     <ul>
         <a href="/category1">
             <li>Kategória1</li>

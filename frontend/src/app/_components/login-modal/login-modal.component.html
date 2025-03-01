@@ -3,51 +3,45 @@
         <button class="close-button" (click)="closeModal()">&times;</button>
         <h2>Login</h2>
         <form [formGroup]="loginForm" (ngSubmit)="loginAction()">
-            <!-- Email field -->
+            <!-- should be username -->
             <div class="form-group">
                 <label for="email">
                     <i class="fas fa-lock"></i>
                     Email
                 </label>
-                <input type="email" 
-                id="email" 
-                formControlName="email" 
-                placeholder="Email" 
-                [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                <input type="email" id="email" formControlName="email" placeholder="Email"
+                    [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
             </div>
             @if(loginForm.get('email')?.invalid && loginForm.get('email')?.touched){
-                <span class="error">Email is required</span>
+            <span class="error">Email is required</span>
             }
-            
-            <!-- Password field -->
+
             <div class="form-group">
                 <label for="password">
                     <i class="fas fa-lock"></i>
                     Password
                 </label>
                 <div class="password-container">
-                    <input [type]="showPassword ? 'text' : 'password'" 
-                    id="password" 
-                    formControlName="password" 
-                    placeholder="Jelszó" 
-                    [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                    <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password"
+                        placeholder="Jelszó"
+                        [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
                     <button type="button" class="toggle-password-inside" (click)="togglePassword()">
                         <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                     </button>
                 </div>
             </div>
             @if(loginForm.get('password')?.invalid && loginForm.get('password')?.touched){
-                <span class="error">Password is required</span>
+            <span class="error">Password is required</span>
             }
-            
+
             <!-- Error messages for validation errors from the server -->
             @if(validationErrors.length > 0){
-                <div class="error-message">
-                    <i class="fas fa-exclamation-circle"></i>
-                    {{validationErrors}}
-                </div>
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{validationErrors}}
+            </div>
             }
-            
+
             <button type="submit" class="login-button" [disabled]="!loginForm.valid || isSubmitting">
                 Bejelentkezés
             </button>
