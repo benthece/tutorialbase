@@ -1,16 +1,33 @@
 .page-container {
     display: flex;
-    gap: 8px;
+    gap: 24px;
     padding: 24px;
     max-width: 1400px;
     margin: 0 auto;
 }
 
-.main-content {
+.left-column {
+    display: flex;
+    flex-direction: column;
     flex: 1;
     min-width: 0;
+    gap: 24px;
+}
+
+.main-content {
+    width: 100%;
     margin: 0;
     padding: 0;
+}
+
+.comment-section {
+    width: 100%;
+    margin-top: 16px;
+}
+
+.recommended-videos {
+    width: 360px;
+    flex-shrink: 0;
 }
 
 .section-title {
@@ -23,6 +40,22 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+}
+
+.video-item{
+    margin-bottom: 16px;
+}
+
+.comment-item {
+    margin-bottom: 16px;
+}
+
+
+.comment-section {
+    width: 100%;
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
 }
 
 /* responsive layout */

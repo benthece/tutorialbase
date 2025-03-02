@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 export class RegisterComponentModal implements OnInit {
 
   registerForm: FormGroup;
-  name: string = ''
+  username: string = ''
   email: string = ''
   password: string = ''
   confirmPassword: string = ''
@@ -31,7 +31,7 @@ export class RegisterComponentModal implements OnInit {
   ) {
     this.registerForm = this.fb.group({
       email: ['', [Validators.required]],
-      name: ['', Validators.required],
+      username: ['', Validators.required],
       password: ['', [Validators.required]],
       confirmPassword: ['', [Validators.required]]
     }, {
@@ -58,7 +58,7 @@ export class RegisterComponentModal implements OnInit {
     if (this.registerForm.valid) {
       this.isSubmitting = true;
       let payload = {
-        name: this.registerForm.get('name')?.value,
+        username: this.registerForm.get('username')?.value,
         email: this.registerForm.get('email')?.value,
         password: this.registerForm.get('password')?.value,
         confirmPassword: this.registerForm.get('confirmPassword')?.value

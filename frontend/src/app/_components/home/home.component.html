@@ -1,9 +1,9 @@
 <div class="home-container">
   <div class="banner-container">
-    <img class="banner-image" src="./assets/test.jpg" alt="Banner">
+    <img class="banner-image" src="./assets/pexels-kseniachernaya-5806947.jpg" alt="Banner">
     <div class="banner-content">
-      <h1>Welcome to Your Video Platform</h1>
-      <p>Discover amazing videos curated just for you</p>
+      <h1>Tutorialbase</h1>
+      <p>Nézz szembe a mindennapi problémáiddal és találj rá itt megoldást!</p>
     </div>
   </div>
 
@@ -47,6 +47,7 @@
       <div class="video-row" #category3Row>
         <div *ngFor="let video of category3Videos" class="video-card-wrapper">
           <app-video-card
+            [id]="video.id"
             [title]="video.title"
             [uploaderName]="video.uploaderName"
             [duration]="video.duration"

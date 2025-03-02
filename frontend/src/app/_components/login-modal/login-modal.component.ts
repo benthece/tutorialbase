@@ -22,9 +22,9 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     public userAuthService: UserAuthService,
     private router: Router
-  ) {
+  ){
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      username: ['', [Validators.required]],
       password: ['', [Validators.required]]
     });
   }
@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
       this.isSubmitting = true;
 
       const payload = {
-        email: this.loginForm.get('email')?.value,
+        username: this.loginForm.get('username')?.value,
         password: this.loginForm.get('password')?.value,
       };
 

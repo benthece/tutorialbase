@@ -6,7 +6,6 @@ import { environment } from './environments/environment.development';
 
 axios.defaults.baseURL = environment.apiUrl
 axios.interceptors.request.use(function (config) {
-  config.headers['X-Binarybox-Api-Key'] = environment.apiKey
   return config;
 });
 

@@ -11,7 +11,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './video-card.component.css'
 })
 export class VideoCardComponent {
-  @Input() id: string = '';
+  @Input() id: string = '1';
   @Input() title: string = '';
   @Input() uploaderName: string = '';
   @Input() duration: string = '';

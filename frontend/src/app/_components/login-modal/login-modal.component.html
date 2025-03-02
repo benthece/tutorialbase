@@ -1,25 +1,25 @@
 <div class="modal-backdrop" (click)="onBackdropClick($event)">
     <div class="modal-content">
         <button class="close-button" (click)="closeModal()">&times;</button>
-        <h2>Login</h2>
+        <h2>Bejelentkezés</h2>
         <form [formGroup]="loginForm" (ngSubmit)="loginAction()">
-            <!-- should be username -->
+
             <div class="form-group">
-                <label for="email">
-                    <i class="fas fa-lock"></i>
-                    Email
+                <label for="username">
+                    <i class="fas fa-user"></i>
+                    Felhasználónév
                 </label>
-                <input type="email" id="email" formControlName="email" placeholder="Email"
-                    [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                <input type="text" id="username" formControlName="username" placeholder="Felhasználónév"
+                    [class.invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
             </div>
-            @if(loginForm.get('email')?.invalid && loginForm.get('email')?.touched){
-            <span class="error">Email is required</span>
+            @if(loginForm.get('username')?.invalid && loginForm.get('username')?.touched){
+            <span class="error">A felhasználónév megadása kötelező</span>
             }
 
             <div class="form-group">
                 <label for="password">
                     <i class="fas fa-lock"></i>
-                    Password
+                    Jelszó
                 </label>
                 <div class="password-container">
                     <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password"
@@ -31,7 +31,7 @@
                 </div>
             </div>
             @if(loginForm.get('password')?.invalid && loginForm.get('password')?.touched){
-            <span class="error">Password is required</span>
+            <span class="error">A jelszó megadása kötelező</span>
             }
 
             <!-- Error messages for validation errors from the server -->

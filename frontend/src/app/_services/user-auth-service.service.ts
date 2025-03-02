@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import axios from 'axios';
+import CryptoJS from 'crypto-js';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,6 @@ export class UserAuthService {
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   constructor() {
-    // Initialize auth state based on token presence
     this.checkAuthStatus();
   }
 
@@ -23,11 +23,15 @@ export class UserAuthService {
     return this.isAuthenticatedSubject.value;
   }
 
+  private hashPassword(password: string): string {
+    return CryptoJS.SHA1(password).toString();
+  }
+
   async login(data: any): Promise<any> {
     let payload = {
-      email: data.email,
-      password: data.password
-    }
+      username: data.username,
+      password: this.hashPassword(data.password)
+    };
 
     const response = await axios.post('/api/login', payload);
     if (response.data && response.data.token) {
@@ -38,11 +42,10 @@ export class UserAuthService {
 
   async register(data: any): Promise<any> {
     let payload = {
-      name: data.name,
+      username: data.username,
       email: data.email,
-      password: data.password,
-      password_confirmation: data.confirmPassword
-    }
+      password: this.hashPassword(data.password)
+    };
 
     const response = await axios.post('/api/register', payload);
     if (response.data && response.data.token) {
@@ -58,9 +61,11 @@ export class UserAuthService {
   async logout(): Promise<any> {
     try {
       const response = await axios.post('/api/logout', {}, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token') } });
+      localStorage.removeItem('token');
       this.isAuthenticatedSubject.next(false);
       return response;
     } catch (error) {
+      localStorage.removeItem('token');
       this.isAuthenticatedSubject.next(false);
       throw error;
     }

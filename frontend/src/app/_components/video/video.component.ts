@@ -14,7 +14,7 @@ export class VideoComponent implements OnInit {
 
   isExpanded = false;
   likes = 999;
-  dislikes = 10050;
+  dislikes = 150;
 
   ngOnInit() {
     if (!this.video) {
