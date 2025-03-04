@@ -5,19 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5375e928-351c-4a7d-9c59-ec0b3faafb4e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../backend/.idea/php-test-framework.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/.idea/php-test-framework.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/bootstrap/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/bootstrap/app.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/bootstrap/providers.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/bootstrap/providers.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/config/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/config/auth.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/node_modules/.vite/deps/_metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/node_modules/.vite/deps/_metadata.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/node_modules/.vite/deps/axios.js" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/node_modules/.vite/deps/axios.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/node_modules/.vite/deps/axios.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/node_modules/.vite/deps/axios.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/routes/api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/routes/web.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stored_procedures.sql" beforeDir="false" afterPath="$PROJECT_DIR$/stored_procedures.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tutorialbase_db.sql" beforeDir="false" afterPath="$PROJECT_DIR$/tutorialbase_db.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

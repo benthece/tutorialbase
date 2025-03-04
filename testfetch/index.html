@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title> 
+</head>
+<body>
+    <script>
+        async function getVideos() {
+            try {
+                const response = await fetch("http://192.168.2.30:8000/video/246898e5-090b-412f-8fe9-021b8ba84f51");
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log(data);
+            } catch(err) {
+                console.log(err);
+            }
+        }
+        // getVideos();
+
+        async function login() {
+            try {
+                const response = await fetch("http://localhost:8000/login/", );
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log(data);
+            } catch(err) {
+                console.log(err);
+            }
+        }
+    </script>
+</body>
+</html>
