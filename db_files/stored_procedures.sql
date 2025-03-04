@@ -1,6 +1,58 @@
 -- USE `tutorialbase`;
 
 DELIMITER $$
+CREATE OR REPLACE TRIGGER uuid_v4s BEFORE INSERT ON users FOR EACH ROW -- UUID V4 generáláshoz
+    -- RETURNS CHAR(36)
+BEGIN
+    -- 1st and 2nd block are made of 6 random bytes
+    SET @h1 = HEX(RANDOM_BYTES(4));
+    SET @h2 = HEX(RANDOM_BYTES(2));
+
+    -- 3th block will start with a 4 indicating the version, remaining is random
+    SET @h3 = SUBSTR(HEX(RANDOM_BYTES(2)), 2, 3);
+
+    -- 4th block first nibble can only be 8, 9 A or B, remaining is random
+    SET @h4 = CONCAT(HEX(FLOOR(ASCII(RANDOM_BYTES(1)) / 64) + 8),
+                     SUBSTR(HEX(RANDOM_BYTES(2)), 2, 3));
+
+    -- 5th block is made of 6 random bytes
+    SET @h5 = HEX(RANDOM_BYTES(6));
+
+    -- Build the complete UUID
+    SET NEW.guid = LOWER(CONCAT(
+            @h1, '-', @h2, '-', '4', @h3, '-', @h4, '-', @h5
+                 ));
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE TRIGGER uuid_v4s_vid BEFORE INSERT ON videos FOR EACH ROW -- UUID V4 generáláshoz
+    -- RETURNS CHAR(36)
+BEGIN
+    -- 1st and 2nd block are made of 6 random bytes
+    SET @h1 = HEX(RANDOM_BYTES(4));
+    SET @h2 = HEX(RANDOM_BYTES(2));
+
+    -- 3th block will start with a 4 indicating the version, remaining is random
+    SET @h3 = SUBSTR(HEX(RANDOM_BYTES(2)), 2, 3);
+
+    -- 4th block first nibble can only be 8, 9 A or B, remaining is random
+    SET @h4 = CONCAT(HEX(FLOOR(ASCII(RANDOM_BYTES(1)) / 64) + 8),
+                     SUBSTR(HEX(RANDOM_BYTES(2)), 2, 3));
+
+    -- 5th block is made of 6 random bytes
+    SET @h5 = HEX(RANDOM_BYTES(6));
+
+    -- Build the complete UUID
+    SET NEW.guid = LOWER(CONCAT(
+            @h1, '-', @h2, '-', '4', @h3, '-', @h4, '-', @h5
+                 ));
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_comments(
     IN vid_guid CHAR(36),
     IN offset_val INTEGER UNSIGNED
@@ -66,7 +118,7 @@ DELIMITER ;
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE delete_comment(IN comm_guid CHAR(36))
 BEGIN
-    UPDATE comments SET is_deleted = TRUE WHERE id = comm_id;
+    UPDATE comments SET is_deleted = TRUE WHERE id = comm_guid;
 END;
 $$
 DELIMITER ;
@@ -110,7 +162,7 @@ BEGIN
     FROM videos
              INNER JOIN video_category vc on videos.id = vc.video_id
              INNER JOIN categories c on vc.category_id = c.id
-    WHERE c.id = subcat_id
+    WHERE c.id = subcat_guid
     ORDER BY RAND()
     LIMIT quantity;
 END;
@@ -122,7 +174,7 @@ CREATE OR REPLACE PROCEDURE get_profile_data(IN user_guid CHAR(36))
 BEGIN
     SELECT users.id, username, profile_pic_url, bg_image_url, bio
     FROM users
-    WHERE users.id = uid;
+    WHERE users.id = user_guid;
 END;
 $$
 DELIMITER ;
@@ -132,7 +184,7 @@ CREATE OR REPLACE PROCEDURE get_user_uploaded(IN user_guid CHAR(36))
 BEGIN
     SELECT id, title, url, base_image_url
     FROM videos
-    WHERE user_id = uid;
+    WHERE user_id = user_guid;
 END;
 $$
 DELIMITER ;
