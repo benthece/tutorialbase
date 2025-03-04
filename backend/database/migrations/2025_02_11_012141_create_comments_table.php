@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->uuid('guid')->default('00000000000000000000000000000000');
+            $table->uuid('guid')->default('00000000-0000-0000-0000-000000000000');
             $table->foreignId('user_id')->constrained('users', 'id');
             $table->foreignId('video_id')->constrained('videos', 'id');
             $table->string('text', 100);

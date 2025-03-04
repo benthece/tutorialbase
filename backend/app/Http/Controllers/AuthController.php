@@ -33,7 +33,7 @@ class AuthController extends Controller
             'user' => $user->only(['guid', 'username']),
             'token' => $token,
             'type' => 'bearer',
-        ], 200);
+        ]);
     }
 
     public function login(Request $request): JsonResponse {
@@ -60,7 +60,7 @@ class AuthController extends Controller
             'user' => $user->only(['guid', 'username']),
             'token' => $token,
             'type' => 'bearer',
-        ], 200);
+        ]);
     }
 
     public function logout(): JsonResponse {
@@ -69,7 +69,7 @@ class AuthController extends Controller
         return response()->json([
             "status" => "success",
             "message" => "Logged out successfully",
-        ], 200);
+        ]);
     }
 
     public function refresh(): JsonResponse {
@@ -78,6 +78,6 @@ class AuthController extends Controller
             "user" => Auth::user()->only(['guid', 'username']),
             "token" => Auth::refresh(),
             "type" => "bearer",
-        ], 200);
+        ]);
     }
 }
