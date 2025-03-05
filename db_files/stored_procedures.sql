@@ -1,8 +1,8 @@
 -- USE `tutorialbase`;
 
 DELIMITER $$
-CREATE OR REPLACE TRIGGER uuid_v4s BEFORE INSERT ON users FOR EACH ROW -- UUID V4 generáláshoz
-    -- RETURNS CHAR(36)
+CREATE OR REPLACE FUNCTION uuid_v4s()
+    RETURNS CHAR(36)
 BEGIN
     -- 1st and 2nd block are made of 6 random bytes
     SET @h1 = HEX(RANDOM_BYTES(4));
@@ -19,7 +19,7 @@ BEGIN
     SET @h5 = HEX(RANDOM_BYTES(6));
 
     -- Build the complete UUID
-    SET NEW.guid = LOWER(CONCAT(
+    RETURN LOWER(CONCAT(
             @h1, '-', @h2, '-', '4', @h3, '-', @h4, '-', @h5
                  ));
 END;
@@ -27,27 +27,34 @@ $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE TRIGGER uuid_v4s_vid BEFORE INSERT ON videos FOR EACH ROW -- UUID V4 generáláshoz
-    -- RETURNS CHAR(36)
+CREATE OR REPLACE TRIGGER uuid_v4_user
+    BEFORE INSERT
+    ON users
+    FOR EACH ROW
 BEGIN
-    -- 1st and 2nd block are made of 6 random bytes
-    SET @h1 = HEX(RANDOM_BYTES(4));
-    SET @h2 = HEX(RANDOM_BYTES(2));
+    SET NEW.guid = uuid_v4();
+END;
+$$
+DELIMITER ;
 
-    -- 3th block will start with a 4 indicating the version, remaining is random
-    SET @h3 = SUBSTR(HEX(RANDOM_BYTES(2)), 2, 3);
+DELIMITER $$
+CREATE OR REPLACE TRIGGER uuid_v4_vid
+    BEFORE INSERT
+    ON videos
+    FOR EACH ROW
+BEGIN
+    SET NEW.guid = uuid_v4();
+END;
+$$
+DELIMITER ;
 
-    -- 4th block first nibble can only be 8, 9 A or B, remaining is random
-    SET @h4 = CONCAT(HEX(FLOOR(ASCII(RANDOM_BYTES(1)) / 64) + 8),
-                     SUBSTR(HEX(RANDOM_BYTES(2)), 2, 3));
-
-    -- 5th block is made of 6 random bytes
-    SET @h5 = HEX(RANDOM_BYTES(6));
-
-    -- Build the complete UUID
-    SET NEW.guid = LOWER(CONCAT(
-            @h1, '-', @h2, '-', '4', @h3, '-', @h4, '-', @h5
-                 ));
+DELIMITER $$
+CREATE OR REPLACE TRIGGER uuid_v4_com
+    BEFORE INSERT
+    ON comments
+    FOR EACH ROW
+BEGIN
+    SET NEW.guid = uuid_v4();
 END;
 $$
 DELIMITER ;
@@ -192,7 +199,7 @@ DELIMITER ;
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE user_login(
     IN uname VARCHAR(20),
-    IN pword CHAR(32),
+    IN pword CHAR(36),
     OUT is_success CHAR(2)
 )
 BEGIN
@@ -212,6 +219,20 @@ BEGIN
             SET is_success = 'un';
         END IF;
     END IF;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_video(IN vid_guid CHAR(36))
+BEGIN
+    DECLARE vid_id INTEGER UNSIGNED;
+
+    SELECT id INTO vid_id FROM videos WHERE guid = vid_guid;
+
+    SELECT guid, title, description, url, base_image_url, views, uploaded_at
+    FROM videos
+    WHERE id = vid_id;
 END;
 $$
 DELIMITER ;
