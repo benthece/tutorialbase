@@ -1,0 +1,84 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+    <div class="modal-content">
+        <button class="close-button" (click)="closeModal()">&times;</button>
+        <h2>Regisztráció</h2>
+        <form [formGroup]="registerForm" (ngSubmit)="registerAction()">
+            <div class="form-group">
+                <label for="email">
+                    <i class="fas fa-envelope"></i>
+                    Email
+                </label>
+                <input type="email" formControlName="email" id="email" name="email" placeholder="Email"
+                    [class.invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+            </div>
+            @if(registerForm.get('email')?.invalid && registerForm.get('email')?.touched){
+            <span class="error">Az e-mail megadása kötelező.</span>
+            }
+
+            <div class="form-group">
+                <label for="username">
+                    <i class="fas fa-user"></i>
+                    Felhasználónév
+                </label>
+                <input type="text" formControlName="username" id="username" name="username" placeholder="Felhasználónév"
+                    [class.invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
+            </div>
+            @if(registerForm.get('username')?.invalid && registerForm.get('username')?.touched){
+            <span class="error">A felhasználónév megadása kötelező.</span>
+            }
+
+            <div class="form-group">
+                <label for="password">
+                    <i class="fas fa-lock"></i>
+                    Jelszó
+                </label>
+                <div class="password-container">
+                    <input [type]="showPassword ? 'text' : 'password'" formControlName="password" id="password"
+                        name="password" placeholder="Jelszó"
+                        [class.invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+                    <button type="button" class="toggle-password-inside" (click)="togglePassword()">
+                        <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                    </button>
+                </div>
+            </div>
+            @if(registerForm.get('password')?.invalid && registerForm.get('password')?.touched){
+            <span class="error">A jelszó megadása kötelező.</span>
+            }
+
+            <div class="form-group">
+                <label for="confirmPassword">
+                    <i class="fas fa-lock"></i>
+                    Jelszó újra
+                </label>
+                <div class="password-container">
+                    <input [type]="showConfirmPassword ? 'text' : 'password'" id="confirmPassword"
+                        formControlName="confirmPassword" name="confirmPassword" placeholder="Jelszó újra"
+                        [class.invalid]="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched">
+                    <button type="button" class="toggle-password-inside" (click)="toggleConfirmPassword()">
+                        <i [class]="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                    </button>
+                </div>
+            </div>
+            @if(registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched){
+            <span class="error">A jelszó megerősítése kötelező.</span>
+            }
+
+            @if(registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched){
+            <span class="error">A megadott jelszavak nem egyeznek</span>
+            }
+
+            @if(validationErrors.length > 0){
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{validationErrors}}
+            </div>
+            }
+
+            <button type="submit" class="signup-button"
+                [disabled]="!registerForm.valid || isSubmitting">Regisztráció</button>
+        </form>
+        <div class="login-link">
+            <a (click)="switchToLogin()">Már van fiókod? Jelentkezz be</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,75 @@
+.page-container {
+    display: flex;
+    gap: 24px;
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.left-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    gap: 24px;
+}
+
+.main-content {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.comment-section {
+    width: 100%;
+    margin-top: 16px;
+}
+
+.recommended-videos {
+    width: 360px;
+    flex-shrink: 0;
+}
+
+.section-title {
+    color: white;
+    margin: 0px 0px 20px 0px;
+    font-size: 18px;
+}
+
+.video-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.video-item{
+    margin-bottom: 16px;
+}
+
+.comment-item {
+    margin-bottom: 16px;
+}
+
+
+.comment-section {
+    width: 100%;
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* responsive layout */
+@media (max-width: 1200px) {
+    .page-container {
+        flex-direction: column;
+    }
+
+    .recommended-videos {
+        width: 100%;
+    }
+
+    .video-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    }
+}

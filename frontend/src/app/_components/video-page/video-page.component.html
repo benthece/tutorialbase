@@ -1,0 +1,27 @@
+<div class="page-container">
+    <div class="left-column">
+        <div class="main-content">
+            <app-video [video]="currentVideo"></app-video>
+        </div>
+
+        <div class="comment-section">
+            <h3 class="section-title">Kommentek</h3>
+            <div *ngFor="let comment of comments" class="comment-item">
+                <app-comment [username]="comment.username"
+                [avatarSrc]="comment.avatarSrc" [commentText]="comment.commentText">
+            </app-comment>
+            </div>
+        </div>
+    </div>
+
+    <div class="recommended-videos">
+        <h3 class="section-title">Ajánlott videók</h3>
+        <div class="video-list">
+            <div *ngFor="let video of recommendedVideos" class="video-item">
+                <app-video-card [id]="video.id" [title]="video.title" [uploaderName]="video.uploaderName"
+                    [duration]="video.duration" [thumbnailSrc]="video.thumbnailSrc" [avatarSrc]="video.avatarSrc">
+                </app-video-card>
+            </div>
+        </div>
+    </div>
+</div>
