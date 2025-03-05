@@ -1,0 +1,42 @@
+<div class="video-container" *ngIf="video">
+    <div class="video-player">
+        <video controls width="900" [src]="video.videoSrc">
+            A böngésződ nem támogatja a video taget.
+        </video>
+    </div>
+
+    <div class="video-info">
+        <div class="profile-section">
+            <img [src]="video.avatarSrc" class="profile-pic" />
+            <div class="title-views">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 class="video-title">{{ video.title }}</h2>
+                    <div class="like-dislike">
+                        <div class="counter">
+                            <button (click)="incrementLikes()">
+                                <i class="fa-solid fa-thumbs-up" style="color: #ffffffbc;"></i>
+                            </button>
+                            {{ likes }}
+                        </div>
+                        <div class="counter">
+                            <button (click)="incrementDislikes()">
+                                <i class="fa-solid fa-thumbs-down" style="color: #ffffffbc;"></i>
+                            </button>
+                            {{ dislikes }}
+                        </div>
+                    </div>
+                </div>
+                <span class="view-count">{{ video.views?.toLocaleString() || 0 }} views</span>
+            </div>
+        </div>
+
+        <div class="description-container">
+            <p class="description-text" [class.expanded]="isExpanded">
+                {{ video.description || 'No description available' }}
+            </p>
+            <button class="expand-button" (click)="toggleDescription()">
+                {{ isExpanded ? 'Show less' : 'Show more' }}
+            </button>
+        </div>
+    </div>
+</div>

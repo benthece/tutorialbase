@@ -1,0 +1,61 @@
+<div class="home-container">
+  <div class="banner-container">
+    <img class="banner-image" src="./assets/pexels-kseniachernaya-5806947.jpg" alt="Banner">
+    <div class="banner-content">
+      <h1>Tutorialbase</h1>
+      <p>Nézz szembe a mindennapi problémáiddal és találj rá itt megoldást!</p>
+    </div>
+  </div>
+
+  <div class="video-section">
+    <h2 class="section-title">Kategória1</h2>
+    <div class="video-container">
+      <div class="video-row" #category1Row>
+        <div *ngFor="let video of category1Videos" class="video-card-wrapper">
+          <app-video-card
+            [title]="video.title"
+            [uploaderName]="video.uploaderName"
+            [duration]="video.duration"
+            [thumbnailSrc]="video.thumbnailSrc"
+            [avatarSrc]="video.avatarSrc">
+          </app-video-card>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-section">
+    <h2 class="section-title">Kategória2</h2>
+    <div class="video-container">
+      <div class="video-row" #category2Row>
+        <div *ngFor="let video of category2Videos" class="video-card-wrapper">
+          <app-video-card
+            [title]="video.title"
+            [uploaderName]="video.uploaderName"
+            [duration]="video.duration"
+            [thumbnailSrc]="video.thumbnailSrc"
+            [avatarSrc]="video.avatarSrc">
+          </app-video-card>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-section">
+    <h2 class="section-title">Kategória3</h2>
+    <div class="video-container">
+      <div class="video-row" #category3Row>
+        <div *ngFor="let video of category3Videos" class="video-card-wrapper">
+          <app-video-card
+            [id]="video.id"
+            [title]="video.title"
+            [uploaderName]="video.uploaderName"
+            [duration]="video.duration"
+            [thumbnailSrc]="video.thumbnailSrc"
+            [avatarSrc]="video.avatarSrc">
+          </app-video-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
