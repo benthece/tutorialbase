@@ -131,6 +131,21 @@ $$
 DELIMITER ;
 
 DELIMITER $$
+CREATE OR REPLACE PROCEDURE video_reactions(IN vid_guid CHAR(36))
+BEGIN
+    DECLARE vid_id INTEGER UNSIGNED;
+    SELECT id INTO vid_id FROM videos WHERE guid = vid_guid;
+
+    SELECT COUNT(IF(is_useful = TRUE, 1, NULL))  AS upvote,
+           COUNT(IF(is_useful = FALSE, 1, NULL)) AS downvote
+    FROM reactions
+    WHERE video_id = vid_id AND is_removed = 0
+    GROUP BY video_id;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
 CREATE OR REPLACE PROCEDURE reset_wish()
 BEGIN
     UPDATE users SET wishes = 5 WHERE id != 0;
