@@ -9,12 +9,12 @@ use Illuminate\Http\Request;
 
 class VideoController extends Controller
 {
-    public function getVideo(string $guid, int $offset): JsonResponse
+    public function getVideo(string $guid, Request $request): JsonResponse
     {
-        if ($offset) {
+        if ($request->off != 0) {
 
             return response()->json([
-                "comments" => Comment::getComments($guid, $offset),
+                "comments" => Comment::getComments($guid, $request->off),
             ]);
         }
 
