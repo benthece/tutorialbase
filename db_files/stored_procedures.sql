@@ -288,3 +288,6 @@ DELIMITER ;
 -- profil oldal
 -- video megtekinés oldal video suggestions kommentekkel együtt növekszik (ha beszólnak)
 -- user guid
+
+-- MIT szeretne az Adri?
+-- /api/recommended?catId={category_guid}
