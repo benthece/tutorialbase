@@ -20,6 +20,9 @@ class Video extends Model
             "base_image_url" => $video[0]->base_image_url,
             "views" => $video[0]->views,
             "uploaded_at" => $video[0]->uploaded_at,
+            "uploader_id" => $video[0]->uploader_id,
+            "uploader" => $video[0]->uploader,
+            "uploader_pic" => $video[0]->uploader_pic,
         ];
     }
 }

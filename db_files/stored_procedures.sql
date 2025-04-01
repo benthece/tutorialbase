@@ -69,7 +69,13 @@ BEGIN
 
     SELECT id INTO vid FROM videos WHERE guid = vid_guid;
 
-    SELECT comments.guid, username, text, comments.created_at, comments.modified_at
+    SELECT comments.guid,
+           username,
+           users.guid      AS 'user_guid',
+           profile_pic_url AS 'user_pic',
+           text,
+           comments.created_at,
+           comments.modified_at
     FROM comments
              INNER JOIN videos
                         ON videos.id = comments.video_id
@@ -139,7 +145,8 @@ BEGIN
     SELECT COUNT(IF(is_useful = TRUE, 1, NULL))  AS upvote,
            COUNT(IF(is_useful = FALSE, 1, NULL)) AS downvote
     FROM reactions
-    WHERE video_id = vid_id AND is_removed = 0
+    WHERE video_id = vid_id
+      AND is_removed = 0
     GROUP BY video_id;
 END;
 $$
@@ -245,9 +252,19 @@ BEGIN
 
     SELECT id INTO vid_id FROM videos WHERE guid = vid_guid;
 
-    SELECT guid, title, description, url, base_image_url, views, uploaded_at
+    SELECT videos.guid,
+           title,
+           description,
+           url,
+           base_image_url,
+           views,
+           uploaded_at,
+           users.guid      AS 'uploader_id',
+           username        AS 'uploader',
+           profile_pic_url AS 'uploader_pic'
     FROM videos
-    WHERE id = vid_id;
+             JOIN users ON videos.user_id = users.id
+    WHERE videos.id = vid_id;
 END;
 $$
 DELIMITER ;
