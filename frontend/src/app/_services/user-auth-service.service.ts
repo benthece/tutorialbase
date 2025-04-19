@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 
@@ -10,7 +11,7 @@ export class UserAuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
-  constructor() {
+  constructor(private router: Router) {
     this.checkAuthStatus();
   }
 
@@ -63,6 +64,7 @@ export class UserAuthService {
       const response = await axios.post('/api/logout', {}, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token') } });
       localStorage.removeItem('token');
       this.isAuthenticatedSubject.next(false);
+      this.router.navigateByUrl('/home');
       return response;
     } catch (error) {
       localStorage.removeItem('token');

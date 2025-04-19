@@ -1,0 +1,33 @@
+<div class="profile-container">
+    <!-- Header with banner and profile image -->
+    <div class="profile-header">
+        <div class="banner-image">
+            <!-- Blue and brown marble-like banner image -->
+        </div>
+        <div class="profile-picture">
+            <!-- Profile picture thumbnail -->
+            <img src="./assets/profilepic.jpg">
+        </div>
+        <div class="username">Username</div>
+    </div>
+
+    <!-- User bio section -->
+    <div class="user-bio">
+        <p>This will contain the users bio. This will contain the users bio. This will contain the users bio. This will contain the users bio. This will contain the users bio. This will contain the users bio. This will contain the users bio. This will contain the users bio. This will contain the users bio. his will contain the users bio. This will contain the users bio. This will contain the users bio. his will contain the users bio. This will contain the users bio. This will contain the users bio.</p>
+    </div>
+
+    <!-- Videos section -->
+    <div class="videos-section">
+        <h1>Videók:</h1>
+        <div class="videos-grid">
+            <!-- Grid of app-video-card components -->
+             <div *ngFor="let video of videos">
+                <app-video-card 
+                [title]="video.title"
+                [uploaderName]="video.uploaderName"
+                [thumbnailSrc]="video.thumbnailSrc"
+                [avatarSrc]="video.avatarSrc"></app-video-card>
+            </div> 
+        </div>
+    </div>
+</div>

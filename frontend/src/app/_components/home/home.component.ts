@@ -5,6 +5,7 @@ import { fromEvent, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { Video } from '../../_interfaces/video';
 import { VideoService } from '../../_services/video-service.service';
+//import { VideoPageService } from '../../_services/video-page-service.service'; //új
 
 @Component({
   selector: 'app-home',
@@ -25,7 +26,11 @@ export class HomeComponent implements AfterViewInit, OnDestroy, OnInit {
   category2Videos: Video[] = [];
   category3Videos: Video[] = [];
 
+  //isLoading: boolean = true; //új
+  //error: string | null = null; //új
+
   constructor(private videoService: VideoService, private renderer: Renderer2) { }
+  //constructor(private videoPageService: VideoPageService, private renderer: Renderer2) { } //új
 
   ngOnInit() {
 
@@ -34,7 +39,24 @@ export class HomeComponent implements AfterViewInit, OnDestroy, OnInit {
     this.category1Videos = [...allVideos];
     this.category2Videos = [...allVideos];
     this.category3Videos = [...allVideos];
+
+    //this.loadCategoryVideos(); //új
   }
+
+/*   async loadCategoryVideos() { //új
+    this.isLoading = true;
+    
+    try {
+      this.category1Videos = await this.videoPageService.getVideosByCategory('Kategória1');
+      this.category2Videos = await this.videoPageService.getVideosByCategory('Kategória2');
+      this.category3Videos = await this.videoPageService.getVideosByCategory('Kategória3');
+      this.isLoading = false;
+    } catch (error) {
+      console.error('Error loading category videos:', error);
+      this.error = 'Failed to load videos. Please try again later.';
+      this.isLoading = false;
+    }
+  } */
 
   ngAfterViewInit(): void {
     // Set up scroll listeners for each row

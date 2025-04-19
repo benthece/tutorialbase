@@ -24,18 +24,6 @@
     object-fit: cover;
 }
 
-.timestamp {
-    position: absolute;
-    bottom: 8px;
-    right: 8px;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 3px 4px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
 .content {
     display: flex;
     padding-top: 12px;

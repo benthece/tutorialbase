@@ -1,7 +1,10 @@
 export interface Comment {
-    id: string;
+    id: string; //guid
     username: string;
+    text: string;
     avatarSrc: string;
-    commentText: string;
+    //createdAt
+    //modifiedAt
+
 
 }

@@ -1,7 +1,8 @@
-import { Component, Output, EventEmitter, OnInit, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, ElementRef, HostListener, ViewChild, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { UserAuthService } from '../../_services/user-auth-service.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -10,28 +11,43 @@ import { UserAuthService } from '../../_services/user-auth-service.service';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
 
-  @ViewChild('hamburgerMenu') hamburgerMenu!: ElementRef;
+  @ViewChild('categoryMenu') categoryMenu!: ElementRef;
 
-  dropdownVisible = false;
-  hamburgerMenuVisible = false;
+  profileMenuVisible = false;
+  categoryMenuVisible = false;
   isLoggedIn = false;
+  private authSubscription!: Subscription;
 
-  @ViewChild('hamburgerButton', { static: false }) hamburgerButton!: ElementRef;
-  @ViewChild('dropdownButton', { static: false }) dropdownButtonButton!: ElementRef;
-  @ViewChild('dropdownMenu') dropdownMenu!: ElementRef;
-  @ViewChild('dropdownButton') dropdownButton!: ElementRef;
+  @ViewChild('categoryButton', { static: false }) categoryButton!: ElementRef;
+  @ViewChild('profileButton', { static: false }) profileButtonButton!: ElementRef;
+  @ViewChild('profileMenu') profileMenu!: ElementRef;
+  @ViewChild('profileButton') profileButton!: ElementRef;
+
+  @Output() showLoginModal = new EventEmitter<void>();
+  @Output() showRegisterModal = new EventEmitter<void>();
 
   constructor(public userAuthService: UserAuthService) { }
 
   ngOnInit(): void {
-    // Check if user is logged in on component initialization
+    // Subscribe to authentication state changes
+    this.authSubscription = this.userAuthService.isAuthenticated$.subscribe(
+      isAuthenticated => {
+        this.isLoggedIn = isAuthenticated;
+      }
+    );
+    
+    // Initial check for login status
     this.checkLoginStatus();
   }
 
-  @Output() showLoginModal = new EventEmitter<void>();
-  @Output() showRegisterModal = new EventEmitter<void>();
+  ngOnDestroy(): void {
+    // Clean up subscription when component is destroyed
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+  }
 
   // Check if token exists and is not empty
   checkLoginStatus(): void {
@@ -39,41 +55,38 @@ export class NavbarComponent implements OnInit {
     this.isLoggedIn = !!token && token !== '';
   }
 
-  toggleDropdown(event: Event) {
+  toggleProfileMenu(event: Event) {
     event.stopPropagation();
-    this.dropdownVisible = !this.dropdownVisible;
-    // Refresh login status when dropdown is opened
-    if (this.dropdownVisible) {
-      this.checkLoginStatus();
-    }
+    this.profileMenuVisible = !this.profileMenuVisible;
   }
-  toggleHamburgerMenu(event: Event) {
+
+  toggleCategoryMenu(event: Event) {
     event.stopPropagation(); // Prevent the document click event from firing
-    this.hamburgerMenuVisible = !this.hamburgerMenuVisible;
+    this.categoryMenuVisible = !this.categoryMenuVisible;
   }
 
   close() {
-    this.dropdownVisible = false;
-    this.hamburgerMenuVisible = false;
+    this.profileMenuVisible = false;
+    this.categoryMenuVisible = false;
   }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     // Check if clicked element is outside the menu
-    if (this.hamburgerMenuVisible) {
-      const clickedInside = this.hamburgerMenu.nativeElement.contains(event.target);
-      const clickedOnButton = this.hamburgerButton?.nativeElement.contains(event.target);
+    if (this.categoryMenuVisible) {
+      const clickedInside = this.categoryMenu.nativeElement.contains(event.target);
+      const clickedOnButton = this.categoryButton?.nativeElement.contains(event.target);
 
       if (!clickedInside && !clickedOnButton) {
-        this.hamburgerMenuVisible = false;
+        this.categoryMenuVisible = false;
       }
     }
-    if (this.dropdownVisible) {
-      const clickedInsideDropdown = this.dropdownMenu.nativeElement.contains(event.target);
-      const clickedOnDropdownButton = this.dropdownButton?.nativeElement.contains(event.target);
+    if (this.profileMenuVisible && this.profileMenu) {
+      const clickedInsideProfileMenu = this.profileMenu.nativeElement.contains(event.target);
+      const clickedOnProfileButton = this.profileButton?.nativeElement.contains(event.target);
 
-      if (!clickedInsideDropdown && !clickedOnDropdownButton) {
-        this.dropdownVisible = false;
+      if (!clickedInsideProfileMenu && !clickedOnProfileButton) {
+        this.profileMenuVisible = false;
       }
     }
   }
@@ -81,19 +94,14 @@ export class NavbarComponent implements OnInit {
   onLoginClick(event: Event) {
     event.preventDefault();
     this.showLoginModal.emit();
-    this.dropdownVisible = false;
-    this.hamburgerMenuVisible = false;
+    this.close();
   }
 
   onLogoutClick() {
     this.userAuthService.logout().then(() => {
-      localStorage.setItem('token', "")
-      this.isLoggedIn = false;
       this.close();
     }).catch(() => {
-      localStorage.setItem('token', "")
-      this.isLoggedIn = false;
-      this.close()
-    })
+      this.close();
+    });
   }
 }

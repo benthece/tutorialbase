@@ -9,19 +9,19 @@ export class CommentService {
   private comments: Comment[] = [{
     id: '1',
     username: 'Felhasználó neve',
-    commentText: 'Komment szöveg. Komment szöveg. Komment szöveg.',
+    text: 'Komment szöveg. Komment szöveg. Komment szöveg.',
     avatarSrc: './assets/profilepic.jpg',
   },
   {
     id: '2',
     username: 'Felhasználó neve',
-    commentText: 'Komment szöveg. Komment szöveg. Komment szöveg. Komment szöveg.',
+    text: 'Komment szöveg. Komment szöveg. Komment szöveg. Komment szöveg.',
     avatarSrc: './assets/profilepic.jpg',
   },
   {
     id: '3',
     username: 'Felhasználó neve',
-    commentText: 'Komment szöveg.',
+    text: 'Komment szöveg.',
     avatarSrc: './assets/profilepic.jpg',
   }];
 

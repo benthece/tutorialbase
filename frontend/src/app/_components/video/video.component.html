@@ -8,34 +8,38 @@
     <div class="video-info">
         <div class="profile-section">
             <img [src]="video.avatarSrc" class="profile-pic" />
+            <!-- <img [src]="video.avatarSrc" class="profile-pic" alt="User Avatar" [routerLink]="['/user', username]"> -->
             <div class="title-views">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h2 class="video-title">{{ video.title }}</h2>
                     <div class="like-dislike">
                         <div class="counter">
-                            <button (click)="incrementLikes()">
+                            <button > <!-- (click)="incrementLikes()" -->
                                 <i class="fa-solid fa-thumbs-up" style="color: #ffffffbc;"></i>
                             </button>
                             {{ likes }}
                         </div>
                         <div class="counter">
-                            <button (click)="incrementDislikes()">
+                            <button > <!-- (click)="incrementDislikes()" -->
                                 <i class="fa-solid fa-thumbs-down" style="color: #ffffffbc;"></i>
                             </button>
                             {{ dislikes }}
                         </div>
                     </div>
                 </div>
-                <span class="view-count">{{ video.views?.toLocaleString() || 0 }} views</span>
+                <span class="username">{{video.uploaderName}}</span>
+                <!-- <span class="username" [routerLink]="['/user', username]">{{video.uploaderName}}</span> -->
+                <span class="view-count">{{ video.views.toLocaleString() || 0 }} views</span>
             </div>
         </div>
 
         <div class="description-container">
+            <p class="upload-date">Feltöltés dátuma: {{video.uploadDate}}</p>
             <p class="description-text" [class.expanded]="isExpanded">
-                {{ video.description || 'No description available' }}
+                {{ video.description || 'Nincs leírás' }}
             </p>
             <button class="expand-button" (click)="toggleDescription()">
-                {{ isExpanded ? 'Show less' : 'Show more' }}
+                {{ isExpanded ? 'Mutass többet' : 'Mutass kevesebbet' }}
             </button>
         </div>
     </div>
