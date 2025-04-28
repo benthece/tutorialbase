@@ -3,24 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\Reaction;
 use App\Models\Video;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class VideoController extends Controller
 {
-    public function getVideo(Request $request, string $guid): JsonResponse
+    public function getVideo(string $guid, Request $request): JsonResponse
     {
-        if (isset($request->offset)) {
-            $offset = $request->offset;
+        if ($request->off != 0) {
 
             return response()->json([
-                "comments" => Comment::getComments($guid, $offset),
+                "comments" => Comment::getComments($guid, $request->off),
             ]);
         }
 
         return response()->json([
             "video" => Video::getVideo($guid),
+            "reactions" => Reaction::getReactions($guid),
             "comments" => Comment::getComments($guid, 0),
         ]);
     }
