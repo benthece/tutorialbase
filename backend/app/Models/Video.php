@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\Uid\UuidV8;
 
 class Video extends Model
 {

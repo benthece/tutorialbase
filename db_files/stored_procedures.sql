@@ -3,6 +3,7 @@
 DELIMITER $$
 CREATE OR REPLACE FUNCTION uuid_v4s()
     RETURNS CHAR(36)
+NOT DETERMINISTIC
 BEGIN
     -- 1st and 2nd block are made of 6 random bytes
     SET @h1 = HEX(RANDOM_BYTES(4));
