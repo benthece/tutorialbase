@@ -200,11 +200,11 @@ $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_profile_data(IN user_guid CHAR(36))
+CREATE OR REPLACE PROCEDURE get_profile_data(IN user_name VARCHAR(36))
 BEGIN
     SELECT users.id, username, profile_pic_url, bg_image_url, bio
     FROM users
-    WHERE users.id = user_guid;
+    WHERE users.username = user_name;
 END;
 $$
 DELIMITER ;
