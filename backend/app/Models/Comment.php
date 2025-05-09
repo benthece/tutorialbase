@@ -25,4 +25,9 @@ class Comment extends Model
         }
         return $result;
     }
+
+    public static function modifyComment(string $guid , string $userGuid, string $text): string {
+        $response = DB::select('CALL modify_comment(?, ?, ?)', [$guid, $userGuid, $text]);
+        return $response["message"];
+    }
 }

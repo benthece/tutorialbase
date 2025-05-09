@@ -116,15 +116,23 @@ DELIMITER ;
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE modify_comment(
     IN comm_guid CHAR(36),
+    IN user_guid CHAR(36),
     IN comm_text VARCHAR(100)
 )
 BEGIN
     DECLARE comm_id INTEGER UNSIGNED;
+    DECLARE commenter_guid CHAR(36);
 
     SELECT id INTO comm_id FROM comments WHERE guid = comm_guid;
+    SELECT guid INTO commenter_guid FROM comments WHERE id = comm_id;
 
-    UPDATE comments SET text = comm_text WHERE id = comm_id;
-    UPDATE comments SET modified_at = NOW() WHERE id = comm_id;
+    IF commenter_guid = user_guid THEN
+        UPDATE comments SET text = comm_text WHERE id = comm_id;
+        UPDATE comments SET modified_at = NOW() WHERE id = comm_id;
+        SELECT 'SUCCESS' AS message;
+    ELSE
+        SELECT 'FORBIDDEN' AS message;
+    END IF;
 END;
 $$
 DELIMITER ;
