@@ -61,6 +61,17 @@ $$
 DELIMITER ;
 
 DELIMITER $$
+CREATE OR REPLACE TRIGGER uuid_v4_cat
+    BEFORE INSERT
+    ON categories
+    FOR EACH ROW
+BEGIN
+    SET NEW.guid = uuid_v4();
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_comments(
     IN vid_guid CHAR(36),
     IN offset_val INTEGER UNSIGNED
@@ -252,11 +263,30 @@ CREATE OR REPLACE PROCEDURE get_videos_for_subcategory(
     -- IN offset INTEGER UNSIGNED,
     IN quantity INTEGER UNSIGNED)
 BEGIN
-    SELECT videos.id, title, url, base_image_url
+    SELECT videos.guid, title, username, profile_pic_url, url, base_image_url
     FROM videos
              INNER JOIN video_category vc on videos.id = vc.video_id
              INNER JOIN categories c on vc.category_id = c.id
-    WHERE c.id = subcat_guid
+             INNER JOIN users u on u.id = videos.user_id
+    WHERE c.guid = subcat_guid
+    ORDER BY RAND()
+    LIMIT quantity;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_videos_for_maincategory(
+    IN cat_guid CHAR(36),
+    -- IN offset INTEGER UNSIGNED,
+    IN quantity INTEGER UNSIGNED)
+BEGIN
+    SELECT videos.guid, title, username, profile_pic_url, url, base_image_url
+    FROM videos
+        JOIN video_category vc on videos.id = vc.video_id
+        JOIN categories c on vc.category_id = c.id
+        JOIN users u on u.id = videos.user_id
+    WHERE cat_guid = (SELECT guid FROM categories WHERE parent_id IS NULL)
     ORDER BY RAND()
     LIMIT quantity;
 END;

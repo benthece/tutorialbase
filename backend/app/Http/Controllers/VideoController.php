@@ -27,6 +27,10 @@ class VideoController extends Controller
         ]);
     }
 
+    public function getRecommended(Request $request, string $guid): JsonResponse {
+        return response()->json(["recommended" => Video::getRecommendedVideos($guid, $request->lim)]);
+    }
+
     public function reaction(string $guid, Request $request): JsonResponse {
         $user = Auth::user();
         $response = Video::reaction($guid, $user->guid, $request->action);

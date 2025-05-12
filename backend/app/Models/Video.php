@@ -25,6 +25,19 @@ class Video extends Model
         ];
     }
 
+    public static function getRecommendedVideos(string $guid, int $limit): array {
+        $response = DB::select("call get_videos_for_subcategory(?, ?)", [$guid, $limit]);
+
+        return [
+            "id" => $response[0]->guid,
+            "title" => $response[0]->title,
+            "uploaderName" => $response[0]->username,
+            "uploaderProfilePicture" => $response[0]->profile_pic_url,
+            "url" => $response[0]->url,
+            "thumbnail" => $response[0]->base_image_url,
+        ];
+    }
+
     public static function reaction(string $guid, string $userGuid, string $action) {
         $response = DB::select('CALL reaction(?, ?, ?)', [$guid, $userGuid, $action]);
         return $response[0]->message;
