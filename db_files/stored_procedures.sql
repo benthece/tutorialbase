@@ -1,9 +1,9 @@
 -- USE `tutorialbase`;
 
-DELIMITER $$
+/*DELIMITER $$
 CREATE OR REPLACE FUNCTION uuid_v4s()
     RETURNS CHAR(36)
-NOT DETERMINISTIC
+    NOT DETERMINISTIC
 BEGIN
     -- 1st and 2nd block are made of 6 random bytes
     SET @h1 = HEX(RANDOM_BYTES(4));
@@ -25,7 +25,7 @@ BEGIN
                  ));
 END;
 $$
-DELIMITER ;
+DELIMITER ;*/
 
 DELIMITER $$
 CREATE OR REPLACE TRIGGER uuid_v4_user
@@ -84,7 +84,7 @@ BEGIN
                         ON users.id = comments.user_id
     WHERE videos.id = vid
       AND comments.is_deleted = 0
-    ORDER BY 4
+    ORDER BY 6 DESC
     LIMIT offset_val, 5;
 END;
 $$
@@ -104,11 +104,12 @@ BEGIN
     SELECT id INTO vid FROM videos WHERE guid = vid_guid;
 
     INSERT INTO comments (guid, user_id, video_id, text, created_at)
-    VALUES (uuid_v4s(),
+    VALUES (uuid_v4(),
             uid,
             vid,
             comm_text,
             NOW());
+    SELECT 'success' AS message;
 END;
 $$
 DELIMITER ;
@@ -116,23 +117,42 @@ DELIMITER ;
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE modify_comment(
     IN comm_guid CHAR(36),
+    IN user_guid CHAR(36),
     IN comm_text VARCHAR(100)
 )
 BEGIN
     DECLARE comm_id INTEGER UNSIGNED;
+    DECLARE commenter_id CHAR(36);
 
     SELECT id INTO comm_id FROM comments WHERE guid = comm_guid;
+    SELECT user_id INTO commenter_id FROM comments WHERE id = comm_id;
 
-    UPDATE comments SET text = comm_text WHERE id = comm_id;
-    UPDATE comments SET modified_at = NOW() WHERE id = comm_id;
+    IF commenter_id = (SELECT id FROM users WHERE guid = user_guid) THEN
+        UPDATE comments SET text = comm_text WHERE id = comm_id;
+        UPDATE comments SET modified_at = NOW() WHERE id = comm_id;
+        SELECT 'success' AS message;
+    ELSE
+        SELECT 'forbidden' AS message;
+    END IF;
 END;
 $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE delete_comment(IN comm_guid CHAR(36))
+CREATE OR REPLACE PROCEDURE delete_comment(IN comm_guid CHAR(36), IN user_guid CHAR(36))
 BEGIN
-    UPDATE comments SET is_deleted = TRUE WHERE id = comm_guid;
+    DECLARE comment_id INT;
+    DECLARE commenter_id CHAR(36);
+
+    SELECT id INTO comment_id FROM comments WHERE guid = comm_guid;
+    SELECT user_id INTO commenter_id FROM comments WHERE id = comment_id;
+
+    IF commenter_id = (SELECT id FROM users WHERE guid = user_guid) THEN
+        UPDATE comments SET is_deleted = 1 WHERE id = comment_id;
+        SELECT 'Comment successfully deleted.' AS message;
+    ELSE
+        SELECT 'Deleting is forbidden.' AS message;
+    END IF;
 END;
 $$
 DELIMITER ;
@@ -149,6 +169,50 @@ BEGIN
     WHERE video_id = vid_id
       AND is_removed = 0
     GROUP BY video_id;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE reaction(
+    IN vid_guid CHAR(36),
+    IN user_guid CHAR(36),
+    IN action VARCHAR(7)
+)
+BEGIN
+    DECLARE present BOOL DEFAULT 0;
+    DECLARE vid_id INT;
+    DECLARE usr_id INT;
+
+    SELECT id INTO vid_id FROM videos WHERE guid = vid_guid;
+    SELECT id INTO usr_id FROM users WHERE guid = user_guid;
+
+    SET present = NOT (SELECT ISNULL((SELECT video_id
+                                      FROM reactions
+                                      WHERE user_id = usr_id
+                                        AND video_id = vid_id)));
+
+    IF present = 1 THEN
+        CASE action
+            WHEN 'like'
+                THEN UPDATE reactions SET is_useful = 1 WHERE (user_id = usr_id AND video_id = vid_id);
+                     UPDATE reactions SET is_removed = 0 WHERE (user_id = usr_id AND video_id = vid_id);
+            WHEN 'dislike'
+                THEN UPDATE reactions SET is_useful = 0 WHERE (user_id = usr_id AND video_id = vid_id);
+                     UPDATE reactions SET is_removed = 0 WHERE (user_id = usr_id AND video_id = vid_id);
+            WHEN 'delete'
+                THEN UPDATE reactions SET is_removed = 1 WHERE (user_id = usr_id AND video_id = vid_id);
+            END CASE;
+        SELECT 'Reaction modified successfully.' AS message;
+    ELSE
+        CASE action
+            WHEN 'like'
+                THEN INSERT INTO reactions (user_id, video_id, is_useful) VALUES (usr_id, vid_id, 1);
+            WHEN 'dislike'
+                THEN INSERT INTO reactions (user_id, video_id, is_useful) VALUES (usr_id, vid_id, 0);
+            END CASE;
+        SELECT 'Reaction created successfully.' AS message;
+    END IF;
 END;
 $$
 DELIMITER ;
@@ -200,11 +264,11 @@ $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_profile_data(IN user_guid CHAR(36))
+CREATE OR REPLACE PROCEDURE get_profile_data(IN user_name VARCHAR(36))
 BEGIN
     SELECT users.id, username, profile_pic_url, bg_image_url, bio
     FROM users
-    WHERE users.id = user_guid;
+    WHERE users.username = user_name;
 END;
 $$
 DELIMITER ;

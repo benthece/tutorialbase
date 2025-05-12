@@ -24,4 +24,9 @@ class Video extends Model
             "uploader_pic" => $video[0]->uploader_pic,
         ];
     }
+
+    public static function reaction(string $guid, string $userGuid, string $action) {
+        $response = DB::select('CALL reaction(?, ?, ?)', [$guid, $userGuid, $action]);
+        return $response[0]->message;
+    }
 }

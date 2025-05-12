@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5375e928-351c-4a7d-9c59-ec0b3faafb4e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../backend/app/Models/Video.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/app/Models/Video.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stored_procedures.sql" beforeDir="false" afterPath="$PROJECT_DIR$/stored_procedures.sql" afterDir="false" />
     </list>
@@ -39,5 +39,17 @@
     ]
   }
 }</component>
+  <component name="RunManager">
+    <configuration name="stored_procedures.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
+      <script-file value="$PROJECT_DIR$/stored_procedures.sql" />
+      <script-mode>FILE</script-mode>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Database Script.stored_procedures.sql" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
 </project>
