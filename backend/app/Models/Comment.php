@@ -25,4 +25,19 @@ class Comment extends Model
         }
         return $result;
     }
+
+    public static function createComment(string $videoGuid, string $userGuid, string $text) {
+        $response = DB::select("CALL create_comment(?, ?, ?)", [$userGuid, $videoGuid, $text]);
+        return $response[0]->message;
+    }
+
+    public static function modifyComment(string $guid , string $userGuid, string $text): string {
+        $response = DB::select('CALL modify_comment(?, ?, ?)', [$guid, $userGuid, $text]);
+        return $response[0]->message;
+    }
+
+    public static function deleteComment(string $guid, string $userGuid) {
+        $response = DB::select('CALL delete_comment(?, ?)', [$guid, $userGuid]);
+        return $response[0]->message;
+    }
 }
