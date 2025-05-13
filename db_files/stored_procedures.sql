@@ -291,27 +291,6 @@ $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_videos_for_subcategory(
-    IN subcat_guid CHAR(36),
-    -- IN offset INTEGER UNSIGNED,
-    IN quantity INTEGER UNSIGNED)
-BEGIN
-    DECLARE subcat_id INT;
-    SELECT id INTO subcat_id FROM categories WHERE guid = subcat_guid;
-
-    SELECT videos.guid, title, username, profile_pic_url, url, base_image_url
-    FROM videos
-             INNER JOIN video_category vc on videos.id = vc.video_id
-             INNER JOIN categories c on vc.category_id = c.id
-             INNER JOIN users u on u.id = videos.user_id
-    WHERE c.id = subcat_id
-    ORDER BY RAND()
-    LIMIT quantity;
-END;
-$$
-DELIMITER ;
-
-DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_profile_data(IN user_name VARCHAR(36))
 BEGIN
     SELECT users.id, username, profile_pic_url, bg_image_url, bio

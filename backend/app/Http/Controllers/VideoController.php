@@ -28,7 +28,7 @@ class VideoController extends Controller
     }
 
     public function getRecommended(Request $request, string $guid): JsonResponse {
-        return response()->json(["recommended" => Video::getRecommendedVideos($guid, $request->lim)]);
+        return response()->json(Video::getRecommendedVideos($guid, $request->limit));
     }
 
     public function reaction(string $guid, Request $request): JsonResponse {
@@ -38,7 +38,7 @@ class VideoController extends Controller
         return response()->json(["message" => $response]);
     }
 
-    public function getHomepage(Request $request): JsonResponse {
-        $response = Video::getHomepageVideos();
+    public function getCategory(Request $request): JsonResponse {
+        return response()->json(Video::getCategoryVideos($request->categoryId, $request->limit));
     }
 }
