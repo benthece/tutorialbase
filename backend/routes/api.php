@@ -12,6 +12,7 @@ Route::get('/video/{guid}', [VideoController::class, 'getVideo'])
     ->whereUuid('guid');
 Route::get('/user/{username}', [ProfileController::class, 'getProfile']);
 Route::get('/videos/recommended/{guid}', [VideoController::class, 'getRecommended']);
+Route::get('/videos/homepage', [VideoController::class, 'getHomepage']);
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);

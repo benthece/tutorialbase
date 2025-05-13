@@ -42,4 +42,8 @@ class Video extends Model
         $response = DB::select('CALL reaction(?, ?, ?)', [$guid, $userGuid, $action]);
         return $response[0]->message;
     }
+
+    public static function getHomepageVideos(): array {
+        $response = DB::select("call ", [$guid]);
+    }
 }

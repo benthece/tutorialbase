@@ -37,4 +37,8 @@ class VideoController extends Controller
 
         return response()->json(["message" => $response]);
     }
+
+    public function getHomepage(Request $request): JsonResponse {
+        $response = Video::getHomepageVideos();
+    }
 }

@@ -247,11 +247,44 @@ $$
 DELIMITER ;
 
 DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_subcategories_for_main(IN main_guid CHAR(36))
+BEGIN
+    SELECT guid, name
+    FROM categories
+    WHERE parent_id = (SELECT id FROM categories WHERE guid = main_guid);
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_subcategories(IN quantity MEDIUMINT UNSIGNED)
 BEGIN
     SELECT id, name
     FROM categories
     WHERE parent_id IS NOT NULL
+    ORDER BY RAND()
+    LIMIT quantity;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_videos_for_category(
+    IN subcat_guid CHAR(36),
+    -- IN offset INTEGER UNSIGNED,
+    IN quantity INTEGER UNSIGNED)
+BEGIN
+    DECLARE subcat_id INT;
+    SELECT id INTO subcat_id FROM categories WHERE guid = subcat_guid;
+
+    SELECT videos.guid, title, username, profile_pic_url, url, base_image_url
+    FROM videos
+             INNER JOIN video_category vc on videos.id = vc.video_id
+             INNER JOIN categories c on vc.category_id = c.id
+             INNER JOIN users u on u.id = videos.user_id
+    WHERE c.id = subcat_id
+       OR c.parent_id = subcat_id
+    ORDER BY RAND()
     LIMIT quantity;
 END;
 $$
@@ -263,30 +296,15 @@ CREATE OR REPLACE PROCEDURE get_videos_for_subcategory(
     -- IN offset INTEGER UNSIGNED,
     IN quantity INTEGER UNSIGNED)
 BEGIN
+    DECLARE subcat_id INT;
+    SELECT id INTO subcat_id FROM categories WHERE guid = subcat_guid;
+
     SELECT videos.guid, title, username, profile_pic_url, url, base_image_url
     FROM videos
              INNER JOIN video_category vc on videos.id = vc.video_id
              INNER JOIN categories c on vc.category_id = c.id
              INNER JOIN users u on u.id = videos.user_id
-    WHERE c.guid = subcat_guid
-    ORDER BY RAND()
-    LIMIT quantity;
-END;
-$$
-DELIMITER ;
-
-DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_videos_for_maincategory(
-    IN cat_guid CHAR(36),
-    -- IN offset INTEGER UNSIGNED,
-    IN quantity INTEGER UNSIGNED)
-BEGIN
-    SELECT videos.guid, title, username, profile_pic_url, url, base_image_url
-    FROM videos
-        JOIN video_category vc on videos.id = vc.video_id
-        JOIN categories c on vc.category_id = c.id
-        JOIN users u on u.id = videos.user_id
-    WHERE cat_guid = (SELECT guid FROM categories WHERE parent_id IS NULL)
+    WHERE c.id = subcat_id
     ORDER BY RAND()
     LIMIT quantity;
 END;
