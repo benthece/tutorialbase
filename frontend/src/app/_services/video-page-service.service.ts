@@ -21,32 +21,32 @@ export interface VideoComment {
 }
 
 export interface RecommendedVideo {
-  id: string;
+  guid: string;
   title: string;
-  uploaderName: string;
-  uploaderProfilePicture: string;
-  thumbnail: string;
+  username: string;
+  profile_pic_url: string;
+  base_image_url: string;
 }
 
 export interface CategoryVideo {
-  id: string;
+  guid: string;
   title: string;
-  uploaderName: string;
-  uploaderProfilePicture: string;
-  thumbnail: string;
+  uploader: string;
+  uploader_pic: string;
+  base_image_url: string;
 }
 
 export interface SubcategoryVideo {
   id: string;
   title: string;
-  uploaderName: string;
-  uploaderProfilePicture: string;
-  thumbnail: string;
+  username: string;
+  profile_pic_url: string;
+  base_image_url: string;
 }
 
 export interface HomeVideos {
-  categoryName: string;
-  categoryId: string;
+  id: string;
+  name: string;
   videos: CategoryVideo[];
 }
 
@@ -62,6 +62,7 @@ export interface VideoDetails {
     uploader_id: string;
     uploader: string;
     uploader_pic: string;
+    categ_id: string
   };
   reactions: {
     useful: number;
@@ -91,7 +92,6 @@ export interface UploadVideoRequest {
   providedIn: 'root'
 })
 export class VideoPageService {
-  private apiUrl = environment.apiUrl;
 
   private currentVideoSubject = new BehaviorSubject<VideoDetails | null>(null);
   public currentVideo$ = this.currentVideoSubject.asObservable();
@@ -127,13 +127,14 @@ export class VideoPageService {
       uploaderName: videoDetails.video.uploader,
       thumbnailSrc: videoDetails.video.base_image_url,
       avatarSrc: videoDetails.video.uploader_pic,
-      //videoSrc: 'videoDetails.video.src', //át kell írni majd
-      //subcategoryId: 'videoDetails.video.subcategoryId',
+      //videoSrc: 'videoDetails.video.url', //át kell írni majd
+      categ_id: videoDetails.video.categ_id,
       views: videoDetails.video.views,
       uploadDate: new Date(videoDetails.video.uploaded_at),
       reactions: {
         useful: videoDetails.reactions.useful,
-        notuseful: videoDetails.reactions.notuseful
+        notuseful: videoDetails.reactions.notuseful,
+        //userReaction: videoDetails.reactions.userReaction
       }
     };
   }
@@ -158,12 +159,12 @@ export class VideoPageService {
     return this.mapToCommentInterface(videoDetails.comments);
   }
 
-  
 
-  async getRecommendedVideos(subcategoryId: string): Promise<RecommendedVideo[]> {
+
+  async getRecommendedVideos(categ_id: string): Promise<RecommendedVideo[]> {
     try {
-      const response = await axios.get('/api/video/recommended', {
-        params: { subcategoryId }
+      const response = await axios.get(`/api/videos/recommended/${categ_id}`, {
+        params: { limit: 8 }
       });
 
       return response.data;
@@ -173,10 +174,10 @@ export class VideoPageService {
     }
   }
 
-  async getVideosByCategory(categoryId: string): Promise<CategoryVideo[]> {
+  async getVideosByCategory(category: string): Promise<CategoryVideo[]> {
     try {
-      const response = await axios.get('/api/video/category', {
-        params: { categoryId }
+      const response = await axios.get('/api/videos/category', {
+        params: { category }
       });
 
       return response.data;
@@ -186,10 +187,10 @@ export class VideoPageService {
     }
   }
 
-  async getVideosBySubcategory(subcategoryId: string): Promise<SubcategoryVideo[]> {
+  async getVideosBySubcategory(subcategory: string): Promise<SubcategoryVideo[]> {
     try {
-      const response = await axios.get('/api/video/subcategory', {
-        params: { subcategoryId }
+      const response = await axios.get('/api/videos/subcategory', {
+        params: { subcategory }
       });
 
       return response.data;
@@ -203,7 +204,7 @@ export class VideoPageService {
     try {
       this.isLoadingHomepageSubject.next(true);
 
-      const response = await axios.get('/api/video/homepage');
+      const response = await axios.get('/api/home');
 
       if (response.data) {
         this.homeCategoriesSubject.next(response.data);
@@ -231,14 +232,14 @@ export class VideoPageService {
     }
   }
 
-  async addComment(videoId: string, commentText: string): Promise<VideoComment> {
+  async addComment(videoId: string, commentText: string): Promise<any> {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
         throw new Error('Authentication token not found. Please log in.');
       }
 
-      const response = await axios.post(`/api/create-comment/${videoId}`,
+      await axios.post(`/api/create-comment/${videoId}`,
         {
           text: commentText
         },
@@ -249,14 +250,7 @@ export class VideoPageService {
           }
         }
       );
-
-      // If successful, reload the video details to get the updated comments
-      if (response.data) {
-        // Reload the video with fresh data from the server
-        await this.getVideoWithDetails(videoId);
-      }
-
-      return response.data;
+      await this.getVideoWithDetails(videoId);
     } catch (error) {
       console.error('Error adding comment:', error);
       throw error;
@@ -264,29 +258,28 @@ export class VideoPageService {
   }
 
   async addReaction(videoId: string, action: 'like' | 'dislike'): Promise<void> {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('Authentication token not found. Please log in.');
-    }
-
-    await axios.post(`/api/reaction/${videoId}`,
-      { action }, // { action: 'like' } vagy 'dislike'
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication token not found. Please log in.');
       }
-    );
 
-    // Frissítjük az aktuális videót az új like/dislike számmal
-    await this.getVideoWithDetails(videoId);
-  } catch (error) {
-    console.error('Error adding reaction:', error);
-    throw error;
+      await axios.post(`/api/reaction/${videoId}`,
+        { action }, // { action: 'like' } or 'dislike'
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      await this.getVideoWithDetails(videoId);
+    } catch (error) {
+      console.error('Error adding reaction:', error);
+      throw error;
+    }
   }
-}
 
 
   async uploadVideo(
@@ -296,7 +289,8 @@ export class VideoPageService {
     description: string,
     categoryId: string,
     subcategoryId: string,
-    tagsText: string
+    tagsText: string,
+    onProgress?: (progress: number) => void
   ): Promise<string> {
     try {
       // Check if token exists
@@ -333,8 +327,9 @@ export class VideoPageService {
         },
         onUploadProgress: (progressEvent) => {
           // You can implement progress tracking here if needed
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
-          console.log(`Upload progress: ${percentCompleted}%`);
+          const percent = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
+          if (onProgress) onProgress(percent);
+          console.log(`Upload progress: ${percent}%`);
         }
       });
 

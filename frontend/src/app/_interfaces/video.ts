@@ -6,7 +6,7 @@ export interface Video {
     thumbnailSrc: string;
     avatarSrc: string;
     //videoSrc: string;
-    //subcategoryId: string;
+    categ_id: string;
     views: number; //views?: number;
     uploadDate: Date;
     reactions: {

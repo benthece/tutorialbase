@@ -3,11 +3,11 @@ import { BehaviorSubject } from 'rxjs';
 import axios from 'axios';
 
 export interface SearchResult {
-  videoId: string;
-  videoThumbnail: string;
-  videoTitle: string;
-  username: string;
-  userProfilePicture: string;
+  guid: string;
+  base_image_url: string;
+  title: string;
+  uploader: string;
+  uploader_pic: string;
   description: string;
   uploadDate: string;
 }
@@ -20,34 +20,36 @@ export class SearchService {
   public searchResults$ = this.searchResultsSubject.asObservable();
   
   private currentQuery = '';
+  private limit = 30;
   private isLoading = false;
   
-  // Az összes betöltött eredmény tárolása (maximum 30)
+  // Store all loaded results (maximum 30 from the server)
   private allLoadedResults: SearchResult[] = [];
-  // A jelenleg megjelenített eredmények száma
+  // Number of results currently displayed
   private displayedCount = 0;
-  // Egyszerre mennyi eredményt jelenítünk meg
+  // Number of results to display in each batch
   private batchSize = 10;
 
   constructor() { }
 
-  async search(query: string): Promise<void> {
+  async search(query: string, limit: number): Promise<void> {
     this.currentQuery = query;
+    this.limit = limit;
     this.allLoadedResults = [];
     this.displayedCount = 0;
     
     try {
       const response = await axios.get('/api/search', {
         params: {
-          query: this.currentQuery
+          query: this.currentQuery,
+          limit: this.limit
         }
       });
-      
-      if (response.data && Array.isArray(response.data.results)) {
-        // Eltároljuk az összes lekért eredményt (max 30 lesz a szervertől)
-        this.allLoadedResults = response.data.results;
+      if (response.data) {
+        // Store all fetched results (max 30 from server)
+        this.allLoadedResults = response.data;
         
-        // Csak az első batch-et jelenítjük meg
+        // Only display the first batch initially
         const initialResults = this.allLoadedResults.slice(0, Math.min(this.batchSize, this.allLoadedResults.length));
         this.searchResultsSubject.next(initialResults);
         this.displayedCount = initialResults.length;
@@ -68,11 +70,11 @@ export class SearchService {
     this.isLoading = true;
     
     try {
-      // Csak a már letöltött eredményekből jelenítünk meg többet
+      // Display more from the already fetched results
       const nextBatchEnd = Math.min(this.displayedCount + this.batchSize, this.allLoadedResults.length);
       const currentResults = this.searchResultsSubject.getValue();
       
-      // Hozzáadjuk a következő adagot a már megjelenített eredményekhez
+      // Add the next batch to the already displayed results
       const newBatch = this.allLoadedResults.slice(this.displayedCount, nextBatchEnd);
       const updatedResults = [...currentResults, ...newBatch];
       
@@ -91,7 +93,7 @@ export class SearchService {
   }
 
   get hasMore(): boolean {
-    // Csak azt ellenőrizzük, hogy már megjelenítettük-e az összes betöltött eredményt
+    // Check if all loaded results have been displayed
     return this.displayedCount < this.allLoadedResults.length;
   }
 

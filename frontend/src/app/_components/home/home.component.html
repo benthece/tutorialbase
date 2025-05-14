@@ -8,48 +8,38 @@
   </div>
 
   <div class="video-section">
-    <h2 class="section-title">Kategória1</h2>
+    <h2 class="section-title">{{ category1Name }}</h2>
     <div class="video-container">
       <div class="video-row" #category1Row>
         <div *ngFor="let video of category1Videos" class="video-card-wrapper">
-          <app-video-card
-            [title]="video.title"
-            [uploaderName]="video.uploaderName"
-            [thumbnailSrc]="video.thumbnailSrc"
-            [avatarSrc]="video.avatarSrc">
-          </app-video-card> <!-- [duration]="video.duration" -->
+          <app-video-card [id]="video.guid" [title]="video.title" [username]="video.uploader"
+            [base_image_url]="video.base_image_url" [profile_pic_url]="video.uploader_pic">
+          </app-video-card>
         </div>
       </div>
     </div>
   </div>
 
   <div class="video-section">
-    <h2 class="section-title">Kategória2</h2>
+    <h2 class="section-title">{{ category2Name }}</h2>
     <div class="video-container">
       <div class="video-row" #category2Row>
         <div *ngFor="let video of category2Videos" class="video-card-wrapper">
-          <app-video-card
-            [title]="video.title"
-            [uploaderName]="video.uploaderName"
-            [thumbnailSrc]="video.thumbnailSrc"
-            [avatarSrc]="video.avatarSrc">
-          </app-video-card> <!-- [duration]="video.duration" -->
+          <app-video-card [id]="video.guid" [title]="video.title" [username]="video.uploader"
+            [base_image_url]="video.base_image_url" [profile_pic_url]="video.uploader_pic">
+          </app-video-card>
         </div>
       </div>
     </div>
   </div>
 
   <div class="video-section">
-    <h2 class="section-title">Kategória3</h2>
+    <h2 class="section-title">{{ category3Name }}</h2>
     <div class="video-container">
       <div class="video-row" #category3Row>
         <div *ngFor="let video of category3Videos" class="video-card-wrapper">
-          <app-video-card
-            [id]="video.id"
-            [title]="video.title"
-            [uploaderName]="video.uploaderName"
-            [thumbnailSrc]="video.thumbnailSrc"
-            [avatarSrc]="video.avatarSrc"> <!-- [duration]="video.duration" -->
+          <app-video-card [id]="video.guid" [title]="video.title" [username]="video.uploader"
+            [base_image_url]="video.base_image_url" [profile_pic_url]="video.uploader_pic">
           </app-video-card>
         </div>
       </div>

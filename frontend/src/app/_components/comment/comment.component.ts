@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { UserAuthService } from '../../_services/user-auth-service.service';
 import { ReportModalComponent } from '../report-modal/report-modal.component';
 import { AdminServiceService } from '../../_services/admin-service.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-comment',
@@ -21,7 +22,7 @@ export class CommentComponent {
   showReportModal = false;
   isDeleting = false;
 
-  constructor(public authService: UserAuthService, private adminService: AdminServiceService) { }
+  constructor(public authService: UserAuthService, private adminService: AdminServiceService, private router: Router) { }
   
   openReportModal() {
     this.showReportModal = true;
@@ -29,6 +30,10 @@ export class CommentComponent {
   
   closeReportModal() {
     this.showReportModal = false;
+  }
+
+  navigateToUser() {
+    this.router.navigate(['/user', this.username]);
   }
 
   async deleteComment() {

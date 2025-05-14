@@ -1,8 +1,9 @@
-import { Component, Input, OnInit  } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output  } from '@angular/core';
 import { VideoPageService } from '../../_services/video-page-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { UserServiceService } from '../../_services/user-service.service';
 import { FormsModule } from '@angular/forms';
+import { Video } from '../../_interfaces/video';
 
 @Component({
   selector: 'app-add-comment',
@@ -18,6 +19,9 @@ export class AddCommentComponent implements OnInit{
   userName: string = '';
   profilePictureUrl: string = '';
 
+  @Output() commentAdded = new EventEmitter<void>();
+  @Input() video: Video | undefined;
+
   constructor(
     private videoPageService: VideoPageService,
     private route: ActivatedRoute,
@@ -25,7 +29,6 @@ export class AddCommentComponent implements OnInit{
   ) { }
 
   ngOnInit(): void {
-    // Get the video ID from the route parameters
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.videoId = params['id'];
@@ -53,12 +56,10 @@ export class AddCommentComponent implements OnInit{
     try {
       this.isSubmitting = true;
       await this.videoPageService.addComment(this.videoId, this.commentText);
-      
-      // Clear the comment text after successful submission
       this.commentText = '';
+      this.commentAdded.emit();
     } catch (error) {
-      console.error('Error sending comment:', error);
-      // You might want to show an error message to the user here
+      console.error('Komment küldése sikertelen:', error);
     } finally {
       this.isSubmitting = false;
     }

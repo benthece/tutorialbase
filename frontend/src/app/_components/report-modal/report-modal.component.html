@@ -9,7 +9,7 @@
                 <div class="select-container">
                     <select id="reason" formControlName="reason"
                         [class.invalid]="reportForm.get('reason')?.invalid && reportForm.get('reason')?.touched">
-                        <option value="" disabled selected>reason</option>
+                        <option value="" disabled selected>Válaszd ki az indokot</option>
                         @for (reason of reasons; track reason.id) {
                             <option [value]="reason.id">{{reason.name}}</option>
                         }

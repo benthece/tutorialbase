@@ -17,7 +17,7 @@ import { VideoPageService } from '../../_services/video-page-service.service';
 export class VideoComponent implements OnInit {
   @Input() video: Video | undefined;
   @Output() videoDeleted = new EventEmitter<string>();
-
+  @Input() uploaderName: string = '';
   isExpanded = false;
   showReportModal = false;
   isDeleting = false;
@@ -33,17 +33,27 @@ export class VideoComponent implements OnInit {
         thumbnailSrc: '',
         avatarSrc: '',
         //videoSrc: './assets/SampleVideo_1280x720_1mb.mp4',
+        categ_id: '',
         views: 0,
         uploadDate: new Date(''),
         description: '',
         reactions: {
-        useful: 0,
-        notuseful: 0,
-        //userReaction: 'none',
-      }
+          useful: 0,
+          notuseful: 0,
+          //userReaction: 'none',
+        }
       };
     }
   }
+
+  navigateToUser() {
+  const username = this.video?.uploaderName;
+  if (!username) {
+    console.warn('Nem ismert a felhasználónév, nem lehet navigálni.');
+    return;
+  }
+  this.router.navigate(['/user', username]);
+}
 
   toggleDescription() {
     this.isExpanded = !this.isExpanded;
@@ -52,50 +62,50 @@ export class VideoComponent implements OnInit {
   openReportModal() {
     this.showReportModal = true;
   }
-  
+
   closeReportModal() {
     this.showReportModal = false;
   }
 
   reactToVideo(action: 'like' | 'dislike') {
-  if (!this.video?.id) return;
+    if (!this.video?.id) return;
 
-  this.videoPageService.addReaction(this.video.id, action)
-    .then(() => {
-      
-      this.loadVideo();
-    })
-    .catch(error => {
-      console.error('Nem sikerült a reakció:', error);
-    });
-}
+    this.videoPageService.addReaction(this.video.id, action)
+      .then(() => {
 
-async loadVideo() {
-  if (!this.video?.id) return;
-
-  try {
-    const updated = await this.videoPageService.getVideoById(this.video.id);
-    this.video = updated;
-  } catch (err) {
-    console.error('Hiba a videó újratöltésekor:', err);
+        this.loadVideo();
+      })
+      .catch(error => {
+        console.error('Nem sikerült a reakció:', error);
+      });
   }
-}
+
+  async loadVideo() {
+    if (!this.video?.id) return;
+
+    try {
+      const updated = await this.videoPageService.getVideoById(this.video.id);
+      this.video = updated;
+    } catch (err) {
+      console.error('Hiba a videó újratöltésekor:', err);
+    }
+  }
 
   async deleteVideo() {
     if (!this.authService.isAdmin || !this.video?.id) {
       return;
     }
-      try {
-        this.isDeleting = true;
-        await this.adminService.deleteVideo(this.video.id);
-        this.videoDeleted.emit(this.video.id);
-        
-        this.router.navigate(['/']);
-      } catch (error) {
-        console.error('Hiba a videó törlésekor:', error);
-        alert('A videó törlése sikertelen.');
-      } finally {
-        this.isDeleting = false;
-      }
+    try {
+      this.isDeleting = true;
+      await this.adminService.deleteVideo(this.video.id);
+      this.videoDeleted.emit(this.video.id);
+
+      this.router.navigate(['/']);
+    } catch (error) {
+      console.error('Hiba a videó törlésekor:', error);
+      alert('A videó törlése sikertelen.');
+    } finally {
+      this.isDeleting = false;
+    }
   }
 }

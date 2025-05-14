@@ -1,16 +1,14 @@
 <div class="video-card">
-    <div class="thumbnail-container" [routerLink]="['/video', id]">
-        <img [src]="thumbnailSrc" alt="Video Thumbnail" class="thumbnail">
+    <div class="thumbnail-container" (click)="navigateToVideo()">
+        <img [src]="base_image_url" alt="Video Thumbnail" class="thumbnail">
     </div>
     <div class="content">
         <div>
-            <img class="uploader-avatar" [src]="avatarSrc" alt="User Avatar">
-            <!-- <img class="uploader-avatar" [src]="avatarSrc" alt="User Avatar" [routerLink]="['/user', username]"> -->
+            <img class="uploader-avatar" [src]="profile_pic_url" alt="User Avatar" (click)="navigateToUser()">
         </div>
         <div class="info">
-            <div class="title" [routerLink]="['/video', id]">{{title}}</div>
-            <div class="uploader-name">{{uploaderName}}</div>
-            <!-- <div class="uploader-name" [routerLink]="['/user', username]">{{uploaderName}}</div> -->
+            <div class="title" (click)="navigateToVideo()">{{title}}</div>
+            <div class="uploader-name" (click)="navigateToUser()">{{username }}</div>
         </div>
     </div>
 </div>

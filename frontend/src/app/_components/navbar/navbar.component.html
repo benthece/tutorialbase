@@ -16,8 +16,8 @@
     <div class="nav-middle">
         <div class="search-field">
             <input type="text" placeholder="Keresés" class="search-field-input" [(ngModel)]="searchQuery"
-        (keyup.enter)="onSearch()">
-            <div class="search-field-icon" (click)="onSearch()">
+        (keyup.enter)="onSearch()" (blur)="onInputBlur()">
+            <div class="search-field-icon" (click)="onSearch()" (mousedown)="onIconMouseDown()">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
                     <circle cx="11" cy="11" r="8" />
@@ -34,8 +34,7 @@
                 (click)="toggleProfileMenu($event)" />
             <div *ngIf="profileMenuVisible" class="profile-menu" #profileMenu>
                 <ul>
-                    <a [routerLink]="['/user/username']" (click)="close()">
-                        <!-- <a [routerLink]="['/profile', username]" (click)="close()"> -->
+                    <a [routerLink]="['/user', username]" (click)="close()">
                         <li>Profil</li>
                     </a>
                     <a [routerLink]="['/upload']" (click)="close()">
@@ -54,7 +53,7 @@
             </div>
         </ng-container>
         
-        <!-- Login button template when not logged in -->
+        <!-- Login button when not logged in -->
         <ng-template #loginButton>
             <button class="login-button" (click)="onLoginClick($event)">Bejelentkezés</button>
         </ng-template>

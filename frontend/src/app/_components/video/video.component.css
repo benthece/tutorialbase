@@ -94,6 +94,7 @@ body {
     border-radius: 50%;
     background-color: #343A40;
     flex-shrink: 0;
+    cursor: pointer;
 }
 
 .title-views {
@@ -122,6 +123,7 @@ body {
     font-size: 14px;
     display: block;
     margin-top: 4px;
+    cursor: pointer;
 }
 
 .view-count {

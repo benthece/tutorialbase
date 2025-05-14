@@ -8,7 +8,7 @@
         <div class="comment-section">
             <h3 class="section-title">Kommentek</h3>
             <div>
-                <app-add-comment *ngIf="authService.isAuthenticated"></app-add-comment>
+                <app-add-comment *ngIf="authService.isAuthenticated" [video]="video" (commentAdded)="loadComments()"></app-add-comment>
             </div>
 
             <!-- Display comments based on expanded state -->
@@ -34,8 +34,8 @@
         <h3 class="section-title">Ajánlott videók</h3>
         <div class="video-list">
             <div *ngFor="let video of recommendedVideos" class="video-item">
-                <app-video-card [id]="video.id" [title]="video.title" [uploaderName]="video.uploaderName"
-                    [thumbnailSrc]="video.thumbnail" [avatarSrc]="video.uploaderProfilePicture">
+                <app-video-card [id]="video.guid" [title]="video.title" [username]="video.username"
+                    [base_image_url]="video.base_image_url" [profile_pic_url]="video.profile_pic_url">
                 </app-video-card>
             </div>
         </div>

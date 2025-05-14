@@ -5,6 +5,7 @@ import { UserAuthService } from '../../_services/user-auth-service.service';
 import { SearchService } from '../../_services/search-service.service';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { UserServiceService } from '../../_services/user-service.service';
 
 @Component({
   selector: 'app-navbar',
@@ -22,7 +23,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   private authSubscription!: Subscription;
   searchQuery: string = '';
+  limit: number = 30;
   isSearching: boolean = false;
+  username: string = '';
+
+  clickedSearchIcon = false;
 
   @ViewChild('categoryButton', { static: false }) categoryButton!: ElementRef;
   @ViewChild('profileButton', { static: false }) profileButtonButton!: ElementRef;
@@ -33,24 +38,38 @@ export class NavbarComponent implements OnInit, OnDestroy {
   @Output() showRegisterModal = new EventEmitter<void>();
 
   constructor(public userAuthService: UserAuthService, private searchService: SearchService,
-    private router: Router) { }
+    private router: Router, public userService: UserServiceService) { }
 
-  ngOnInit(): void {
-    // Subscribe to authentication state changes
-    this.authSubscription = this.userAuthService.isAuthenticated$.subscribe(
-      isAuthenticated => {
-        this.isLoggedIn = isAuthenticated;
+async ngOnInit(): Promise<void> {
+  // Subscribe to authentication state changes
+  this.authSubscription = this.userAuthService.isAuthenticated$.subscribe(
+    async isAuthenticated => {
+      this.isLoggedIn = isAuthenticated;
+      if (isAuthenticated) {
+        await this.loadCurrentUser();
       }
-    );
+    }
+  );
 
-    // Initial check for login status
-    this.checkLoginStatus();
+  this.checkLoginStatus();
+  if (this.isLoggedIn) {
+    await this.loadCurrentUser();
   }
+}
 
   ngOnDestroy(): void {
     // Clean up subscription when component is destroyed
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
+    }
+  }
+
+  async loadCurrentUser(): Promise<void> {
+    try {
+      const userData = await this.userService.getCurrentUserInfo();
+      this.username = userData.username;
+    } catch (error) {
+      console.error('Error fetching current user info:', error);
     }
   }
 
@@ -100,10 +119,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (this.searchQuery.trim() && !this.isSearching) {
       this.isSearching = true;
 
-      this.searchService.search(this.searchQuery.trim())
+      this.searchService.search(this.searchQuery.trim(), 30)
         .then(() => {
           this.router.navigate(['/search'], {
-            queryParams: { q: this.searchQuery.trim() }
+            queryParams: { query: this.searchQuery.trim(), limit: this.limit }
           });
         })
         .catch(error => {
@@ -111,8 +130,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
         })
         .finally(() => {
           this.isSearching = false;
+          this.searchQuery = '';
         });
     }
+  }
+
+  onIconMouseDown(): void {
+  this.clickedSearchIcon = true;
+  }
+
+  onInputBlur(): void {
+  setTimeout(() => {
+    if (!this.clickedSearchIcon && this.searchQuery.trim()) {
+      this.searchQuery = '';
+    }
+    this.clickedSearchIcon = false; // Reset
+  })
   }
 
   onLoginClick(event: Event) {

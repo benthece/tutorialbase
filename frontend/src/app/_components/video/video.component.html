@@ -7,7 +7,7 @@
 
     <div class="video-info">
         <div class="profile-section">
-            <img [src]="video.avatarSrc" class="profile-pic" />
+            <img [src]="video.avatarSrc" class="profile-pic" (click)="navigateToUser()"/>
             <!-- <img [src]="video.avatarSrc" class="profile-pic" alt="User Avatar" [routerLink]="['/user', username]"> -->
             <div class="title-views">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -27,7 +27,7 @@
                         </div>
                     </div>
                 </div>
-                <span class="username">{{video.uploaderName}}</span>
+                <span class="username" (click)="navigateToUser()">{{video.uploaderName}}</span>
                 <!-- <span class="username" [routerLink]="['/user', username]">{{video.uploaderName}}</span> -->
                 <span class="view-count">{{ video.views.toLocaleString() || 0 }} views</span>
             </div>

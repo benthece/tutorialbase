@@ -15,6 +15,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
   searchResults: SearchResult[] = [];
   searchQuery: string = '';
+  limit: number = 30;
   isLoading: boolean = false;
 
   private searchSubscription: Subscription | null = null;
@@ -28,8 +29,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Subscribe to query parameter changes
     this.route.queryParams.subscribe(params => {
-      if (params['q']) {
-        this.searchQuery = params['q'];
+      if (params['query']) {
+        this.searchQuery = params['query'];
         this.loadInitialResults();
       }
     });
@@ -66,7 +67,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
   private loadInitialResults(): void {
     this.isLoading = true;
-    this.searchService.search(this.searchQuery)
+    this.searchService.search(this.searchQuery, this.limit)
       .catch(error => {
         console.error('Error loading search results:', error);
         this.isLoading = false;

@@ -23,8 +23,8 @@ export interface VideoHistoryItem {
 
 export interface UserProfile {
   username: string;
-  userProfilePicture: string;
-  userThumbnail: string;
+  profilePicture: string;
+  profileThumbnail: string;
   bio: string;
 }
 
@@ -48,7 +48,7 @@ export class UserServiceService {
 
 async getCurrentUserInfo(): Promise<any> {
   try {
-    const response = await axios.get('/api/user/info', {
+    const response = await axios.post('/api/user/info', {}, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + localStorage.getItem('token')

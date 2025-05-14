@@ -118,7 +118,8 @@
 }
 
 .video-card-wrapper {
-  flex: 0 0 auto;
+  flex: 0 0 360px; /* forces all items to be same width */
+  max-width: 360px;
 }
 
 /* Responsive */
@@ -182,5 +183,9 @@
   .fade-left,
   .fade-right {
     width: 30px;
+  }
+
+  .video-card-wrapper {
+    flex: 0 0 280px;
   }
 }

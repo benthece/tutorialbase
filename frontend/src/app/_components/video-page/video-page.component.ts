@@ -21,17 +21,20 @@ export class VideoPageComponent implements OnInit {
   currentVideo: Video | undefined;
   recommendedVideos: RecommendedVideo[] = [];
   comments: CommentModel[] = [];
-  videoId: string = '1'; // Default to first video
+  videoId: string = '';
   isMobileView = false;
   commentsExpanded = false;
+  categ_id: string = '';
 
-  isLoading: boolean = true; //új
-  error: string | null = null; //új
+  isLoading: boolean = true;
+  error: string | null = null;
+
+  video: Video | undefined;
 
   constructor(
     private route: ActivatedRoute,
     public authService: UserAuthService,
-    private videoPageService: VideoPageService //új
+    private videoPageService: VideoPageService
   ) { }
 
   ngOnInit() {
@@ -39,10 +42,9 @@ export class VideoPageComponent implements OnInit {
     this.checkScreenSize();
     // Subscribe to route parameters to get the video ID
     this.route.paramMap.subscribe((params: ParamMap) => {
-      this.videoId = params.get('id') || '1';
-      //this.subcategoryId = params.get('subcategoryId') || '1';
-      this.isLoading = true; //új
-      this.error = null; //új
+      this.videoId = params.get('id') || '';
+      this.isLoading = true; 
+      this.error = null; 
 
       // Load video and comments data
       this.loadVideo();
@@ -63,8 +65,10 @@ export class VideoPageComponent implements OnInit {
     try {
       this.currentVideo = await this.videoPageService.getVideoById(this.videoId);
       this.isLoading = false;
+      this.categ_id = this.currentVideo.categ_id;
 
-      //this.recommendedVideos = await this.videoPageService.getRecommendedVideos(this.subcategoryId);
+      this.recommendedVideos = await this.videoPageService.getRecommendedVideos(this.categ_id);
+      console.log(this.recommendedVideos, this.categ_id)
     } catch (error) {
       console.error('Error loading video:', error);
       this.isLoading = false;
@@ -80,7 +84,6 @@ export class VideoPageComponent implements OnInit {
   private checkScreenSize() {
     this.isMobileView = window.innerWidth <= 1200;
     
-    // Reset expanded state when switching to mobile view
     if (this.isMobileView) {
       this.commentsExpanded = false;
     }
