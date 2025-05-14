@@ -1,0 +1,21 @@
+<div class="video-history-card">
+    <img class="video-thumbnail" [src]="videoThumbnail"
+        alt="Video thumbnail" />
+
+    <div class="video-details">
+        <div class="video-info">
+            <h1 class="video-title">{{ videoTitle }}</h1>
+            <p class="uploader-name">{{ username }}</p>
+        </div>
+
+        <div class="description-container">
+            <img class="avatar" [src]="userProfilePicture" alt="User avatar" />
+            <div class="captions-text">
+                <p class="upload-date">Feltöltés dátuma: {{ uploadDate }}</p>
+                <p class="description-text">
+                    {{ description }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

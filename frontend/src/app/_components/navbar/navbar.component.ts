@@ -1,13 +1,15 @@
 import { Component, Output, EventEmitter, OnInit, ElementRef, HostListener, ViewChild, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UserAuthService } from '../../_services/user-auth-service.service';
+import { SearchService } from '../../_services/search-service.service';
 import { Subscription } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
@@ -19,6 +21,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   categoryMenuVisible = false;
   isLoggedIn = false;
   private authSubscription!: Subscription;
+  searchQuery: string = '';
+  isSearching: boolean = false;
 
   @ViewChild('categoryButton', { static: false }) categoryButton!: ElementRef;
   @ViewChild('profileButton', { static: false }) profileButtonButton!: ElementRef;
@@ -28,7 +32,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   @Output() showLoginModal = new EventEmitter<void>();
   @Output() showRegisterModal = new EventEmitter<void>();
 
-  constructor(public userAuthService: UserAuthService) { }
+  constructor(public userAuthService: UserAuthService, private searchService: SearchService,
+    private router: Router) { }
 
   ngOnInit(): void {
     // Subscribe to authentication state changes
@@ -37,7 +42,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.isLoggedIn = isAuthenticated;
       }
     );
-    
+
     // Initial check for login status
     this.checkLoginStatus();
   }
@@ -88,6 +93,25 @@ export class NavbarComponent implements OnInit, OnDestroy {
       if (!clickedInsideProfileMenu && !clickedOnProfileButton) {
         this.profileMenuVisible = false;
       }
+    }
+  }
+
+  onSearch(): void {
+    if (this.searchQuery.trim() && !this.isSearching) {
+      this.isSearching = true;
+
+      this.searchService.search(this.searchQuery.trim())
+        .then(() => {
+          this.router.navigate(['/search'], {
+            queryParams: { q: this.searchQuery.trim() }
+          });
+        })
+        .catch(error => {
+          console.error('Search error:', error);
+        })
+        .finally(() => {
+          this.isSearching = false;
+        });
     }
   }
 

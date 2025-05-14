@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { VideoCardComponent } from '../video-card/video-card.component';
 import { CommonModule } from '@angular/common';
-import { VideoService } from '../../_services/video-service.service';
+//import { VideoService } from '../../_services/video-service.service';
 import { Video } from '../../_interfaces/video';
 
 @Component({
@@ -12,13 +12,21 @@ import { Video } from '../../_interfaces/video';
 })
 export class ProfilePageComponent implements OnInit{
 videos: Video[] = [];
+bioExpanded = false;
+isMobile = false;
 
-constructor(private videoService: VideoService) { }
+constructor(/* private videoService: VideoService */) { }
+
+@HostListener('window:resize')
+  onResize() {
+    this.isMobile = window.innerWidth <= 768;
+  }
 
   ngOnInit() {
 
-    const allVideos = this.videoService.getAllVideos();
-
-    this.videos = [...allVideos];
+    /* const allVideos = this.videoService.getAllVideos();
+    
+    this.isMobile = window.innerWidth <= 768;
+    this.videos = [...allVideos]; */
   }
 }

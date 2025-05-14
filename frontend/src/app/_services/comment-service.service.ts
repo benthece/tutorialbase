@@ -1,3 +1,4 @@
+//ez törölve lesz
 import { Injectable } from '@angular/core';
 import { Comment } from '../_interfaces/comment';
 

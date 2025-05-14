@@ -9,5 +9,19 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './video-upload.component.css'
 })
 export class VideoUploadComponent {
+  selectedImage: string | ArrayBuffer | null = null;
 
+  onImageSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement)?.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result;
+        if (result !== undefined) {
+          this.selectedImage = result;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }
 }

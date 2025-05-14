@@ -1,0 +1,24 @@
+<div class="search-page-container">
+    <div *ngIf="searchQuery" class="search-header">
+        <h1>Keresési eredmények: "{{ searchQuery }}"</h1>
+        <p *ngIf="searchResults.length > 0">{{ searchResults.length }} találat eddig betöltve</p>
+    </div>
+
+    <div class="search-results">
+        <div *ngIf="searchResults.length === 0 && !isLoading" class="no-results">
+            <p>Nincs találat a keresési feltételnek megfelelően.</p>
+        </div>
+
+        <app-search-card *ngFor="let result of searchResults" [result]="result">
+        </app-search-card>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Betöltés...</p>
+    </div>
+
+    <div *ngIf="!isLoading && !searchService.hasMore && searchResults.length > 0" class="end-of-results">
+        <p>Nincs több találat.</p>
+    </div>
+</div>

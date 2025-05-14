@@ -1,8 +1,91 @@
 import { Injectable } from '@angular/core';
-import { Video } from '../_interfaces/video';
-import { Comment } from '../_interfaces/comment';
 import axios from 'axios';
 import { environment } from '../../environments/environment.development';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { Video } from '../_interfaces/video';
+import { Comment } from '../_interfaces/comment';
+
+export interface UserVideo {
+  id: string;
+  uploaderName: string;
+  uploaderProfilePicture: string;
+  title: string;
+  thumbnail: string;
+}
+
+export interface VideoComment {
+  id: string;
+  username: string;
+  profilePicture: string;
+  text: string;
+}
+
+export interface RecommendedVideo {
+  id: string;
+  title: string;
+  uploaderName: string;
+  uploaderProfilePicture: string;
+  thumbnail: string;
+}
+
+export interface CategoryVideo {
+  id: string;
+  title: string;
+  uploaderName: string;
+  uploaderProfilePicture: string;
+  thumbnail: string;
+}
+
+export interface SubcategoryVideo {
+  id: string;
+  title: string;
+  uploaderName: string;
+  uploaderProfilePicture: string;
+  thumbnail: string;
+}
+
+export interface HomeVideos {
+  categoryName: string;
+  categoryId: string;
+  videos: CategoryVideo[];
+}
+
+export interface VideoDetails {
+  video: {
+    guid: string;
+    title: string;
+    description: string;
+    url: string;
+    base_image_url: string;
+    views: number;
+    uploaded_at: string;
+    uploader_id: string;
+    uploader: string;
+    uploader_pic: string;
+  };
+  reactions: {
+    useful: number;
+    notuseful: number;
+    //userReaction: string;
+  };
+  comments: Array<{
+    guid: string;
+    username: string;
+    user_guid: string;
+    user_pic: string;
+    text: string;
+    created_at: string;
+    modified_at: string | null;
+  }>;
+}
+
+export interface UploadVideoRequest {
+  title: string;
+  description: string;
+  categoryId: string;  // We will send ID, not name
+  subcategoryId: string;  // We will send ID, not name
+  tagsText: string;  // Raw tags text input that will be converted to array
+}
 
 @Injectable({
   providedIn: 'root'
@@ -10,159 +93,255 @@ import { environment } from '../../environments/environment.development';
 export class VideoPageService {
   private apiUrl = environment.apiUrl;
 
+  private currentVideoSubject = new BehaviorSubject<VideoDetails | null>(null);
+  public currentVideo$ = this.currentVideoSubject.asObservable();
+
+  private homeCategoriesSubject = new BehaviorSubject<HomeVideos[]>([]);
+  public homeCategories$ = this.homeCategoriesSubject.asObservable();
+
+  private isLoadingHomepageSubject = new BehaviorSubject<boolean>(false);
+  public isLoadingHomepage$ = this.isLoadingHomepageSubject.asObservable();
+
   constructor() { }
 
-/*   async getAllVideos(): Promise<Video[]> {
+  async getVideoWithDetails(videoId: string): Promise<VideoDetails> {
     try {
-      const response = await axios.get(`${this.apiUrl}/videos`);
+      const response = await axios.get(`/api/video/${videoId}`);
+
+      if (response.data) {
+        this.currentVideoSubject.next(response.data);
+      }
+
       return response.data;
     } catch (error) {
-      console.error('Error fetching all videos:', error);
-      throw error;
-    }
-  } */
-
-    //át kell írni mert, mert egybe jön vissza a videó, komment és likeok
-
-  async getVideoById(id: string): Promise<Video> {
-    try {
-      const response = await axios.get(`${this.apiUrl}/video/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching video with id ${id}:`, error);
+      console.error('Error fetching video details:', error);
       throw error;
     }
   }
 
-  //  /api/recommended?catId={categorx_guid} --> kell tárolni a videocategoryid-t fronztenden
+  mapToVideoInterface(videoDetails: VideoDetails): Video {
+    return {
+      id: videoDetails.video.guid,
+      title: videoDetails.video.title,
+      description: videoDetails.video.description,
+      uploaderName: videoDetails.video.uploader,
+      thumbnailSrc: videoDetails.video.base_image_url,
+      avatarSrc: videoDetails.video.uploader_pic,
+      //videoSrc: 'videoDetails.video.src', //át kell írni majd
+      //subcategoryId: 'videoDetails.video.subcategoryId',
+      views: videoDetails.video.views,
+      uploadDate: new Date(videoDetails.video.uploaded_at),
+      reactions: {
+        useful: videoDetails.reactions.useful,
+        notuseful: videoDetails.reactions.notuseful
+      }
+    };
+  }
 
-  async getRecommendedVideos(currentVideoId: string): Promise<Video[]> {
-    try {
-      const response = await axios.get(`${this.apiUrl}/video/recommended/${currentVideoId}`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching recommended videos:', error);
-      throw error;
-    }
+  mapToCommentInterface(apiComments: VideoDetails['comments']): Comment[] {
+    return apiComments.map(comment => ({
+      id: comment.guid,
+      username: comment.username,
+      avatarSrc: comment.user_pic,
+      text: comment.text,
+      date: new Date(comment.created_at)
+    }));
+  }
+
+  async getVideoById(videoId: string): Promise<Video> {
+    const videoDetails = await this.getVideoWithDetails(videoId);
+    return this.mapToVideoInterface(videoDetails);
   }
 
   async getVideoComments(videoId: string): Promise<Comment[]> {
+    const videoDetails = await this.getVideoWithDetails(videoId);
+    return this.mapToCommentInterface(videoDetails.comments);
+  }
+
+  
+
+  async getRecommendedVideos(subcategoryId: string): Promise<RecommendedVideo[]> {
     try {
-      const response = await axios.get(`${this.apiUrl}/videos/${videoId}/comments`);
+      const response = await axios.get('/api/video/recommended', {
+        params: { subcategoryId }
+      });
+
       return response.data;
     } catch (error) {
-      console.error(`Error fetching comments for video ${videoId}:`, error);
+      console.error('Hiba a kapcsolódó videók lekérése során:', error);
       throw error;
     }
   }
 
-  async addComment(videoId: string, comment: Partial<Comment>): Promise<Comment> {
+  async getVideosByCategory(categoryId: string): Promise<CategoryVideo[]> {
     try {
-      const response = await axios.post(`${this.apiUrl}/videos/${videoId}/comments`, comment);
+      const response = await axios.get('/api/video/category', {
+        params: { categoryId }
+      });
+
       return response.data;
     } catch (error) {
-      console.error(`Error adding comment to video ${videoId}:`, error);
+      console.error('Hiba a kategória videóinak lekérése során:', error);
       throw error;
     }
   }
 
-/*   async likeVideo(videoId: string): Promise<{likes: number}> {
+  async getVideosBySubcategory(subcategoryId: string): Promise<SubcategoryVideo[]> {
     try {
-      const response = await axios.post(`${this.apiUrl}/video/${videoId}/like`);
+      const response = await axios.get('/api/video/subcategory', {
+        params: { subcategoryId }
+      });
+
       return response.data;
     } catch (error) {
-      console.error(`Error liking video ${videoId}:`, error);
+      console.error('Hiba az alkategória videóinak lekérése során:', error);
       throw error;
     }
   }
 
-  async dislikeVideo(videoId: string): Promise<{dislikes: number}> {
+  async getHomepageVideos(): Promise<HomeVideos[]> {
     try {
-      const response = await axios.post(`${this.apiUrl}/videos/${videoId}/dislike`);
-      return response.data;
-    } catch (error) {
-      console.error(`Error disliking video ${videoId}:`, error);
-      throw error;
-    }
-  } */
+      this.isLoadingHomepageSubject.next(true);
 
-  async getVideosByCategory(categoryName: string): Promise<Video[]> {
-    try {
-      const response = await axios.get(`${this.apiUrl}/videos/category/${categoryName}`);
+      const response = await axios.get('/api/video/homepage');
+
+      if (response.data) {
+        this.homeCategoriesSubject.next(response.data);
+      }
+
       return response.data;
     } catch (error) {
-      console.error(`Error fetching videos for category ${categoryName}:`, error);
+      console.error('Error fetching homepage videos:', error);
+      throw error;
+    } finally {
+      this.isLoadingHomepageSubject.next(false);
+    }
+  }
+
+  async getUserVideos(userName: string): Promise<UserVideo[]> {
+    try {
+      const response = await axios.get('/api/user/videos', {
+        params: { userName }
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Hiba a felhasználó videóinak lekérése során:', error);
       throw error;
     }
   }
-}
 
-/*
+  async addComment(videoId: string, commentText: string): Promise<VideoComment> {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication token not found. Please log in.');
+      }
 
-{
-    "video": {
-        "guid": "82395f86-66d3-4193-80d2-84d4e84c0ca5",
-        "title": "Introduction to SQL",
-        "description": "A beginner tutorial on SQL.",
-        "url": "/videos/1",
-        "base_image_url": "/images/vid1.jpg",
-        "views": 1500,
-        "uploaded_at": "2025-01-01 10:00:00",
-        "uploader_id": "54fec882-d527-41dd-b12d-fcf9b56005cb",
-        "uploader": "john_doe",
-        "uploader_pic": "http://example.com/john.png"
-    },
-    "reactions": {
-        "useful": 2,
-        "notuseful": 0
-    },
-    "comments": [
+      const response = await axios.post(`/api/create-comment/${videoId}`,
         {
-            "guid": "ffdbd219-5b0c-4cd4-8b84-3f499580d168",
-            "username": "david_wilson",
-            "user_guid": "a6784a48-9137-4407-b50c-ec2153a697d0",
-            "user_pic": "http://example.com/david.png",
-            "text": "Thanks for this!",
-            "created_at": "2025-01-08 11:15:00",
-            "modified_at": null
+          text: commentText
         },
         {
-            "guid": "8635e5c0-b463-4f89-a9e4-e6fe3527152c",
-            "username": "isabella_hall",
-            "user_guid": "2233a7c6-3b66-4eb8-9edb-a59b686e0772",
-            "user_pic": "http://example.com/isabella.png",
-            "text": "Perfect for beginners.",
-            "created_at": "2025-01-11 18:00:00",
-            "modified_at": null
-        },
-        {
-            "guid": "84efc06c-5b5b-4c8d-85db-5ee0a8d2485f",
-            "username": "jack_baker",
-            "user_guid": "2dbfb117-b0d9-4ecd-9cea-6e38ed906498",
-            "user_pic": "http://example.com/jack.png",
-            "text": "Enjoyed the session.",
-            "created_at": "2025-01-12 19:15:00",
-            "modified_at": null
-        },
-        {
-            "guid": "19173576-eff9-4956-8314-44f0bb5ea34e",
-            "username": "jane_smith",
-            "user_guid": "f90e7c7b-8749-484e-9730-488aa157d3c5",
-            "user_pic": "http://example.com/jane.png",
-            "text": "Very helpful, thanks.",
-            "created_at": "2025-01-03 15:00:00",
-            "modified_at": "2025-01-03 15:10:00"
-        },
-        {
-            "guid": "5c7c7b6f-89e5-40ba-8cf7-36a523ba5635",
-            "username": "john_doe",
-            "user_guid": "54fec882-d527-41dd-b12d-fcf9b56005cb",
-            "user_pic": "http://example.com/john.png",
-            "text": "Great video!",
-            "created_at": "2025-01-03 14:00:00",
-            "modified_at": null
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         }
-    ]
+      );
+
+      // If successful, reload the video details to get the updated comments
+      if (response.data) {
+        // Reload the video with fresh data from the server
+        await this.getVideoWithDetails(videoId);
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      throw error;
+    }
+  }
+
+  async addReaction(videoId: string, action: 'like' | 'dislike'): Promise<void> {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in.');
+    }
+
+    await axios.post(`/api/reaction/${videoId}`,
+      { action }, // { action: 'like' } vagy 'dislike'
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    // Frissítjük az aktuális videót az új like/dislike számmal
+    await this.getVideoWithDetails(videoId);
+  } catch (error) {
+    console.error('Error adding reaction:', error);
+    throw error;
+  }
 }
 
-*/
+
+  async uploadVideo(
+    videoFile: File,
+    thumbnailFile: File,
+    title: string,
+    description: string,
+    categoryId: string,
+    subcategoryId: string,
+    tagsText: string
+  ): Promise<string> {
+    try {
+      // Check if token exists
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication token not found. Please log in.');
+      }
+
+      // Convert tagsText to array (splitting by commas and trimming whitespace)
+      const tags = tagsText
+        .split(',')
+        .map(tag => tag.trim())
+        .filter(tag => tag.length > 0);
+
+      // Create FormData object to send files and data
+      const formData = new FormData();
+      formData.append('videoFile', videoFile);
+      formData.append('thumbnailFile', thumbnailFile);
+
+      // Add other metadata
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('categoryId', categoryId);
+      formData.append('subcategoryId', subcategoryId);
+
+      // Add tags as a JSON string
+      formData.append('tags', JSON.stringify(tags));
+
+      // Make the API request
+      const response = await axios.post('/api/video/upload', formData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        },
+        onUploadProgress: (progressEvent) => {
+          // You can implement progress tracking here if needed
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
+          console.log(`Upload progress: ${percentCompleted}%`);
+        }
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Error uploading video:', error);
+      throw error;
+    }
+  }
+}

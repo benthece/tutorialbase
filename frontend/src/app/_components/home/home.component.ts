@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { fromEvent, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { Video } from '../../_interfaces/video';
-import { VideoService } from '../../_services/video-service.service';
+//import { VideoService } from '../../_services/video-service.service';
 //import { VideoPageService } from '../../_services/video-page-service.service'; //új
 
 @Component({
@@ -29,16 +29,16 @@ export class HomeComponent implements AfterViewInit, OnDestroy, OnInit {
   //isLoading: boolean = true; //új
   //error: string | null = null; //új
 
-  constructor(private videoService: VideoService, private renderer: Renderer2) { }
+  constructor(/* private videoService: VideoService, */ private renderer: Renderer2) { }
   //constructor(private videoPageService: VideoPageService, private renderer: Renderer2) { } //új
 
   ngOnInit() {
 
-    const allVideos = this.videoService.getAllVideos();
+/*     const allVideos = this.videoService.getAllVideos();
 
     this.category1Videos = [...allVideos];
     this.category2Videos = [...allVideos];
-    this.category3Videos = [...allVideos];
+    this.category3Videos = [...allVideos]; */
 
     //this.loadCategoryVideos(); //új
   }

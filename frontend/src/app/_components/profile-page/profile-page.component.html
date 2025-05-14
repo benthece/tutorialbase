@@ -2,7 +2,6 @@
     <!-- Header with banner and profile image -->
     <div class="profile-header">
         <div class="banner-image">
-            <!-- Blue and brown marble-like banner image -->
         </div>
         <div class="profile-picture">
             <!-- Profile picture thumbnail -->
@@ -12,9 +11,13 @@
     </div>
 
     <!-- User bio section -->
-    <div class="user-bio">
+    <div class="user-bio" [class.expanded]="bioExpanded" [class.button-visible]="isMobile">
         <p>This will contain the users bio. This will contain the users bio. This will contain the users bio. This will contain the users bio. This will contain the users bio. This will contain the users bio. This will contain the users bio. This will contain the users bio. This will contain the users bio. his will contain the users bio. This will contain the users bio. This will contain the users bio. his will contain the users bio. This will contain the users bio. This will contain the users bio.</p>
     </div>
+
+    <button class="toggle-bio" *ngIf="isMobile" (click)="bioExpanded = !bioExpanded">
+        {{ bioExpanded ? 'Show less' : 'Show more' }}
+    </button>
 
     <!-- Videos section -->
     <div class="videos-section">

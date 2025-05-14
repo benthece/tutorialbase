@@ -3,9 +3,25 @@
         <img [src]="avatarSrc" alt="User avatar">
     </div>
     <div class="comment-container">
+        <div class="report-button" *ngIf="authService.isAuthenticated">
+            <button *ngIf="authService.isAdmin" class="delete-icon" title="Komment törlése" (click)="deleteComment()" [disabled]="isDeleting">
+                <i class="fas fa-trash"></i>
+            </button>
+            <button *ngIf="!authService.isAdmin" class="report-icon" title="Komment jelentése" (click)="openReportModal()">
+                <i class="fas fa-exclamation-circle"></i>
+            </button>
+        </div>
         <div class="username-container">
             <span class="username">{{ username }}</span>
         </div>
         <div class="comment-text">{{ commentText }}</div>
     </div>
 </div>
+
+<!-- Report Modal -->
+<app-report-modal 
+    *ngIf="showReportModal" 
+    [itemId]="commentId" 
+    itemType="comment"
+    (close)="closeReportModal()">
+</app-report-modal>

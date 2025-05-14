@@ -1,91 +1,101 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 import { Video } from '../../_interfaces/video';
 import { CommonModule } from '@angular/common';
-//  import { VideoPageService } from '../../_services/video-page-service.service'; //új
+import { UserAuthService } from '../../_services/user-auth-service.service';
+import { ReportModalComponent } from '../report-modal/report-modal.component';
+import { AdminServiceService } from '../../_services/admin-service.service';
+import { Router } from '@angular/router';
+import { VideoPageService } from '../../_services/video-page-service.service';
 
 @Component({
   selector: 'app-video',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReportModalComponent],
   templateUrl: './video.component.html',
   styleUrl: './video.component.css'
 })
 export class VideoComponent implements OnInit {
   @Input() video: Video | undefined;
-  //@Input() videoId: string | undefined; //új
+  @Output() videoDeleted = new EventEmitter<string>();
 
   isExpanded = false;
-  likes = 9;
-  dislikes = 1;
-  //isLoading = false; //új
+  showReportModal = false;
+  isDeleting = false;
 
-  //constructor(private videoPageService: VideoPageService) { } //új
+  constructor(public authService: UserAuthService, private adminService: AdminServiceService, private router: Router, private videoPageService: VideoPageService) { }
 
-    ngOnInit() {
-      if (!this.video) {
-        this.video = {
-          id: '1',
-          title: 'Default Video',
-          uploaderName: 'Default User',
-          thumbnailSrc: './assets/test.jpg',
-          avatarSrc: './assets/profilepic.jpg',
-          videoSrc: './assets/SampleVideo_1280x720_1mb.mp4',
-          views: 0,
-          uploadDate: "2010.02.11.",
-          description: 'No description available'
-        };
+  ngOnInit() {
+    if (!this.video) {
+      this.video = {
+        id: '1',
+        title: '',
+        uploaderName: '',
+        thumbnailSrc: '',
+        avatarSrc: '',
+        //videoSrc: './assets/SampleVideo_1280x720_1mb.mp4',
+        views: 0,
+        uploadDate: new Date(''),
+        description: '',
+        reactions: {
+        useful: 0,
+        notuseful: 0,
+        //userReaction: 'none',
       }
+      };
     }
-
-/*   async ngOnInit() { //új
-    // If we have a videoId but no video, fetch the video
-    if (!this.video && this.videoId) {
-      this.isLoading = true;
-      try {
-        this.video = await this.videoPageService.getVideoById(this.videoId);
-        this.isLoading = false;
-      } catch (error) {
-        console.error('Error fetching video:', error);
-        this.isLoading = false;
-      }
-    }
-  } */
+  }
 
   toggleDescription() {
     this.isExpanded = !this.isExpanded;
   }
 
-  /*   incrementLikes() {
-      this.likes++;
-    }
+  openReportModal() {
+    this.showReportModal = true;
+  }
   
-    incrementDislikes() {
-      this.dislikes++;
-    } */
-
-/*   async incrementLikes() { //új
-    if (this.video) {
-      try {
-        const response = await this.videoPageService.likeVideo(this.video.id);
-        this.likes = response.likes;
-      } catch (error) {
-        console.error('Error liking video:', error);
-        // Optimistic UI update
-        this.likes++;
-      }
-    }
+  closeReportModal() {
+    this.showReportModal = false;
   }
 
-  async incrementDislikes() { //új
-    if (this.video) {
-      try {
-        const response = await this.videoPageService.dislikeVideo(this.video.id);
-        this.dislikes = response.dislikes;
-      } catch (error) {
-        console.error('Error disliking video:', error);
-        // Optimistic UI update
-        this.dislikes++;
-      }
+  reactToVideo(action: 'like' | 'dislike') {
+  if (!this.video?.id) return;
+
+  this.videoPageService.addReaction(this.video.id, action)
+    .then(() => {
+      
+      this.loadVideo();
+    })
+    .catch(error => {
+      console.error('Nem sikerült a reakció:', error);
+    });
+}
+
+async loadVideo() {
+  if (!this.video?.id) return;
+
+  try {
+    const updated = await this.videoPageService.getVideoById(this.video.id);
+    this.video = updated;
+  } catch (err) {
+    console.error('Hiba a videó újratöltésekor:', err);
+  }
+}
+
+  async deleteVideo() {
+    if (!this.authService.isAdmin || !this.video?.id) {
+      return;
     }
-  } */
+      try {
+        this.isDeleting = true;
+        await this.adminService.deleteVideo(this.video.id);
+        this.videoDeleted.emit(this.video.id);
+        
+        this.router.navigate(['/']);
+      } catch (error) {
+        console.error('Hiba a videó törlésekor:', error);
+        alert('A videó törlése sikertelen.');
+      } finally {
+        this.isDeleting = false;
+      }
+  }
 }

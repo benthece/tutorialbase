@@ -1,0 +1,16 @@
+<div class="comment-wrapper">
+    <div class="avatar">
+        <img [src]="profilePictureUrl" alt="Profilkép"> 
+    </div>
+    <div class="comment-container">
+        <div class="username-container">
+            <span class="username">{{ userName || 'Bejelentkezett felhasználó' }}</span>
+        </div>
+        <div class="input-group">
+            <div class="comment-text">
+                <input class="comment-input" type="text" placeholder="Írj egy kommentet..." [(ngModel)]="commentText">
+            </div>
+            <button class="send" (click)="sendComment()">Küldés</button>
+        </div>
+    </div>
+</div>

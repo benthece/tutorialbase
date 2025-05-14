@@ -1,3 +1,4 @@
+/* Updated CSS with better mobile responsiveness */
 * {
     box-sizing: border-box;
 }
@@ -8,6 +9,7 @@
     width: 100%;
     max-width: 945px;
     position: relative;
+    margin-bottom: 50px;
 }
 
 .avatar {
@@ -29,52 +31,6 @@
     padding: 15px;
     color: white;
     border: 2px solid #808080;
-    position: relative; /* Add this to position the report button */
-}
-
-.report-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 1;
-}
-
-.report-icon {
-    background-color: transparent;
-    border: none;
-    color: #adb5bd;
-    font-size: 16px;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s, background-color 0.2s;
-}
-
-.report-icon:hover {
-    color: #ff9494;
-    
-}
-
-.delete-icon {
-    background-color: transparent;
-    border: none;
-    color: #adb5bd;
-    font-size: 16px;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s, background-color 0.2s;
-}
-
-.delete-icon:hover {
-    color: #ff9494;
-    
 }
 
 .username-container {
@@ -93,17 +49,46 @@
     word-break: break-word;
 }
 
-.comment-text {
-    font-size: 15px;
-    line-height: 1.4;
-    color: white;
+/* Flexbox container for input and button */
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin-top: 5px;
+}
+
+.comment-text {
+    flex: 1;
+    line-height: 1.4;
     padding-left: 15px;
-    word-wrap: break-word;
+}
+
+.comment-input {
+    background-color: #495057;
+    border: none;
+    color: white;
+    font-size: 15px;
+    width: 100%;
+}
+
+.send {
+    padding: 5px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #7ecc70e7;
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    white-space: nowrap;
 }
 
 /* Media queries for responsiveness */
 @media screen and (max-width: 480px) {
+    .comment-wrapper {
+        margin-bottom: 30px;
+    }
+
     .avatar img {
         width: 40px;
         height: 40px;
@@ -117,9 +102,22 @@
         font-size: 14px;
         padding: 3px 8px;
     }
-
+    
     .comment-text {
         font-size: 14px;
         padding-left: 8px;
+        width: 100%; /* Ensure it takes full width in mobile view */
+    }
+    
+    /* For very small screens, stack the input and button */
+    .input-group {
+        flex-direction: column;
+        align-items: stretch; /* Changed from flex-start to stretch for full width */
+        width: 100%;
+    }
+    
+    .send {
+        align-self: flex-end;
+        margin-top: 8px;
     }
 }

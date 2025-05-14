@@ -2,9 +2,16 @@
     <div class="outer-border">
         <div class="content-wrapper">
             <div class="thumbnail-container">
-                <!--there should be an img under the button-->
-                <label for="image-upload" class="select-image-btn">Kép kiválasztása</label>
-                <input type="file" id="image-upload" accept=".jpg">
+                <div class="thumbnail-preview" [ngClass]="{'no-image': !selectedImage}">
+                    <img *ngIf="selectedImage" [src]="selectedImage" alt="Selected Thumbnail">
+                </div>
+                <div class="buttons-area">
+                    <label for="image-upload" class="select-image-btn">Kép kiválasztása</label>
+                    <input type="file" id="image-upload" accept=".jpg" (change)="onImageSelected($event)">
+                    <label for="video-upload" class="select-video-btn">Videó kiválasztása</label>
+                    <input type="file" id="video-upload" accept=".mp4">
+                </div>
+                
             </div>
 
             <div class="form-section">
@@ -33,11 +40,6 @@
 
                 <div class="form-group">
                     <input type="text" placeholder="Add meg a tageket (max 5)" class="form-control">
-                </div>
-
-                <div class="text-center">
-                    <label for="video-upload" class="select-video-btn">Videó kiválasztása</label>
-                    <input type="file" id="video-upload" accept=".mp4">
                 </div>
 
                 <button class="upload-btn">Feltöltés</button>

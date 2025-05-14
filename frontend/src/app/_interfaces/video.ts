@@ -2,13 +2,16 @@ export interface Video {
     id: string; //giud
     title: string;
     description: string; //description?: string;
-    //url
-    thumbnailSrc: string; //base_image_url
-    //uploadedAt
     uploaderName: string;
-    //uploaderId: string; //nem kell
+    thumbnailSrc: string;
     avatarSrc: string;
-    videoSrc: string;
+    //videoSrc: string;
+    //subcategoryId: string;
     views: number; //views?: number;
-    uploadDate: string;
+    uploadDate: Date;
+    reactions: {
+    useful: number;
+    notuseful: number;
+    //userreaction: string;
+    };
 }

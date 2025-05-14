@@ -11,6 +11,9 @@ export class UserAuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
+  private isAdminSubject = new BehaviorSubject<boolean>(false);
+  public isAdmin$ = this.isAdminSubject.asObservable();
+
   constructor(private router: Router) {
     this.checkAuthStatus();
   }
@@ -22,6 +25,10 @@ export class UserAuthService {
 
   get isAuthenticated(): boolean {
     return this.isAuthenticatedSubject.value;
+  }
+
+  get isAdmin(): boolean {
+    return this.isAdminSubject.value;
   }
 
   private hashPassword(password: string): string {
@@ -38,6 +45,12 @@ export class UserAuthService {
     if (response.data && response.data.token) {
       this.isAuthenticatedSubject.next(true);
     }
+
+    if (response.data && response.data.token) {
+    this.isAuthenticatedSubject.next(true);
+    await this.checkAdminStatus();
+  }
+
     return response;
   }
 
@@ -55,8 +68,18 @@ export class UserAuthService {
     return response;
   }
 
-  getUser(): Promise<any> {
-    return axios.get('/api/user', { headers: { Authorization: 'Bearer ' + localStorage.getItem('token') } });
+  async checkAdminStatus(): Promise<boolean> {
+    try {
+      const response = await axios.get('/api/user/isAdmin', {
+        headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
+      });
+      const isAdmin = response.data.isAdmin || false;
+      this.isAdminSubject.next(isAdmin);
+      return isAdmin;
+    } catch (error) {
+      this.isAdminSubject.next(false);
+      return false;
+    }
   }
 
   async logout(): Promise<any> {
@@ -71,5 +94,9 @@ export class UserAuthService {
       this.isAuthenticatedSubject.next(false);
       throw error;
     }
+  }
+
+  getUser(): Promise<any> {
+    return axios.get('/api/user', { headers: { Authorization: 'Bearer ' + localStorage.getItem('token') } });
   }
 }

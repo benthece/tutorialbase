@@ -1,0 +1,219 @@
+.profile-settings-container {
+    display: flex;
+    justify-content: center;
+}
+
+.settings-section {
+    width: 100%;
+    max-width: 1300px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.setting-card {
+    display: flex;
+    padding: 25px 40px;
+    background-color: #495057;
+    border-radius: 10px;
+    align-items: center;
+    border: 2px solid #808080;
+}
+
+.setting-label {
+    flex: 0 0 180px;
+    font-size: 20px;
+    font-weight: 500;
+    color: white;
+}
+
+.setting-control {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.button-group {
+    display: flex;
+    gap: 20px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+/* styling for the bio card */
+.bio-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding-bottom: 25px;
+}
+
+.bio-header {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.bio-textarea-container {
+    width: 100%;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    padding: 0px;
+    border-radius: 8px;
+    border: none;
+    background-color: #343A40;
+    color: white;
+    resize: vertical;
+    font-size: 16px;
+}
+
+textarea::placeholder {
+    color: #808080;
+}
+
+.file-select-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #343A40;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+    text-align: center;
+    min-width: 160px;
+}
+
+.file-select-button:hover {
+    background-color: #292d32;
+}
+
+.upload-button {
+    padding: 12px 24px;
+    background-color: #7ecc70e7;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+    min-width: 160px;
+}
+
+.upload-button:hover {
+    background-color: #a0ea93e7;
+}
+
+.upload-button:disabled {
+    background-color: #7db87d;
+    cursor: not-allowed;
+}
+
+.delete-button {
+    padding: 12px 24px;
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+    min-width: 160px;
+}
+
+.delete-button:hover {
+    background-color: #c9302c;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+    .setting-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+        padding: 20px;
+    }
+
+    .setting-label {
+        flex: unset;
+        width: 100%;
+        font-size: 18px;
+        text-align: center;
+    }
+
+    .setting-control {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .button-group {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+    }
+
+    .button-container {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .file-select-button,
+    .upload-button,
+    .delete-button {
+        display: block;
+        width: 100%;
+        max-width: 280px;
+        font-size: 16px;
+        padding: 12px 24px;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    .bio-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        text-align: center;
+    }
+
+    textarea {
+        font-size: 15px;
+    }
+
+    .profile-settings-container {
+        padding: 0 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .setting-card {
+        padding: 15px;
+    }
+
+    .setting-label {
+        font-size: 16px;
+    }
+
+    .file-select-button,
+    .upload-button,
+    .delete-button {
+        max-width: 260px;
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+    
+
+    textarea {
+        height: 80px;
+    }
+}

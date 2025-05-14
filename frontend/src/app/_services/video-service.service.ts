@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+/* import { Injectable } from '@angular/core';
 import { Video } from '../_interfaces/video';
 
 @Injectable({
@@ -77,3 +77,4 @@ export class VideoService {
     return this.videos.filter(video => video.id !== currentVideoId);
   }
 }
+ */

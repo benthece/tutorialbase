@@ -6,6 +6,7 @@ import { authGuard } from './_guards/auth-guard.guard';
 import { VideoHistoryPageComponent } from './_components/video-history-page/video-history-page.component';
 import { ProfilePageComponent } from './_components/profile-page/profile-page.component';
 import { SettingsPageComponent } from './_components/settings-page/settings-page.component';
+import { SearchPageComponent } from './_components/search-page/search-page.component';
 
 
 export const routes: Routes = [
@@ -16,6 +17,7 @@ export const routes: Routes = [
     { path: 'video', redirectTo: '/home', pathMatch: 'full' },
     { path: 'user/:username', component: ProfilePageComponent }, //új
     { path: 'user', redirectTo: '/home', pathMatch: 'full' }, //új
+    {path: 'search', component: SearchPageComponent},
 
     {
         path: 'upload',

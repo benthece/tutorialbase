@@ -1,9 +1,11 @@
+/* video-page.component.scss */
 .page-container {
     display: flex;
     gap: 24px;
     padding: 24px;
     max-width: 1400px;
     margin: 0 auto;
+    justify-content: center;
 }
 
 .left-column {
@@ -23,11 +25,8 @@
 .comment-section {
     width: 100%;
     margin-top: 16px;
-}
-
-.recommended-videos {
-    width: 360px;
-    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .section-title {
@@ -36,13 +35,18 @@
     font-size: 18px;
 }
 
+.recommended-videos {
+    width: 360px;
+    flex-shrink: 0;
+}
+
 .video-list {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-.video-item{
+.video-item {
     margin-bottom: 16px;
 }
 
@@ -50,26 +54,88 @@
     margin-bottom: 16px;
 }
 
+.show-more-comments {
+    background-color: #343A40;
+    color: white;
+    border: 1px solid #808080;
+    border-radius: 8px;
+    padding: 8px 16px;
+    margin-top: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    align-self: start;
+    transition: background-color 0.2s;
+}
 
-.comment-section {
-    width: 100%;
-    margin-top: 16px;
-    display: flex;
-    flex-direction: column;
+.show-more-comments:hover {
+    background-color: #495057;
+}
+
+.hidden {
+    display: none;
 }
 
 /* responsive layout */
 @media (max-width: 1200px) {
     .page-container {
         flex-direction: column;
+        align-items: center;
+    }
+
+    .left-column {
+        flex-direction: column;
+        align-items: center;
+        max-width: 900px;
+        width: 100%;
     }
 
     .recommended-videos {
         width: 100%;
+        margin-top: 24px;
+        max-width: 1000px;
     }
 
     .video-list {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 16px;
+    }
+    
+    .video-item {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-container {
+        padding: 16px;
+        gap: 16px;
+    }
+    
+    .left-column {
+        gap: 16px;
+    }
+    
+    .video-list {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+
+    .main-content, .comment-section {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .page-container {
+        padding: 12px;
+        gap: 12px;
+    }
+    
+    .video-list {
+        grid-template-columns: 1fr;
+    }
+
+    .comment-item {
+        margin-bottom: 5px;
     }
 }

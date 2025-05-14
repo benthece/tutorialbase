@@ -1,1 +1,55 @@
-<p>settings-page works!</p>
+<!-- profile-settings.html -->
+<div class="profile-settings-container">
+    <div class="settings-section">
+        <div class="setting-card">
+            <div class="setting-label">Háttérkép:</div>
+            <div class="setting-control">
+                <div class="button-group">
+                    <input type="file" id="backgroundImageInput" accept="image/*" hidden>
+                    <label for="backgroundImageInput" class="file-select-button">Kép kiválasztása</label>
+                    <button class="upload-button">
+                        Feltöltés
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="setting-card">
+            <div class="setting-label">Profilkép:</div>
+            <div class="setting-control">
+                <div class="button-group">
+                    <input type="file" id="profileImageInput" accept="image/*" hidden>
+                    <label for="profileImageInput" class="file-select-button">Kép kiválasztása</label>
+                    <button class="upload-button">
+                        Feltöltés
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="setting-card bio-card">
+            <div class="bio-header">
+                <div class="setting-label">Profil Bio:</div>
+                <div class="button-container">
+                    <button class="upload-button">
+                        Feltöltés
+                    </button>
+                </div>
+            </div>
+            <div class="bio-textarea-container">
+                <textarea placeholder="Írd be az új szöveget..."></textarea>
+            </div>
+        </div>
+
+        <div class="setting-card">
+            <div class="setting-label">Fiók törlése</div>
+            <div class="setting-control">
+                <div class="button-container">
+                    <button class="delete-button">
+                        Törlés
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

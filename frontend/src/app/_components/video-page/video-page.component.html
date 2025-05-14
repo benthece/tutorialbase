@@ -1,3 +1,4 @@
+<!-- video-page.component.html -->
 <div class="page-container">
     <div class="left-column">
         <div class="main-content">
@@ -6,11 +7,26 @@
 
         <div class="comment-section">
             <h3 class="section-title">Kommentek</h3>
-            <div *ngFor="let comment of comments" class="comment-item">
-                <app-comment [username]="comment.username"
-                [avatarSrc]="comment.avatarSrc" [commentText]="comment.text">
-            </app-comment>
+            <div>
+                <app-add-comment *ngIf="authService.isAuthenticated"></app-add-comment>
             </div>
+
+            <!-- Display comments based on expanded state -->
+            <div *ngFor="let comment of comments; let i = index" class="comment-item"
+                [class.hidden]="isMobileView && !commentsExpanded && i > 0">
+                <app-comment [username]="comment.username" [avatarSrc]="comment.avatarSrc" [commentText]="comment.text">
+                </app-comment>
+            </div>
+
+            <button *ngIf="(!isMobileView) || (isMobileView && commentsExpanded)" class="show-more-comments">
+                Több komment betöltése
+            </button>
+
+            <!-- Show more comments button -->
+            <button *ngIf="isMobileView && comments.length > 1" (click)="toggleCommentsExpanded()"
+                class="show-more-comments">
+                {{ commentsExpanded ? 'Kevesebb komment' : 'Mutass többet' }}
+            </button>
         </div>
     </div>
 
@@ -19,7 +35,7 @@
         <div class="video-list">
             <div *ngFor="let video of recommendedVideos" class="video-item">
                 <app-video-card [id]="video.id" [title]="video.title" [uploaderName]="video.uploaderName"
-                    [thumbnailSrc]="video.thumbnailSrc" [avatarSrc]="video.avatarSrc"> <!-- [duration]="video.duration" -->
+                    [thumbnailSrc]="video.thumbnail" [avatarSrc]="video.uploaderProfilePicture">
                 </app-video-card>
             </div>
         </div>
