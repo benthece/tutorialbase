@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
@@ -26,4 +27,5 @@ Route::group(['middleware' => 'auth:api'], function () {
         ->whereUuid('guid');
     Route::post('/reaction/{guid}', [VideoController::class, 'reaction'])
         ->whereUuid('guid');
+    Route::post('/user/is_admin', [AdminController::class, 'isAdmin']);
 });

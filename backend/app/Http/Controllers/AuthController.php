@@ -26,6 +26,7 @@ class AuthController extends Controller
         $token = Auth::login($user);
 
         $user = User::find($user->id);
+        User::where('id', $user->id)->update(['last_login' => NOW()]);
 
         return response()->json([
             'status' => 'success',
@@ -55,6 +56,8 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+        User::where('id', $user->id)->update(['last_login' => NOW()]);
+
         return response()->json([
             'status' => 'success',
             'user' => $user->only(['guid', 'username']),

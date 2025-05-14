@@ -72,6 +72,22 @@ $$
 DELIMITER ;
 
 DELIMITER $$
+CREATE OR REPLACE PROCEDURE is_admin(IN usr_guid CHAR(36))
+BEGIN
+    IF (SELECT privilege_id
+        FROM users
+        WHERE id = (SELECT id
+                    FROM users
+                    WHERE guid = usr_guid)) = 1 THEN
+        SELECT 'user is admin' AS message;
+    ELSE
+        SELECT 'user is not admin' AS message;
+    END IF;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_comments(
     IN vid_guid CHAR(36),
     IN offset_val INTEGER UNSIGNED
@@ -277,7 +293,16 @@ BEGIN
     DECLARE subcat_id INT;
     SELECT id INTO subcat_id FROM categories WHERE guid = subcat_guid;
 
-    SELECT videos.guid, title, username, profile_pic_url, url, base_image_url
+    SELECT videos.guid,
+           title,
+           (SELECT IFNULL((SELECT name FROM categories WHERE id = c.parent_id), name))   AS category,
+           (SELECT NULLIF(name, category))                                               AS subcategory,
+           (SELECT IFNULL((SELECT guid FROM categories WHERE id = c.parent_id), c.guid)) AS categ_id,
+           (SELECT NULLIF(c.guid, categ_id))                                             AS subcateg_id,
+           username,
+           profile_pic_url,
+           url,
+           base_image_url
     FROM videos
              INNER JOIN video_category vc on videos.id = vc.video_id
              INNER JOIN categories c on vc.category_id = c.id
@@ -347,15 +372,21 @@ BEGIN
     SELECT videos.guid,
            title,
            description,
+           (SELECT IFNULL((SELECT name FROM categories WHERE id = c.parent_id), name))   AS category,
+           (SELECT NULLIF(name, category))                                               AS subcategory,
+           (SELECT IFNULL((SELECT guid FROM categories WHERE id = c.parent_id), c.guid)) AS categ_id,
+           (SELECT NULLIF(c.guid, categ_id))                                             AS subcateg_id,
            url,
            base_image_url,
            views,
            uploaded_at,
-           users.guid      AS 'uploader_id',
-           username        AS 'uploader',
-           profile_pic_url AS 'uploader_pic'
+           users.guid                                                                    AS 'uploader_id',
+           username                                                                      AS 'uploader',
+           profile_pic_url                                                               AS 'uploader_pic'
     FROM videos
              JOIN users ON videos.user_id = users.id
+             JOIN video_category vc ON videos.id = vc.video_id
+             JOIN categories c ON vc.category_id = c.id
     WHERE videos.id = vid_id;
 END;
 $$
@@ -383,3 +414,11 @@ DELIMITER ;
 
 -- MIT szeretne az Adri?
 -- /api/recommended?catId={category_guid}
+
+-- admin végpont
+-- email api
+-- search végpont
+-- report
+-- reaction visszajelzés user_reaction: liked disliked none
+-- video data adja a subcategory id-t is
+-- user profile CHARACTER SET
