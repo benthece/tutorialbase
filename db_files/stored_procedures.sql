@@ -79,9 +79,9 @@ BEGIN
         WHERE id = (SELECT id
                     FROM users
                     WHERE guid = usr_guid)) = 1 THEN
-        SELECT 'user is admin' AS message;
+        SELECT 'true' AS message;
     ELSE
-        SELECT 'user is not admin' AS message;
+        SELECT 'false' AS message;
     END IF;
 END;
 $$
@@ -188,14 +188,20 @@ DELIMITER $$
 CREATE OR REPLACE PROCEDURE video_reactions(IN vid_guid CHAR(36))
 BEGIN
     DECLARE vid_id INTEGER UNSIGNED;
+    DECLARE upvote INT UNSIGNED DEFAULT 0;
+    DECLARE downvote INT UNSIGNED DEFAULT 0;
+
     SELECT id INTO vid_id FROM videos WHERE guid = vid_guid;
 
-    SELECT COUNT(IF(is_useful = TRUE, 1, NULL))  AS upvote,
-           COUNT(IF(is_useful = FALSE, 1, NULL)) AS downvote
+    SELECT COUNT(IF(is_useful = TRUE, 1, 0)),
+           COUNT(IF(is_useful = FALSE, 1, 0))
+    INTO upvote, downvote
     FROM reactions
     WHERE video_id = vid_id
       AND is_removed = 0
     GROUP BY video_id;
+
+    SELECT upvote, downvote;
 END;
 $$
 DELIMITER ;
@@ -255,9 +261,11 @@ DELIMITER ;
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_maincategories()
 BEGIN
-    SELECT id, name
+    SELECT guid, name
     FROM categories
-    WHERE parent_id IS NULL;
+    WHERE parent_id IS NULL
+    ORDER BY rand()
+    LIMIT 5;
 END;
 $$
 DELIMITER ;
@@ -335,7 +343,7 @@ END;
 $$
 DELIMITER ;
 
-DELIMITER $$
+/*DELIMITER $$
 CREATE OR REPLACE PROCEDURE user_login(
     IN uname VARCHAR(20),
     IN pword CHAR(36),
@@ -360,7 +368,7 @@ BEGIN
     END IF;
 END;
 $$
-DELIMITER ;
+DELIMITER ;*/
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_video(IN vid_guid CHAR(36))
@@ -388,6 +396,33 @@ BEGIN
              JOIN video_category vc ON videos.id = vc.video_id
              JOIN categories c ON vc.category_id = c.id
     WHERE videos.id = vid_id;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE search(IN srch_string VARCHAR(50), IN lim TINYINT)
+BEGIN
+    SELECT videos.guid,
+           title,
+           (SELECT IFNULL((SELECT name FROM categories WHERE id = c.parent_id), name))   AS category,
+           (SELECT NULLIF(name, category))                                               AS subcategory,
+           (SELECT IFNULL((SELECT guid FROM categories WHERE id = c.parent_id), c.guid)) AS categ_id,
+           (SELECT NULLIF(c.guid, categ_id))                                             AS subcateg_id,
+           username,
+           profile_pic_url,
+           description,
+           url,
+           base_image_url,
+           uploaded_at
+    FROM videos
+             INNER JOIN video_category vc on videos.id = vc.video_id
+             INNER JOIN categories c on vc.category_id = c.id
+             INNER JOIN users u on u.id = videos.user_id
+    WHERE title LIKE srch_string
+       OR (SELECT IFNULL((SELECT name FROM categories WHERE id = c.parent_id), name)) LIKE srch_string
+    ORDER BY 2 DESC
+    LIMIT lim;
 END;
 $$
 DELIMITER ;

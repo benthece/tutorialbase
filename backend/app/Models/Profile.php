@@ -13,7 +13,7 @@ class Profile extends Model
         if ($profile) {
             return [
                 'username' => $profile[0]->username,
-                'profilePicture' => $profile[0]->profile_pic_url,
+                'profilePicture' => env('APP_URL') . ':8000' . $profile[0]->profile_pic_url,
                 'profileThumbnail' => $profile[0]-> bg_image_url,
                 'bio' => $profile[0]->bio,
             ];

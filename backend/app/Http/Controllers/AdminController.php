@@ -11,6 +11,8 @@ class AdminController extends Controller
 {
     public function isAdmin(Request $request): JsonResponse {
         $user = Auth::user();
-        return response()->json(Admin::isAdmin($user->guid));
+        return response()->json(Admin::isAdmin($user->guid))
+            ->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods', 'POST');
     }
 }
