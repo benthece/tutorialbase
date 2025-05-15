@@ -13,7 +13,7 @@ import { UserServiceService } from '../../_services/user-service.service';
 export class HistoryCardComponent {
 
   @Input() video!: VideoHistoryItem;
-  @Output() onDelete = new EventEmitter<string>();
+  @Output() historyDeleted = new EventEmitter<string>();
 
   constructor(private router: Router, private userService: UserServiceService) { }
 
@@ -31,12 +31,12 @@ export class HistoryCardComponent {
 
   }
 
-  async deleteItem() {
+  async deleteHistory() {
     try {
       await this.userService.deleteHistoryItem(this.video.id);
-      this.onDelete.emit(this.video.id);
+      this.historyDeleted.emit(this.video.id);  // jelzem a szülőnek, hogy töröltem
     } catch (error) {
-      alert('Hiba történt az előzmény törlése során.');
+      console.error('Failed to delete history item:', error);
     }
   }
 }

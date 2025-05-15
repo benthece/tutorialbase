@@ -77,7 +77,7 @@ export interface VideoDetails {
     description: string;
     url: string;
     base_image_url: string;
-    views: number;
+    views: string;
     uploaded_at: string;
     uploader_id: string;
     uploader: string;
@@ -89,6 +89,7 @@ export interface VideoDetails {
     notuseful: number;
     reactionState: 'like' | 'dislike' | 'none' | 'not logged in';
   };
+  views: string;
   comments: Array<{
     guid: string;
     username: string;
@@ -149,24 +150,28 @@ export class VideoPageService {
   }
 
   mapToVideoInterface(videoDetails: VideoDetails): Video {
-    return {
-      id: videoDetails.video.guid,
-      title: videoDetails.video.title,
-      description: videoDetails.video.description,
-      uploaderName: videoDetails.video.uploader,
-      thumbnailSrc: videoDetails.video.base_image_url,
-      avatarSrc: videoDetails.video.uploader_pic,
-      url: videoDetails.video.url,
-      categ_id: videoDetails.video.categ_id,
-      views: videoDetails.video.views,
-      uploadDate: videoDetails.video.uploaded_at,
-      reactions: {
-        useful: videoDetails.reactions.useful,
-        notuseful: videoDetails.reactions.notuseful,
-        reactionState: videoDetails.reactions.reactionState
-      }
-    };
-  }
+
+  const externalViews = parseInt(videoDetails.views || '0', 10) || 0;
+  const totalViews = externalViews;
+
+  return {
+    id: videoDetails.video.guid,
+    title: videoDetails.video.title,
+    description: videoDetails.video.description,
+    uploaderName: videoDetails.video.uploader,
+    thumbnailSrc: videoDetails.video.base_image_url,
+    avatarSrc: videoDetails.video.uploader_pic,
+    url: videoDetails.video.url,
+    categ_id: videoDetails.video.categ_id,
+    views: totalViews.toString(),
+    uploadDate: videoDetails.video.uploaded_at,
+    reactions: {
+      useful: videoDetails.reactions.useful,
+      notuseful: videoDetails.reactions.notuseful,
+      reactionState: videoDetails.reactions.reactionState
+    }
+  };
+}
 
   mapToCommentInterface(apiComments: VideoDetails['comments']): Comment[] {
     return apiComments.map(comment => ({

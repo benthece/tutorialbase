@@ -1,5 +1,5 @@
 <div class="video-history-card">
-    <button class="close-button">×</button>
+    <button class="close-button" (click)="deleteHistory()">×</button>
     <img class="video-thumbnail" [src]="video.thumbnail" alt="Video thumbnail" (click)="navigateToVideo()"/>
 
     <div class="video-details">

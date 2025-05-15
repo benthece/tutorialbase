@@ -112,4 +112,6 @@ export class VideoPageComponent implements OnInit {
   toggleCommentsExpanded() {
     this.commentsExpanded = !this.commentsExpanded;
   }
+
+
 }

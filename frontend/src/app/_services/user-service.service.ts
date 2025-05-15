@@ -129,23 +129,33 @@ export class UserServiceService {
   }
 
   async getUserHistory(): Promise<VideoHistoryItem[]> {
-    try {
-      const response = await axios.post('/api/user/watch_history', {}, {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token')
-        }
-      });
-
-      if (!response.data || response.data === false) {
-        return [];
+  try {
+    const response = await axios.post('/api/user/watch_history', {}, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token')
       }
+    });
 
-      return response.data.data ?? [];
-    } catch (error) {
-      console.error('Error while fetching video watch history:', error);
-      throw error;
+    if (!response.data || response.data === false) {
+      return [];
     }
+
+    // Itt mappelünk
+    return response.data.map((item: any) => ({
+      id: item.guid,
+      thumbnail: item.base_image_url,
+      title: item.title,
+      username: item.uploader,
+      userProfilePicture: item.uploader_pic,
+      description: item.description,
+      uploadDate: item.uploaded_at,
+    })) as VideoHistoryItem[];
+
+  } catch (error) {
+    console.error('Error while fetching video watch history:', error);
+    throw error;
   }
+}
 
   async deleteHistoryItem(videoId: string): Promise<any> {
     try {

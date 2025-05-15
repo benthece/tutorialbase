@@ -16,7 +16,7 @@ export class VideoHistoryPageComponent implements OnInit {
   noHistory = false;
 
   constructor(private userService: UserServiceService) {}
-
+/* 
   async ngOnInit() {
     try {
       this.historyItems = await this.userService.getUserHistory();
@@ -25,5 +25,24 @@ export class VideoHistoryPageComponent implements OnInit {
       console.error('Hiba a videó előzmények betöltésekor:', error);
       this.noHistory = true;
     }
+  } */
+
+    async ngOnInit() {
+  await this.loadHistory();
+}
+
+async loadHistory() {
+  try {
+    this.historyItems = await this.userService.getUserHistory();
+    this.noHistory = this.historyItems.length === 0;
+  } catch (error) {
+    console.error('Error loading video history:', error);
+    this.noHistory = true;
   }
+}
+
+onHistoryDeleted(deletedVideoId: string) {
+  // újratöltjük a history-t törlés után
+  this.loadHistory();
+}
 }

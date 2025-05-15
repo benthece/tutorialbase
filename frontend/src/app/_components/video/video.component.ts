@@ -34,7 +34,7 @@ export class VideoComponent implements OnInit {
         thumbnailSrc: '',
         avatarSrc: '',
         categ_id: '',
-        views: 0,
+        views: '',
         uploadDate: '',
         description: '',
         reactions: {
@@ -107,5 +107,9 @@ export class VideoComponent implements OnInit {
     } finally {
       this.isDeleting = false;
     }
+  }
+
+    formatViewCount(views: number): string {
+    return views.toLocaleString();
   }
 }

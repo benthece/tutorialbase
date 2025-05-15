@@ -6,6 +6,6 @@
 
 <ng-container *ngIf="!noHistory">
   <ng-container *ngFor="let video of historyItems">
-    <app-history-card [video]="video"></app-history-card>
+    <app-history-card [video]="video" (historyDeleted)="onHistoryDeleted($event)"></app-history-card>
   </ng-container>
 </ng-container>

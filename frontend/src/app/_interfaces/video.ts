@@ -7,7 +7,7 @@ export interface Video {
     avatarSrc: string;
     url: string;
     categ_id: string;
-    views: number;
+    views: string;
     uploadDate: string;
     reactions: {
     useful: number;
