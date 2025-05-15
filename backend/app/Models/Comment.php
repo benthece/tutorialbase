@@ -17,7 +17,7 @@ class Comment extends Model
                 "guid" => $comment->guid,
                 "username" => $comment->username,
                 "user_guid" => $comment->user_guid,
-                "user_pic" => $comment->user_pic,
+                "user_pic" => env('APP_URL') . ":8000" . $comment->user_pic,
                 "text" => $comment->text,
                 "created_at" => $comment->created_at,
                 "modified_at" => $comment->modified_at,

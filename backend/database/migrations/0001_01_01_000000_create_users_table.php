@@ -26,7 +26,7 @@ return new class extends Migration
             $table->timestamp('pw_modified_at')->nullable();
             $table->string('profile_pic_url', 50)->nullable();
             $table->string('bg_image_url', 50)->nullable();
-            $table->string('bio', 100)->nullable();
+            $table->longText('bio')->nullable();
             $table->foreignId('privilege_id')->default(3)->constrained('user_privileges', 'id');
             $table->unsignedTinyInteger('wishes')->default(5);
             $table->timestamp('last_login')->nullable();

@@ -112,4 +112,30 @@ class Video extends Model
         }
         return $toReturn;
     }
+
+    public static function getMainCategories(): array {
+        $response = DB::select("call get_maincategories()");
+        $categories = [];
+
+        foreach ($response as $category) {
+            $categories[] = [
+                "guid" => $category->guid,
+                "name" => $category->name,
+            ];
+        }
+        return $categories;
+    }
+
+    public static function getSubCategories(string $mainCatId): array {
+        $response = DB::select("call get_subcategories_for_main(?)", [$mainCatId]);
+        $subcategories = [];
+
+        foreach ($response as $subcategory) {
+            $subcategories[] = [
+                "guid" => $subcategory->guid,
+                "name" => $subcategory->name,
+            ];
+        }
+        return $subcategories;
+    }
 }

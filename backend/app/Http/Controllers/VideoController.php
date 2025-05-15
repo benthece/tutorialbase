@@ -58,6 +58,21 @@ class VideoController extends Controller
     }
 
     public function search(Request $request): JsonResponse {
-        return response()->json(Video::searchVideos("%$request->text%", $request->limit));
+        return response()->json(Video::searchVideos(strtolower("%$request->text%"), $request->limit));
+    }
+
+    public function getCategories(Request $request): JsonResponse
+    {
+        $mainCategories = Video::getCategories();
+        $categories = [];
+
+        foreach ($mainCategories as $category) {
+            $categories[] = [
+                "guid" => $category["guid"],
+                "name" => $category["name"],
+                "subcategories" => Video::getSubCategories($category["guid"])
+            ];
+        }
+        return response()->json($categories);
     }
 }

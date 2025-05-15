@@ -193,8 +193,8 @@ BEGIN
 
     SELECT id INTO vid_id FROM videos WHERE guid = vid_guid;
 
-    SELECT COUNT(IF(is_useful = TRUE, 1, 0)),
-           COUNT(IF(is_useful = FALSE, 1, 0))
+    SELECT COUNT(IF(is_useful = TRUE, 1, NULL)),
+           COUNT(IF(is_useful = FALSE, 1, NULL))
     INTO upvote, downvote
     FROM reactions
     WHERE video_id = vid_id
@@ -228,13 +228,29 @@ BEGIN
     IF present = 1 THEN
         CASE action
             WHEN 'like'
-                THEN UPDATE reactions SET is_useful = 1 WHERE (user_id = usr_id AND video_id = vid_id);
-                     UPDATE reactions SET is_removed = 0 WHERE (user_id = usr_id AND video_id = vid_id);
+                THEN IF (SELECT is_removed FROM reactions WHERE (video_id = vid_id AND user_id = usr_id)) = 0
+                THEN
+                    IF (SELECT is_useful FROM reactions WHERE (video_id = vid_id AND user_id = usr_id)) = 0 THEN
+                        UPDATE reactions SET is_useful = 1 WHERE (user_id = usr_id AND video_id = vid_id);
+                    ELSE
+                        UPDATE reactions SET is_removed = 1 WHERE (user_id = usr_id AND video_id = vid_id);
+                    END IF;
+                ELSE
+                    UPDATE reactions SET is_useful = 1 WHERE (user_id = usr_id AND video_id = vid_id);
+                    UPDATE reactions SET is_removed = 0 WHERE (user_id = usr_id AND video_id = vid_id);
+                END IF;
             WHEN 'dislike'
-                THEN UPDATE reactions SET is_useful = 0 WHERE (user_id = usr_id AND video_id = vid_id);
-                     UPDATE reactions SET is_removed = 0 WHERE (user_id = usr_id AND video_id = vid_id);
-            WHEN 'delete'
-                THEN UPDATE reactions SET is_removed = 1 WHERE (user_id = usr_id AND video_id = vid_id);
+                THEN IF (SELECT is_removed FROM reactions WHERE (video_id = vid_id AND user_id = usr_id)) = 0
+                THEN
+                    IF (SELECT is_useful FROM reactions WHERE (video_id = vid_id AND user_id = usr_id)) = 1 THEN
+                        UPDATE reactions SET is_useful = 0 WHERE (user_id = usr_id AND video_id = vid_id);
+                    ELSE
+                        UPDATE reactions SET is_removed = 1 WHERE (user_id = usr_id AND video_id = vid_id);
+                    END IF;
+                ELSE
+                    UPDATE reactions SET is_useful = 0 WHERE (user_id = usr_id AND video_id = vid_id);
+                    UPDATE reactions SET is_removed = 0 WHERE (user_id = usr_id AND video_id = vid_id);
+                END IF;
             END CASE;
         SELECT 'Reaction modified successfully.' AS message;
     ELSE
@@ -264,8 +280,7 @@ BEGIN
     SELECT guid, name
     FROM categories
     WHERE parent_id IS NULL
-    ORDER BY rand()
-    LIMIT 5;
+    ORDER BY 2;
 END;
 $$
 DELIMITER ;
@@ -275,7 +290,8 @@ CREATE OR REPLACE PROCEDURE get_subcategories_for_main(IN main_guid CHAR(36))
 BEGIN
     SELECT guid, name
     FROM categories
-    WHERE parent_id = (SELECT id FROM categories WHERE guid = main_guid);
+    WHERE parent_id = (SELECT id FROM categories WHERE guid = main_guid)
+    ORDER BY 2;
 END;
 $$
 DELIMITER ;
@@ -334,14 +350,19 @@ $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_user_uploaded(IN user_guid CHAR(36))
+CREATE OR REPLACE PROCEDURE get_user_uploaded(IN user_name VARCHAR(50))
 BEGIN
-    SELECT id, title, url, base_image_url
+    DECLARE usr_id INT UNSIGNED;
+    SELECT id INTO usr_id FROM users WHERE username = user_name;
+
+    SELECT videos.guid, title, username, profile_pic_url, base_image_url
     FROM videos
-    WHERE user_id = user_guid;
+             JOIN users u ON videos.user_id = u.id
+    WHERE user_id = usr_id;
 END;
 $$
 DELIMITER ;
+
 
 /*DELIMITER $$
 CREATE OR REPLACE PROCEDURE user_login(
@@ -423,6 +444,32 @@ BEGIN
        OR (SELECT IFNULL((SELECT name FROM categories WHERE id = c.parent_id), name)) LIKE srch_string
     ORDER BY 2 DESC
     LIMIT lim;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE watch_history(IN user_guid CHAR(36))
+BEGIN
+    DECLARE usr_id INT UNSIGNED;
+
+    SELECT id INTO usr_id FROM users WHERE guid = user_guid;
+
+    SELECT videos.guid,
+           title,
+           u2.username,
+           u2.profile_pic_url,
+           description,
+           url,
+           base_image_url,
+           uploaded_at
+    -- viewed_at
+    FROM videos
+             INNER JOIN watch_history wh ON videos.id = wh.video_id
+             INNER JOIN users u ON wh.user_id = u.id
+             INNER JOIN users u2 ON u2.id = videos.id
+    WHERE wh.user_id = usr_id
+    ORDER BY viewed_at DESC;
 END;
 $$
 DELIMITER ;

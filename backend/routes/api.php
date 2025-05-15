@@ -18,6 +18,8 @@ Route::get('/videos/category', [VideoController::class, 'getCategory']);
 Route::get('/videos/subcategory', [VideoController::class, 'getCategory']);
 Route::get('/home', [VideoController::class, 'getHomePage']);
 Route::get('/search', [VideoController::class, 'search']);
+Route::get('/user/uploaded/{username}', [ProfileController::class, 'userUploaded']);
+Route::get('/categories', [VideoController::class, 'getCategories']);
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -32,4 +34,5 @@ Route::group(['middleware' => 'auth:api'], function () {
         ->whereUuid('guid');
     Route::post('/user/is_admin', [AdminController::class, 'isAdmin']);
     Route::post('/user/info', [UserController::class, 'getInfo']);
+    Route::post('/user/watch_history', [ProfileController::class, 'watchHistory']);
 });

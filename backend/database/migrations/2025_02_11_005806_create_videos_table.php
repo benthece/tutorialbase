@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('guid')->default('00000000-0000-0000-0000-000000000000');
             $table->string('title', 32);
-            $table->string('description', 100);
+            $table->longText('description');
             $table->string('url', 50);
             $table->string('base_image_url', 50)->nullable();
             $table->unsignedInteger('views')->default(0);
