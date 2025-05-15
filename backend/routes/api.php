@@ -19,7 +19,9 @@ Route::get('/videos/subcategory', [VideoController::class, 'getCategory']);
 Route::get('/home', [VideoController::class, 'getHomePage']);
 Route::get('/search', [VideoController::class, 'search']);
 Route::get('/user/uploaded/{username}', [ProfileController::class, 'userUploaded']);
-Route::get('/categories', [VideoController::class, 'getCategories']);
+Route::get('/maincategories', [VideoController::class, 'getCategories']);
+Route::get('/subcategories/{guid}', [VideoController::class, 'getSubcategories']);
+Route::get('/categories/{guid}', [VideoController::class, 'getSubcatFromMain']);
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -35,4 +37,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/user/is_admin', [AdminController::class, 'isAdmin']);
     Route::post('/user/info', [UserController::class, 'getInfo']);
     Route::post('/user/watch_history', [ProfileController::class, 'watchHistory']);
+    Route::post('/user/delete_history_item', [ProfileController::class, 'deleteHistory']);
+    Route::post('/user/upload_profile_pic', [ProfileController::class, 'uploadProfilePicture']);
 });

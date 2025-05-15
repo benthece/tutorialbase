@@ -30,9 +30,9 @@ class Profile extends Model
                     "guid" => $video->guid,
                     "title" => $video->title,
                     "uploader" => $video->username,
-                    "uploader_pic" => $video->profile_pic_url,
+                    "uploader_pic" => env('APP_URL') . ':8000' . $video->profile_pic_url,
                     "description" => $video->description,
-                    "base_image_url" => $video->base_image_url,
+                    "base_image_url" => env('APP_URL') . ':8000' . $video->base_image_url,
                     "uploaded_at" => $video->uploaded_at,
                 ];
             }
@@ -56,5 +56,15 @@ class Profile extends Model
             }
         } else return false;
         return $videos;
+    }
+
+    public static function deleteHistory(string $vidGuid, string $userGuid): bool
+    {
+        return (bool)DB::delete('CALL delete_watch_history(?, ?)', [$vidGuid, $userGuid]);
+    }
+
+    public static function storeProfPic(string $path, string $userGuid): bool
+    {
+        return DB::statement('CALL store_prof_pic(?, ?)', [$path, $userGuid]);
     }
 }

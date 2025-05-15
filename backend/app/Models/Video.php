@@ -77,8 +77,8 @@ class Video extends Model
         return $toReturn;
     }
 
-    public static function getCategories(): array {
-        $response = DB::select("call get_maincategories()");
+    public static function getCategories(bool $isRandom): array {
+        $response = DB::select("call get_maincategories(?)", [$isRandom]);
         $toReturn = [];
 
         foreach ($response as $category) {
@@ -113,8 +113,8 @@ class Video extends Model
         return $toReturn;
     }
 
-    public static function getMainCategories(): array {
-        $response = DB::select("call get_maincategories()");
+    public static function getMainCategories(bool $isRandom): array {
+        $response = DB::select("call get_maincategories(?)", [$isRandom]);
         $categories = [];
 
         foreach ($response as $category) {
@@ -133,9 +133,39 @@ class Video extends Model
         foreach ($response as $subcategory) {
             $subcategories[] = [
                 "guid" => $subcategory->guid,
+                "main_name" => $subcategory->main_name,
                 "name" => $subcategory->name,
             ];
         }
         return $subcategories;
+    }
+
+    public static function getSubcatByMain(string $mainCatId): array {
+        $response = DB::select("call get_subcategories_for_main(?)", [$mainCatId]);
+        $subcategories = [];
+
+        foreach ($response as $subcategory) {
+            $subcategories[] = [
+                "guid" => $subcategory->guid,
+                "name" => $subcategory->name,
+            ];
+        }
+        return $subcategories;
+    }
+
+    public static function getReactionState(string $videoGuid, string $userGuid): string {
+        $response = DB::select("call reaction_state(?, ?)", [$videoGuid, $userGuid]);
+        return $response[0]->state;
+    }
+
+    public static function getViews(string $videoGuid): string {
+        $response = DB::select("call get_views(?)", [$videoGuid]);
+        return $response[0]->viewcount;
+    }
+
+    public static function countView(string $videoGuid, string $userGuid): bool {
+        $response = DB::select("call count_views(?, ?)", [$videoGuid, $userGuid]);
+
+        return (bool)$response;
     }
 }
