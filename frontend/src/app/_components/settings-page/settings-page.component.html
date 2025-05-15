@@ -9,7 +9,7 @@
                         (change)="onBackgroundImageSelected($event)" hidden>
                     <label for="backgroundImageInput" class="file-select-button">Kép kiválasztása</label>
                     <button class="upload-button" (click)="uploadBackgroundImage()"
-                        [disabled]="!selectedBackgroundImage">
+                        [disabled]="!cover_image">
                         Feltöltés
                     </button>
                 </div>
@@ -34,13 +34,13 @@
             <div class="bio-header">
                 <div class="setting-label">Profil Bio:</div>
                 <div class="button-container">
-                    <button class="upload-button" (click)="uploadBio()" [disabled]="!newBio.trim()">
+                    <button class="upload-button" (click)="uploadBio()" [disabled]="!bio.trim()">
                         Feltöltés
                     </button>
                 </div>
             </div>
             <div class="bio-textarea-container">
-                <textarea placeholder="Írd be az új szöveget..." [(ngModel)]="newBio"
+                <textarea placeholder="Írd be az új szöveget..." [(ngModel)]="bio"
                     [attr.maxLength]="maxBioLength"></textarea>
                 <div class="bio-counter">{{ bioLengthRemaining }}</div>
             </div>

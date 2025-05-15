@@ -13,7 +13,7 @@
 
     <!-- User bio section -->
     <div class="user-bio" [class.expanded]="bioExpanded" [class.button-visible]="isMobile">
-        <p>{{ bio }}</p>
+        <p>{{ bio?.trim() ? bio : 'A felhasználó még nem töltött fel bemutatkozást.' }}</p>
     </div>
 
     <button class="toggle-bio" *ngIf="isMobile" (click)="bioExpanded = !bioExpanded">

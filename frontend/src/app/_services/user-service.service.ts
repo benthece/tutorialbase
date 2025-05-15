@@ -54,9 +54,9 @@ export class UserServiceService {
   async updateThumbnail(imageFile: File): Promise<any> {
     try {
       const formData = new FormData();
-      formData.append('coverImage', imageFile);
+      formData.append('cover_image', imageFile);
 
-      const response = await axios.post('/api/user/cover-image', formData, {
+      const response = await axios.post('/api/user/upload_cover_image', formData, {
         headers: {
           'Authorization': 'Bearer ' + localStorage.getItem('token'),
           'Content-Type': 'multipart/form-data'

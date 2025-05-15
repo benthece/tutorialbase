@@ -361,6 +361,7 @@ export class VideoPageService {
 
       // Add tags as a JSON string
       formData.append('tags', JSON.stringify(tags));
+      console.log(formData);
 
       const response = await axios.post('/api/video/upload', formData, {
         headers: {

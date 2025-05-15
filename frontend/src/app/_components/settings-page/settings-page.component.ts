@@ -11,9 +11,9 @@ import { UserAuthService } from '../../_services/user-auth-service.service';
   styleUrls: ['./settings-page.component.css']
 })
 export class SettingsPageComponent implements OnInit {
-  selectedBackgroundImage: File | null = null;
+  cover_image: File | null = null;
   file: File | null = null;
-  newBio: string = '';
+  bio: string = '';
   maxBioLength: number = 400;
 
   constructor(private userService: UserServiceService, private userAuthService: UserAuthService) {}
@@ -23,7 +23,7 @@ export class SettingsPageComponent implements OnInit {
   onBackgroundImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
-      this.selectedBackgroundImage = input.files[0];
+      this.cover_image = input.files[0];
     }
   }
 
@@ -35,12 +35,12 @@ export class SettingsPageComponent implements OnInit {
   }
 
   async uploadBackgroundImage() {
-    if (!this.selectedBackgroundImage) return;
+    if (!this.cover_image) return;
 
     try {
-      await this.userService.updateThumbnail(this.selectedBackgroundImage);
+      await this.userService.updateThumbnail(this.cover_image);
       alert('Háttérkép sikeresen feltöltve!');
-      this.selectedBackgroundImage = null;
+      this.cover_image = null;
     } catch (error) {
       alert('Hiba a háttérkép feltöltése során.');
     }
@@ -59,10 +59,10 @@ export class SettingsPageComponent implements OnInit {
   }
 
   async uploadBio() {
-    if (!this.newBio.trim()) return;
+    if (!this.bio.trim()) return;
 
     try {
-      await this.userService.updateBio(this.newBio.trim());
+      await this.userService.updateBio(this.bio.trim());
       alert('Bio frissítve!');
     } catch (error) {
       alert('Hiba a bio frissítésekor.');
@@ -85,6 +85,6 @@ export class SettingsPageComponent implements OnInit {
   }
 
   get bioLengthRemaining(): number {
-    return this.maxBioLength - this.newBio.length;
+    return this.maxBioLength - this.bio.length;
   }
 }
