@@ -45,7 +45,6 @@
     width: 100%;
 }
 
-/* styling for the bio card */
 .bio-card {
     flex-direction: column;
     align-items: stretch;
@@ -74,6 +73,13 @@ textarea {
     color: white;
     resize: vertical;
     font-size: 16px;
+}
+
+.bio-counter {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.585);
+    margin-top: 4px;
+    text-align: right;
 }
 
 textarea::placeholder {
@@ -114,7 +120,7 @@ textarea::placeholder {
 }
 
 .upload-button:disabled {
-    background-color: #7db87d;
+    background-color: rgba(125, 184, 125, 0.782);
     cursor: not-allowed;
 }
 
@@ -134,7 +140,6 @@ textarea::placeholder {
     background-color: #c9302c;
 }
 
-/* RESPONSIVE DESIGN */
 @media (max-width: 768px) {
     .setting-card {
         flex-direction: column;
@@ -211,7 +216,7 @@ textarea::placeholder {
         padding: 10px 18px;
         font-size: 14px;
     }
-    
+
 
     textarea {
         height: 80px;

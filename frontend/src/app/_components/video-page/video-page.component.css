@@ -75,7 +75,6 @@
     display: none;
 }
 
-/* responsive layout */
 @media (max-width: 1200px) {
     .page-container {
         flex-direction: column;

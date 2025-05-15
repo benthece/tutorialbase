@@ -16,7 +16,7 @@
     <div class="nav-middle">
         <div class="search-field">
             <input type="text" placeholder="Keresés" class="search-field-input" [(ngModel)]="searchQuery"
-        (keyup.enter)="onSearch()" (blur)="onInputBlur()">
+                (keyup.enter)="onSearch()" (blur)="onInputBlur()">
             <div class="search-field-icon" (click)="onSearch()" (mousedown)="onIconMouseDown()">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
@@ -30,7 +30,7 @@
     <div class="profile">
         <!-- Show profile picture and profile menu when logged in -->
         <ng-container *ngIf="isLoggedIn; else loginButton">
-            <img src="assets/profilepic.jpg" alt="profile picture" class="profile-pic" #profileButton
+            <img [src]="profilePicture" alt="profilkép" class="profile-pic" #profileButton
                 (click)="toggleProfileMenu($event)" />
             <div *ngIf="profileMenuVisible" class="profile-menu" #profileMenu>
                 <ul>
@@ -52,7 +52,7 @@
                 </ul>
             </div>
         </ng-container>
-        
+
         <!-- Login button when not logged in -->
         <ng-template #loginButton>
             <button class="login-button" (click)="onLoginClick($event)">Bejelentkezés</button>
@@ -62,17 +62,10 @@
 
 <div *ngIf="categoryMenuVisible" class="category-menu" #categoryMenu>
     <ul>
-        <a href="/category1">
-            <li>Kategória1</li>
-        </a>
-        <a href="/category2">
-            <li>Kategória2</li>
-        </a>
-        <a href="/category3">
-            <li>Kategória3</li>
-        </a>
-        <a href="/category4">
-            <li>Kategória4</li>
-        </a>
+        <li *ngFor="let category of categories || []">
+            <a [routerLink]="['/category', category.guid]" (click)="close()">
+                {{ category.name }}
+            </a>
+        </li>
     </ul>
 </div>

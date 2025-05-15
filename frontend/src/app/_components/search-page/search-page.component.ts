@@ -27,10 +27,10 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    // Subscribe to query parameter changes
+    // Subscribe to text parameter changes
     this.route.queryParams.subscribe(params => {
-      if (params['query']) {
-        this.searchQuery = params['query'];
+      if (params['text']) {
+        this.searchQuery = params['text'];
         this.loadInitialResults();
       }
     });

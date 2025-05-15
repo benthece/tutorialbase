@@ -50,14 +50,13 @@ export class HomeComponent implements AfterViewInit, OnDestroy, OnInit {
 }
 
   ngAfterViewInit(): void {
-    // Set up scroll listeners for each row
+    // Set up scroll listeners
     this.setupScrollFades(this.category1RowRef.nativeElement, 'category1');
     this.setupScrollFades(this.category2RowRef.nativeElement, 'category2');
     this.setupScrollFades(this.category3RowRef.nativeElement, 'category3');
   }
 
   ngOnDestroy(): void {
-    // Clean up all subscriptions to prevent memory leaks
     this.scrollSubscriptions.forEach(sub => sub.unsubscribe());
   }
 
@@ -95,7 +94,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy, OnInit {
 
     this.scrollSubscriptions.push(scrollSubscription);
 
-    // Initial check for right fade (should show if content overflows)
+    // Initial check for right fade
     setTimeout(() => {
       this.updateFades(element, leftFade, rightFade);
     }, 100);
@@ -112,7 +111,6 @@ export class HomeComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     // Show/hide right fade based on if we're at the end
-    // Allow a small buffer (10px) for rounding errors
     if (scrollWidth - (scrollLeft + clientWidth) < 10) {
       this.renderer.setStyle(rightFade, 'opacity', '0');
     } else {

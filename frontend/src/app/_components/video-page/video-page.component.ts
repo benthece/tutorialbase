@@ -8,7 +8,7 @@ import { CommentComponent } from "../comment/comment.component";
 import { Comment as CommentModel } from '../../_interfaces/comment';
 import { AddCommentComponent } from '../add-comment/add-comment.component';
 import { UserAuthService } from '../../_services/user-auth-service.service';
-import { VideoPageService, RecommendedVideo } from '../../_services/video-page-service.service'; //új
+import { VideoPageService, RecommendedVideo } from '../../_services/video-page-service.service';
 
 @Component({
   selector: 'app-video-page',
@@ -31,6 +31,11 @@ export class VideoPageComponent implements OnInit {
 
   video: Video | undefined;
 
+  hasMoreComments = true;
+
+  commentOffset = 0;
+  readonly COMMENT_PAGE_SIZE = 5;
+
   constructor(
     private route: ActivatedRoute,
     public authService: UserAuthService,
@@ -43,32 +48,47 @@ export class VideoPageComponent implements OnInit {
     // Subscribe to route parameters to get the video ID
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.videoId = params.get('id') || '';
-      this.isLoading = true; 
-      this.error = null; 
+      this.isLoading = true;
+      this.error = null;
 
-      // Load video and comments data
       this.loadVideo();
-      this.loadComments();
+      this.loadComments(true);
     });
   }
 
-  async loadComments(){
-    try {
-      this.comments = await this.videoPageService.getVideoComments(this.videoId);
-    } catch (error) {
-      console.error('Error loading comments:', error);
-      this.error = 'Failed to load comments. Please try again later.';
+  async loadComments(reset: boolean = false) {
+  try {
+    if (reset) {
+      this.comments = [];
+      this.commentOffset = 0;
+      this.hasMoreComments = true;
     }
+
+    const newComments = await this.videoPageService.getVideoComments(this.videoId, this.commentOffset);
+
+    this.comments = [...this.comments, ...newComments];
+    this.commentOffset += this.COMMENT_PAGE_SIZE;
+
+    if (newComments.length < this.COMMENT_PAGE_SIZE) {
+      this.hasMoreComments = false;
+    }
+  } catch (error) {
+    console.error('Hiba kommentek betöltésekor:', error);
+    this.error = 'Nem sikerült a kommentek betöltése.';
+  }
+}
+
+  loadMoreComments() {
+    this.loadComments();
   }
 
-    async loadVideo() {
+  async loadVideo() {
     try {
       this.currentVideo = await this.videoPageService.getVideoById(this.videoId);
       this.isLoading = false;
       this.categ_id = this.currentVideo.categ_id;
 
       this.recommendedVideos = await this.videoPageService.getRecommendedVideos(this.categ_id);
-      console.log(this.recommendedVideos, this.categ_id)
     } catch (error) {
       console.error('Error loading video:', error);
       this.isLoading = false;
@@ -83,7 +103,7 @@ export class VideoPageComponent implements OnInit {
 
   private checkScreenSize() {
     this.isMobileView = window.innerWidth <= 1200;
-    
+
     if (this.isMobileView) {
       this.commentsExpanded = false;
     }

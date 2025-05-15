@@ -141,7 +141,6 @@ select.invalid, textarea.invalid {
     cursor: not-allowed;
 }
 
-/* Successful submission styles */
 .kuldes-button.success {
     background-color: #48bb78;
 }

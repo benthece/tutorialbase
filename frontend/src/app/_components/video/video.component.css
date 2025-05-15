@@ -20,7 +20,8 @@ body {
 .video-player {
     position: relative;
     width: 100%;
-    padding-top: 56.25%; /* 16:9 aspect ratio */
+    padding-top: 56.25%;
+    /* 16:9 aspect ratio */
     overflow: hidden;
 }
 
@@ -100,7 +101,7 @@ body {
 .title-views {
     flex-grow: 1;
     color: white;
-    min-width: 0; /* Helps with text overflow */
+    min-width: 0;
 }
 
 .video-title {
@@ -209,11 +210,12 @@ body {
     .video-title {
         font-size: 16px;
     }
-    
-    .username, .view-count {
+
+    .username,
+    .view-count {
         font-size: 13px;
     }
-    
+
     .description-text {
         font-size: 14px;
     }
@@ -223,11 +225,12 @@ body {
     .video-title {
         font-size: 13px;
     }
-    
-    .username, .view-count {
+
+    .username,
+    .view-count {
         font-size: 11px;
     }
-    
+
     .description-text {
         font-size: 12px;
         line-height: 1.4;
@@ -235,5 +238,19 @@ body {
 
     .like-dislike {
         gap: 5px;
+    }
+}
+
+@media (max-width: 310px) {
+    .report-button {
+        font-size: 12px;
+    }
+
+    .delete-button {
+        font-size: 12px;
+    }
+
+    .profile-pic {
+    display: none;
     }
 }

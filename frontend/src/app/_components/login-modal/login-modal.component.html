@@ -10,11 +10,11 @@
                     Felhasználónév
                 </label>
                 <input type="text" id="username" formControlName="username" placeholder="Felhasználónév"
-                    [class.invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+                    [class.invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" />
+                <span class="error" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+                    A felhasználónév megadása kötelező
+                </span>
             </div>
-            @if(loginForm.get('username')?.invalid && loginForm.get('username')?.touched){
-            <span class="error">A felhasználónév megadása kötelező</span>
-            }
 
             <div class="form-group">
                 <label for="password">
@@ -24,28 +24,27 @@
                 <div class="password-container">
                     <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password"
                         placeholder="Jelszó"
-                        [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                        [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" />
                     <button type="button" class="toggle-password-inside" (click)="togglePassword()">
                         <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                     </button>
                 </div>
+                <span class="error" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                    A jelszó megadása kötelező
+                </span>
             </div>
-            @if(loginForm.get('password')?.invalid && loginForm.get('password')?.touched){
-            <span class="error">A jelszó megadása kötelező</span>
-            }
 
-            <!-- Error messages for validation errors from the server -->
-            @if(validationErrors.length > 0){
-            <div class="error-message">
+            <!-- Backend validation errors -->
+            <div class="error-message" *ngIf="validationErrors">
                 <i class="fas fa-exclamation-circle"></i>
-                {{validationErrors}}
+                {{ validationErrors }}
             </div>
-            }
 
             <button type="submit" class="login-button" [disabled]="!loginForm.valid || isSubmitting">
                 Bejelentkezés
             </button>
         </form>
+
         <div class="links">
             <div class="link-group">
                 <a (click)="switchToSignup()">Új vagy a TutorialBase-n? Regisztrálj</a>

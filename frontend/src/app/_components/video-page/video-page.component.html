@@ -1,4 +1,3 @@
-<!-- video-page.component.html -->
 <div class="page-container">
     <div class="left-column">
         <div class="main-content">
@@ -8,21 +7,23 @@
         <div class="comment-section">
             <h3 class="section-title">Kommentek</h3>
             <div>
-                <app-add-comment *ngIf="authService.isAuthenticated" [video]="video" (commentAdded)="loadComments()"></app-add-comment>
+                <app-add-comment *ngIf="authService.isAuthenticated" [video]="video"
+                    (commentAdded)="loadComments(true)"></app-add-comment>
             </div>
 
             <!-- Display comments based on expanded state -->
             <div *ngFor="let comment of comments; let i = index" class="comment-item"
                 [class.hidden]="isMobileView && !commentsExpanded && i > 0">
-                <app-comment [username]="comment.username" [avatarSrc]="comment.avatarSrc" [commentText]="comment.text">
+                <app-comment [commentId]="comment.id" [username]="comment.username" [avatarSrc]="comment.avatarSrc"
+                    [commentText]="comment.text">
                 </app-comment>
             </div>
 
-            <button *ngIf="(!isMobileView) || (isMobileView && commentsExpanded)" class="show-more-comments">
+            <button *ngIf="hasMoreComments && ((!isMobileView) || (isMobileView && commentsExpanded))"
+                (click)="loadMoreComments()" class="show-more-comments">
                 Több komment betöltése
             </button>
 
-            <!-- Show more comments button -->
             <button *ngIf="isMobileView && comments.length > 1" (click)="toggleCommentsExpanded()"
                 class="show-more-comments">
                 {{ commentsExpanded ? 'Kevesebb komment' : 'Mutass többet' }}

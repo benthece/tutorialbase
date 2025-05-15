@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import axios from 'axios';
-import { environment } from '../../environments/environment.development';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Video } from '../_interfaces/video';
 import { Comment } from '../_interfaces/comment';
 
 export interface UserVideo {
-  id: string;
-  uploaderName: string;
-  uploaderProfilePicture: string;
+  guid: string;
   title: string;
-  thumbnail: string;
+  uploader: string;
+  uploader_pic: string;
+  base_image_url: string;
 }
 
 export interface VideoComment {
@@ -36,12 +35,33 @@ export interface CategoryVideo {
   base_image_url: string;
 }
 
-export interface SubcategoryVideo {
-  id: string;
-  title: string;
-  username: string;
-  profile_pic_url: string;
-  base_image_url: string;
+export interface MainCategoryVideos {
+  subcategory: {
+    id: string;
+    name: string;
+    videos: Video[];
+  }
+}
+
+export interface Subcategory {
+  id?: string;
+  subcategory_name: string;
+  videos: Video[];
+}
+
+export interface SimpleSubcategory {
+  guid: string;
+  name: string;
+}
+
+interface ApiResponse {
+  maincategory_name: string;
+  subcategories: Subcategory[];
+}
+
+export interface Category {
+  guid: string;
+  name: string;
 }
 
 export interface HomeVideos {
@@ -67,7 +87,7 @@ export interface VideoDetails {
   reactions: {
     useful: number;
     notuseful: number;
-    //userReaction: string;
+    reactionState: 'like' | 'dislike' | 'none' | 'not logged in';
   };
   comments: Array<{
     guid: string;
@@ -83,9 +103,9 @@ export interface VideoDetails {
 export interface UploadVideoRequest {
   title: string;
   description: string;
-  categoryId: string;  // We will send ID, not name
-  subcategoryId: string;  // We will send ID, not name
-  tagsText: string;  // Raw tags text input that will be converted to array
+  categoryId: string;
+  subcategoryId: string;
+  tagsText: string;
 }
 
 @Injectable({
@@ -106,7 +126,16 @@ export class VideoPageService {
 
   async getVideoWithDetails(videoId: string): Promise<VideoDetails> {
     try {
-      const response = await axios.get(`/api/video/${videoId}`);
+      const token = localStorage.getItem('token');
+
+      const headers: any = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await axios.get(`/api/video/${videoId}`, {
+        headers
+      });
 
       if (response.data) {
         this.currentVideoSubject.next(response.data);
@@ -127,14 +156,14 @@ export class VideoPageService {
       uploaderName: videoDetails.video.uploader,
       thumbnailSrc: videoDetails.video.base_image_url,
       avatarSrc: videoDetails.video.uploader_pic,
-      //videoSrc: 'videoDetails.video.url', //át kell írni majd
+      url: videoDetails.video.url,
       categ_id: videoDetails.video.categ_id,
       views: videoDetails.video.views,
-      uploadDate: new Date(videoDetails.video.uploaded_at),
+      uploadDate: videoDetails.video.uploaded_at,
       reactions: {
         useful: videoDetails.reactions.useful,
         notuseful: videoDetails.reactions.notuseful,
-        //userReaction: videoDetails.reactions.userReaction
+        reactionState: videoDetails.reactions.reactionState
       }
     };
   }
@@ -154,11 +183,13 @@ export class VideoPageService {
     return this.mapToVideoInterface(videoDetails);
   }
 
-  async getVideoComments(videoId: string): Promise<Comment[]> {
-    const videoDetails = await this.getVideoWithDetails(videoId);
-    return this.mapToCommentInterface(videoDetails.comments);
-  }
+  async getVideoComments(videoId: string, offset = 0): Promise<Comment[]> {
+    const response = await axios.get(`/api/video/${videoId}`, {
+      params: { off: offset }
+    });
 
+    return this.mapToCommentInterface(response.data.comments);
+  }
 
 
   async getRecommendedVideos(categ_id: string): Promise<RecommendedVideo[]> {
@@ -167,18 +198,22 @@ export class VideoPageService {
         params: { limit: 8 }
       });
 
-      return response.data;
+      return response.data.map((video: any) => ({
+        guid: video.guid,
+        title: video.title,
+        username: video.uploader,
+        profile_pic_url: video.uploader_pic,
+        base_image_url: video.base_image_url
+      }));
     } catch (error) {
       console.error('Hiba a kapcsolódó videók lekérése során:', error);
       throw error;
     }
   }
 
-  async getVideosByCategory(category: string): Promise<CategoryVideo[]> {
+  async getCategories(): Promise<Category[]> {
     try {
-      const response = await axios.get('/api/videos/category', {
-        params: { category }
-      });
+      const response = await axios.get('/api/maincategories');
 
       return response.data;
     } catch (error) {
@@ -187,15 +222,22 @@ export class VideoPageService {
     }
   }
 
-  async getVideosBySubcategory(subcategory: string): Promise<SubcategoryVideo[]> {
-    try {
-      const response = await axios.get('/api/videos/subcategory', {
-        params: { subcategory }
-      });
+  async getVideosByCategory(guid: string): Promise<ApiResponse> {
+  try {
+    const response = await axios.get(`/api/subcategories/${guid}`);
+    return response.data as ApiResponse;
+  } catch (error) {
+    console.error('Hiba a kategória videóinak lekérése során:', error);
+    throw error;
+  }
+}
 
+  async getSubcategoriesByMainCategory(mainCategoryId: string): Promise<SimpleSubcategory[]> {
+    try {
+      const response = await axios.get(`/api/categories/${mainCategoryId}`);
       return response.data;
     } catch (error) {
-      console.error('Hiba az alkategória videóinak lekérése során:', error);
+      console.error('Hiba az alkategóriák lekérése során:', error);
       throw error;
     }
   }
@@ -221,10 +263,7 @@ export class VideoPageService {
 
   async getUserVideos(userName: string): Promise<UserVideo[]> {
     try {
-      const response = await axios.get('/api/user/videos', {
-        params: { userName }
-      });
-
+      const response = await axios.get(`/api/user/uploaded/${userName}`);
       return response.data;
     } catch (error) {
       console.error('Hiba a felhasználó videóinak lekérése során:', error);
@@ -265,7 +304,7 @@ export class VideoPageService {
       }
 
       await axios.post(`/api/reaction/${videoId}`,
-        { action }, // { action: 'like' } or 'dislike'
+        { action },
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -293,13 +332,12 @@ export class VideoPageService {
     onProgress?: (progress: number) => void
   ): Promise<string> {
     try {
-      // Check if token exists
       const token = localStorage.getItem('token');
       if (!token) {
         throw new Error('Authentication token not found. Please log in.');
       }
 
-      // Convert tagsText to array (splitting by commas and trimming whitespace)
+      // Convert tagsText to array
       const tags = tagsText
         .split(',')
         .map(tag => tag.trim())
@@ -319,14 +357,13 @@ export class VideoPageService {
       // Add tags as a JSON string
       formData.append('tags', JSON.stringify(tags));
 
-      // Make the API request
       const response = await axios.post('/api/video/upload', formData, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
         },
         onUploadProgress: (progressEvent) => {
-          // You can implement progress tracking here if needed
+          // progress tracking
           const percent = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
           if (onProgress) onProgress(percent);
           console.log(`Upload progress: ${percent}%`);

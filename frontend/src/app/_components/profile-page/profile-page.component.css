@@ -14,12 +14,12 @@
 
 .banner-image {
     width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
+    max-height: 250px;
+    object-fit: cover;
     border-radius: 10px;
     border: 2px solid #808080;
     background-color: #495057;
+    overflow: hidden;
 }
 
 .profile-picture {
@@ -71,6 +71,13 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     row-gap: 30px;
+}
+
+.no-videos-message {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 20px;
+    color: #888;
 }
 
 @media (max-width: 1024px) {

@@ -24,36 +24,38 @@ export class VideoComponent implements OnInit {
 
   constructor(public authService: UserAuthService, private adminService: AdminServiceService, private router: Router, private videoPageService: VideoPageService) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     if (!this.video) {
       this.video = {
         id: '1',
         title: '',
+        url: '',
         uploaderName: '',
         thumbnailSrc: '',
         avatarSrc: '',
-        //videoSrc: './assets/SampleVideo_1280x720_1mb.mp4',
         categ_id: '',
         views: 0,
-        uploadDate: new Date(''),
+        uploadDate: '',
         description: '',
         reactions: {
           useful: 0,
           notuseful: 0,
-          //userReaction: 'none',
+          reactionState: '',
         }
       };
     }
+
+    await this.authService.checkAdminStatus();
   }
 
   navigateToUser() {
-  const username = this.video?.uploaderName;
-  if (!username) {
-    console.warn('Nem ismert a felhasználónév, nem lehet navigálni.');
-    return;
+    const username = this.video?.uploaderName;
+    if (!username) {
+      console.warn('Nem ismert a felhasználónév, nem lehet navigálni.');
+      return;
+    }
+    this.router.navigate(['/user', username]);
   }
-  this.router.navigate(['/user', username]);
-}
 
   toggleDescription() {
     this.isExpanded = !this.isExpanded;
@@ -72,7 +74,6 @@ export class VideoComponent implements OnInit {
 
     this.videoPageService.addReaction(this.video.id, action)
       .then(() => {
-
         this.loadVideo();
       })
       .catch(error => {
@@ -99,7 +100,6 @@ export class VideoComponent implements OnInit {
       this.isDeleting = true;
       await this.adminService.deleteVideo(this.video.id);
       this.videoDeleted.emit(this.video.id);
-
       this.router.navigate(['/']);
     } catch (error) {
       console.error('Hiba a videó törlésekor:', error);

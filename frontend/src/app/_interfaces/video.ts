@@ -1,17 +1,17 @@
 export interface Video {
-    id: string; //giud
+    id: string;
     title: string;
-    description: string; //description?: string;
+    description: string;
     uploaderName: string;
     thumbnailSrc: string;
     avatarSrc: string;
-    //videoSrc: string;
+    url: string;
     categ_id: string;
-    views: number; //views?: number;
-    uploadDate: Date;
+    views: number;
+    uploadDate: string;
     reactions: {
     useful: number;
     notuseful: number;
-    //userreaction: string;
+    reactionState: string;
     };
 }

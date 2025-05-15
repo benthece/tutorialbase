@@ -36,7 +36,7 @@ export class SearchCardComponent {
   }
 
   get uploadDate(): string {
-    return this.result?.uploadDate;
+    return this.result?.uploaded_at;
   }
 
   get description(): string {

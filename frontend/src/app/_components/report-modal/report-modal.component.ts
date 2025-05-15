@@ -11,8 +11,8 @@ import { ReportServiceService } from '../../_services/report-service.service';
   styleUrls: ['./report-modal.component.css']
 })
 export class ReportModalComponent implements OnInit {
-  @Input() itemId!: string; // New input property for comment or video ID
-  @Input() itemType: 'comment' | 'video' = 'comment'; // Type of content being reported
+  @Input() itemId!: string;
+  @Input() itemType: 'comment' | 'video' = 'comment';
   
   reportForm: FormGroup;
   isSubmitting: boolean = false;

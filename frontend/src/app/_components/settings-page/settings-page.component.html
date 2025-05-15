@@ -2,12 +2,14 @@
 <div class="profile-settings-container">
     <div class="settings-section">
         <div class="setting-card">
-            <div class="setting-label">Háttérkép:</div>
+            <div class="setting-label">Borítókép:</div>
             <div class="setting-control">
                 <div class="button-group">
-                    <input type="file" id="backgroundImageInput" accept="image/*" hidden>
+                    <input type="file" id="backgroundImageInput" accept="image/*"
+                        (change)="onBackgroundImageSelected($event)" hidden>
                     <label for="backgroundImageInput" class="file-select-button">Kép kiválasztása</label>
-                    <button class="upload-button">
+                    <button class="upload-button" (click)="uploadBackgroundImage()"
+                        [disabled]="!selectedBackgroundImage">
                         Feltöltés
                     </button>
                 </div>
@@ -18,9 +20,10 @@
             <div class="setting-label">Profilkép:</div>
             <div class="setting-control">
                 <div class="button-group">
-                    <input type="file" id="profileImageInput" accept="image/*" hidden>
+                    <input type="file" id="profileImageInput" accept="image/*" (change)="onProfileImageSelected($event)"
+                        hidden>
                     <label for="profileImageInput" class="file-select-button">Kép kiválasztása</label>
-                    <button class="upload-button">
+                    <button class="upload-button" (click)="uploadProfileImage()" [disabled]="!selectedProfileImage">
                         Feltöltés
                     </button>
                 </div>
@@ -31,13 +34,15 @@
             <div class="bio-header">
                 <div class="setting-label">Profil Bio:</div>
                 <div class="button-container">
-                    <button class="upload-button">
+                    <button class="upload-button" (click)="uploadBio()" [disabled]="!newBio.trim()">
                         Feltöltés
                     </button>
                 </div>
             </div>
             <div class="bio-textarea-container">
-                <textarea placeholder="Írd be az új szöveget..."></textarea>
+                <textarea placeholder="Írd be az új szöveget..." [(ngModel)]="newBio"
+                    [attr.maxLength]="maxBioLength"></textarea>
+                <div class="bio-counter">{{ bioLengthRemaining }}</div>
             </div>
         </div>
 
@@ -45,7 +50,7 @@
             <div class="setting-label">Fiók törlése</div>
             <div class="setting-control">
                 <div class="button-container">
-                    <button class="delete-button">
+                    <button class="delete-button" (click)="deleteAccount()">
                         Törlés
                     </button>
                 </div>

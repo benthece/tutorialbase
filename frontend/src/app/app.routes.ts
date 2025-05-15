@@ -7,6 +7,7 @@ import { VideoHistoryPageComponent } from './_components/video-history-page/vide
 import { ProfilePageComponent } from './_components/profile-page/profile-page.component';
 import { SettingsPageComponent } from './_components/settings-page/settings-page.component';
 import { SearchPageComponent } from './_components/search-page/search-page.component';
+import { CategoryPageComponent } from './_components/category-page/category-page.component';
 
 
 export const routes: Routes = [
@@ -17,8 +18,8 @@ export const routes: Routes = [
     { path: 'video', redirectTo: '/home', pathMatch: 'full' },
     { path: 'user/:username', component: ProfilePageComponent }, //új
     { path: 'user', redirectTo: '/home', pathMatch: 'full' }, //új
-    {path: 'search', component: SearchPageComponent},
-
+    { path: 'search', component: SearchPageComponent},
+    { path: 'category/:guid', component: CategoryPageComponent},
     {
         path: 'upload',
         component: VideoUploadComponent,

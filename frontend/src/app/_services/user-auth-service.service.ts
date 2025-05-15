@@ -69,18 +69,22 @@ export class UserAuthService {
   }
 
   async checkAdminStatus(): Promise<boolean> {
-    try {
-      const response = await axios.get('/api/user/isAdmin', {
-        headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
-      });
-      const isAdmin = response.data.isAdmin || false;
-      this.isAdminSubject.next(isAdmin);
-      return isAdmin;
-    } catch (error) {
-      this.isAdminSubject.next(false);
-      return false;
-    }
+  try {
+    
+    const response = await axios.post('/api/user/is_admin', {}, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        'Content-Type': 'application/json'
+      }
+    });
+    const isAdmin = response.data.message === "true";
+    this.isAdminSubject.next(isAdmin);
+    return isAdmin;
+  } catch (error) {
+    this.isAdminSubject.next(false);
+    return false;
   }
+}
 
   async logout(): Promise<any> {
     try {

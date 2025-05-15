@@ -13,7 +13,6 @@ export class VideoCardComponent {
   @Input() id: string = '';
   @Input() title: string = '';
   @Input() username: string = '';
-  @Input() duration: string = '';
   @Input() base_image_url: string = '';
   @Input() profile_pic_url: string = '';
 

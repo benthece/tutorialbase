@@ -16,28 +16,28 @@
 
             <div class="form-section">
                 <div class="form-group">
-                    <input type="text" placeholder="Írd be a címet" class="form-control" [(ngModel)]="title">
+                    <input type="text" placeholder="Írd be a címet" class="form-control" [(ngModel)]="title"
+                        maxlength="100">
                 </div>
 
                 <div class="form-group">
-                    <textarea placeholder="Add meg a leírást" class="form-control" [(ngModel)]="description"></textarea>
+                    <textarea placeholder="Add meg a leírást" class="form-control" [(ngModel)]="description"
+                        maxlength="600"></textarea>
                 </div>
-
                 <div class="form-group">
-                    <select class="form-control" [(ngModel)]="category">
-                        <option value="" disabled selected>Add meg a kategóriát</option>
-                        <option value="1">Kategória 1</option>
-                        <option value="2">Kategória 2</option>
+                    <select class="form-control" [(ngModel)]="selectedCategory"
+                        (ngModelChange)="onCategoryChange(selectedCategory)">
+                        <option value="" disabled selected>Válassz kategóriát</option>
+                        <option *ngFor="let cat of categories" [value]="cat.guid">{{ cat.name }}</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <select class="form-control" [(ngModel)]="subcategory">
-                        <option value="" disabled selected>Add meg az alkategóriát</option>
-                        <option value="1">Kategória 1</option>
-                        <option value="2">Kategória 2</option>
+                    <select class="form-control" [(ngModel)]="selectedSubcategory" [disabled]="isSubcategoryDisabled"
+                        (ngModelChange)="subcategory = $event">
+                        <option [ngValue]="''" disabled>Válassz kategóriát</option>
+                        <option *ngFor="let sub of subcategories" [value]="sub.guid">{{ sub.name }}</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <input type="text" placeholder="tag1,tag2,tag3,tag4,tag5" class="form-control" [(ngModel)]="tags"
                         [pattern]="'^([a-zA-Z0-9]+,){0,4}[a-zA-Z0-9]+$'" #tagsInput="ngModel" maxlength="50">
@@ -47,7 +47,8 @@
                         engedélyezettek.</p>
                 </div>
 
-                <button class="upload-btn" [disabled]="!isFormValid() || uploading" (click)="onUpload()">Feltöltés</button>
+                <button class="upload-btn" [disabled]="!isFormValid() || uploading"
+                    (click)="onUpload()">Feltöltés</button>
 
                 <div class="progress-bar-wrapper" *ngIf="uploading">
                     <div class="progress-bar" [style.width.%]="uploadProgress"></div>

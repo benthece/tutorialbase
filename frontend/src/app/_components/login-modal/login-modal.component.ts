@@ -16,13 +16,16 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   isSubmitting: boolean = false;
   showPassword: boolean = false;
-  validationErrors: any = [];
+  validationErrors: string = '';
+
+  @Output() close = new EventEmitter<void>();
+  @Output() openSignup = new EventEmitter<void>();
 
   constructor(
     private fb: FormBuilder,
     public userAuthService: UserAuthService,
     private router: Router
-  ){
+  ) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required]]
@@ -30,14 +33,24 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (localStorage.getItem('token') != "" && localStorage.getItem('token') != null) {
+    if (localStorage.getItem('token')) {
       this.router.navigateByUrl('/home');
     }
   }
 
+  private translateErrorMessage(message: string): string {
+  const translations: { [key: string]: string } = {
+    'Invalid credentials': 'Érvénytelen felhasználónév vagy jelszó',
+    'The username field must be at least 4 characters.': 'A felhasználónév mező legalább 4 karakter hosszú kell legyen'
+  };
+
+  return translations[message] || message;
+}
+
   loginAction() {
     if (this.loginForm.valid) {
       this.isSubmitting = true;
+      this.validationErrors = '';
 
       const payload = {
         username: this.loginForm.get('username')?.value,
@@ -48,28 +61,31 @@ export class LoginComponent implements OnInit {
         .then(({ data }) => {
           localStorage.setItem('token', data.token);
           this.close.emit();
-          // Force page refresh to update login status in all components
+          // reload page for other components
           window.location.reload();
           return data;
         }).catch(error => {
-          this.isSubmitting = false;
-          if (error.response.data.errors != undefined) {
-            this.validationErrors = error.response.data.message;
-          }
-          if (error.response.data.error != undefined) {
-            this.validationErrors = error.response.data.error;
-          }
-          return error;
-        });
+  this.isSubmitting = false;
+  let originalMessage = '';
+  if (error.response?.data?.message) {
+    originalMessage = error.response.data.message;
+  } else if (error.response?.data?.error) {
+    originalMessage = error.response.data.error;
+  } else {
+    originalMessage = 'Hiba történt a bejelentkezés során.';
+  }
+
+  this.validationErrors = this.translateErrorMessage(originalMessage);
+  return error;
+});
+    } else {
+      this.loginForm.markAllAsTouched();
     }
   }
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
-
-  @Output() close = new EventEmitter<void>();
-  @Output() openSignup = new EventEmitter<void>();
 
   switchToSignup() {
     this.close.emit();

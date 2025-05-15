@@ -9,7 +9,7 @@ export interface SearchResult {
   uploader: string;
   uploader_pic: string;
   description: string;
-  uploadDate: string;
+  uploaded_at: string;
 }
 
 @Injectable({
@@ -32,8 +32,8 @@ export class SearchService {
 
   constructor() { }
 
-  async search(query: string, limit: number): Promise<void> {
-    this.currentQuery = query;
+  async search(text: string, limit: number): Promise<void> {
+    this.currentQuery = text;
     this.limit = limit;
     this.allLoadedResults = [];
     this.displayedCount = 0;
@@ -41,7 +41,7 @@ export class SearchService {
     try {
       const response = await axios.get('/api/search', {
         params: {
-          query: this.currentQuery,
+          text: this.currentQuery,
           limit: this.limit
         }
       });
@@ -87,7 +87,6 @@ export class SearchService {
     }
   }
 
-  // Getters for component access
   get isLoadingMore(): boolean {
     return this.isLoading;
   }

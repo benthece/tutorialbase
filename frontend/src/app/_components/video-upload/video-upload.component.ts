@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { VideoPageService } from '../../_services/video-page-service.service';
+import { Category, SimpleSubcategory, VideoPageService } from '../../_services/video-page-service.service';
 
 @Component({
   selector: 'app-video-upload',
@@ -9,12 +9,18 @@ import { VideoPageService } from '../../_services/video-page-service.service';
   templateUrl: './video-upload.component.html',
   styleUrls: ['./video-upload.component.css'],
 })
-export class VideoUploadComponent {
+export class VideoUploadComponent implements OnInit {
   selectedImage: string | ArrayBuffer | null = null;
   selectedImageFile: File | null = null;
   selectedVideo: File | null = null;
 
+  selectedCategory: string = '';
+  subcategories: SimpleSubcategory[] = [];
+  selectedSubcategory: string = '';
+  isSubcategoryDisabled: boolean = true;
+
   maxFileSize = 5 * 1024 * 1024; // 5MB
+  categories: Category[] = [];
 
   title = '';
   description = '';
@@ -26,6 +32,41 @@ export class VideoUploadComponent {
   uploading: boolean = false;
 
   constructor(public videoPageService: VideoPageService) { }
+
+  ngOnInit(): void {
+    this.loadCategories();
+  }
+
+  async loadCategories(): Promise<void> {
+    try {
+      this.categories = await this.videoPageService.getCategories();
+    } catch (error) {
+      console.error('Kategóriák betöltése sikertelen:', error);
+    }
+  }
+
+  onCategoryChange(categoryId: string): void {
+  this.selectedSubcategory = '';
+  this.subcategories = [];
+  this.isSubcategoryDisabled = true;
+
+  this.selectedCategory = categoryId;
+  this.category = categoryId;
+
+  if (categoryId) {
+    this.loadSubcategories(categoryId);
+  }
+}
+
+  async loadSubcategories(categoryId: string): Promise<void> {
+    try {
+      this.subcategories = await this.videoPageService.getSubcategoriesByMainCategory(categoryId);
+      this.isSubcategoryDisabled = false;
+    } catch (error) {
+      console.error('Alkategóriák betöltése sikertelen', error);
+      this.isSubcategoryDisabled = true;
+    }
+  }
 
   onImageSelected(event: Event): void {
     const file = (event.target as HTMLInputElement)?.files?.[0];
@@ -75,7 +116,6 @@ export class VideoUploadComponent {
       this.title.trim() !== '' &&
       this.description.trim() !== '' &&
       this.category.trim() !== '' &&
-      this.subcategory.trim() !== '' &&
       this.tags.trim() !== '' &&
       isTagsValid
     );
@@ -96,15 +136,14 @@ export class VideoUploadComponent {
         this.subcategory.trim(),
         this.tags.trim(),
         (progress: number) => {
-        this.uploadProgress = progress;
-      }
+          this.uploadProgress = progress;
+        }
       );
       alert('Videó sikeresen feltöltve!');
-      // Opcionálisan: reset form
     } catch (err) {
       alert('Hiba történt a videó feltöltése során.');
       console.error(err);
-      this.uploading=false;
+      this.uploading = false;
     }
   }
 

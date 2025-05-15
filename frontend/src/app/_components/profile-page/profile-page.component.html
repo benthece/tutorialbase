@@ -1,7 +1,7 @@
 <div class="profile-container">
     <!-- Header with banner and profile image -->
     <div class="profile-header">
-        <div class="banner-image" >
+        <div class="banner-image">
             <img [src]="profileThumbnail" />
         </div>
         <div class="profile-picture">
@@ -23,13 +23,16 @@
     <!-- Videos section -->
     <div class="videos-section">
         <h1>Videók:</h1>
-        <div class="videos-grid">
-            <!-- Grid of app-video-card components -->
-            <div *ngFor="let video of videos">
-                <app-video-card [title]="video.title" [username]="video.uploader"
-                    [base_image_url]="video.base_image_url" [profile_pic_url]="video.uploader_pic">
-                </app-video-card>
+        <ng-container *ngIf="videos && videos.length > 0; else noVideos">
+            <div class="videos-grid">
+                <div *ngFor="let video of videos">
+                    <app-video-card [id]="video.guid" [title]="video.title" [username]="video.uploader"
+                        [base_image_url]="video.base_image_url" [profile_pic_url]="video.uploader_pic"></app-video-card>
+                </div>
             </div>
-        </div>
+        </ng-container>
+        <ng-template #noVideos>
+            <p class="no-videos-message">A felhasználó még nem töltött fel videót.</p>
+        </ng-template>
     </div>
 </div>

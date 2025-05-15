@@ -6,6 +6,8 @@ import { SearchService } from '../../_services/search-service.service';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { UserServiceService } from '../../_services/user-service.service';
+import { Category } from '../../_services/video-page-service.service';
+import { VideoPageService } from '../../_services/video-page-service.service';
 
 @Component({
   selector: 'app-navbar',
@@ -26,8 +28,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   limit: number = 30;
   isSearching: boolean = false;
   username: string = '';
-
+  profilePicture: string = 'assets/profilepic.jpg'; // fallback
   clickedSearchIcon = false;
+  categories: Category[] = [];
 
   @ViewChild('categoryButton', { static: false }) categoryButton!: ElementRef;
   @ViewChild('profileButton', { static: false }) profileButtonButton!: ElementRef;
@@ -38,7 +41,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   @Output() showRegisterModal = new EventEmitter<void>();
 
   constructor(public userAuthService: UserAuthService, private searchService: SearchService,
-    private router: Router, public userService: UserServiceService) { }
+    private router: Router, public userService: UserServiceService, public videoPageService: VideoPageService) { }
 
 async ngOnInit(): Promise<void> {
   // Subscribe to authentication state changes
@@ -55,10 +58,11 @@ async ngOnInit(): Promise<void> {
   if (this.isLoggedIn) {
     await this.loadCurrentUser();
   }
+
+  await this.loadCategories();
 }
 
   ngOnDestroy(): void {
-    // Clean up subscription when component is destroyed
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
     }
@@ -68,6 +72,7 @@ async ngOnInit(): Promise<void> {
     try {
       const userData = await this.userService.getCurrentUserInfo();
       this.username = userData.username;
+      this.profilePicture = userData.profilePicture || 'assets/profilepic.jpg';
     } catch (error) {
       console.error('Error fetching current user info:', error);
     }
@@ -79,15 +84,31 @@ async ngOnInit(): Promise<void> {
     this.isLoggedIn = !!token && token !== '';
   }
 
-  toggleProfileMenu(event: Event) {
-    event.stopPropagation();
-    this.profileMenuVisible = !this.profileMenuVisible;
+  async loadCategories(): Promise<void> {
+  try {
+    this.categories = await this.videoPageService.getCategories();
+  } catch (error) {
+    console.error('Kategóriák betöltése sikertelen:', error);
   }
+}
+
+  toggleProfileMenu(event: Event) {
+  event.stopPropagation();
+  this.profileMenuVisible = !this.profileMenuVisible;
+
+  if (this.profileMenuVisible) {
+    this.categoryMenuVisible = false;
+  }
+}
 
   toggleCategoryMenu(event: Event) {
-    event.stopPropagation(); // Prevent the document click event from firing
-    this.categoryMenuVisible = !this.categoryMenuVisible;
+  event.stopPropagation();
+  this.categoryMenuVisible = !this.categoryMenuVisible;
+
+  if (this.categoryMenuVisible) {
+    this.profileMenuVisible = false;
   }
+}
 
   close() {
     this.profileMenuVisible = false;
@@ -122,7 +143,7 @@ async ngOnInit(): Promise<void> {
       this.searchService.search(this.searchQuery.trim(), 30)
         .then(() => {
           this.router.navigate(['/search'], {
-            queryParams: { query: this.searchQuery.trim(), limit: this.limit }
+            queryParams: { text: this.searchQuery.trim(), limit: this.limit }
           });
         })
         .catch(error => {
@@ -144,7 +165,7 @@ async ngOnInit(): Promise<void> {
     if (!this.clickedSearchIcon && this.searchQuery.trim()) {
       this.searchQuery = '';
     }
-    this.clickedSearchIcon = false; // Reset
+    this.clickedSearchIcon = false;
   })
   }
 

@@ -11,7 +11,7 @@ import { Video } from '../../_interfaces/video';
   templateUrl: './add-comment.component.html',
   styleUrl: './add-comment.component.css'
 })
-export class AddCommentComponent implements OnInit{
+export class AddCommentComponent implements OnInit {
   commentText: string = '';
   videoId: string = '';
   isSubmitting: boolean = false;
@@ -65,4 +65,3 @@ export class AddCommentComponent implements OnInit{
     }
   }
 }
-
