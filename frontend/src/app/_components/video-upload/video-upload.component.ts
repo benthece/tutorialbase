@@ -116,6 +116,7 @@ export class VideoUploadComponent implements OnInit {
       this.title.trim() !== '' &&
       this.description.trim() !== '' &&
       this.category.trim() !== '' &&
+      this.subcategory.trim() !== '' &&
       this.tags.trim() !== '' &&
       isTagsValid
     );

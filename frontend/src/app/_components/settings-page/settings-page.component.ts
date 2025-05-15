@@ -12,7 +12,7 @@ import { UserAuthService } from '../../_services/user-auth-service.service';
 })
 export class SettingsPageComponent implements OnInit {
   selectedBackgroundImage: File | null = null;
-  selectedProfileImage: File | null = null;
+  file: File | null = null;
   newBio: string = '';
   maxBioLength: number = 400;
 
@@ -30,7 +30,7 @@ export class SettingsPageComponent implements OnInit {
   onProfileImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
-      this.selectedProfileImage = input.files[0];
+      this.file = input.files[0];
     }
   }
 
@@ -47,12 +47,12 @@ export class SettingsPageComponent implements OnInit {
   }
 
   async uploadProfileImage() {
-    if (!this.selectedProfileImage) return;
+    if (!this.file) return;
 
     try {
-      await this.userService.updateProfilepic(this.selectedProfileImage);
+      await this.userService.updateProfilepic(this.file);
       alert('Profilkép sikeresen feltöltve!');
-      this.selectedProfileImage = null;
+      this.file = null;
     } catch (error) {
       alert('Hiba a profilkép feltöltése során.');
     }

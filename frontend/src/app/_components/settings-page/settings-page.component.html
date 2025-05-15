@@ -23,7 +23,7 @@
                     <input type="file" id="profileImageInput" accept="image/*" (change)="onProfileImageSelected($event)"
                         hidden>
                     <label for="profileImageInput" class="file-select-button">Kép kiválasztása</label>
-                    <button class="upload-button" (click)="uploadProfileImage()" [disabled]="!selectedProfileImage">
+                    <button class="upload-button" (click)="uploadProfileImage()" [disabled]="!file">
                         Feltöltés
                     </button>
                 </div>

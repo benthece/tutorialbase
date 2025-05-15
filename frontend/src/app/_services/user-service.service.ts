@@ -73,9 +73,9 @@ export class UserServiceService {
   async updateProfilepic(imageFile: File): Promise<any> {
     try {
       const formData = new FormData();
-      formData.append('ProfileImage', imageFile);
+      formData.append('file', imageFile);
 
-      const response = await axios.post('/api/user/profile-image', formData, {
+      const response = await axios.post('/api/user/upload_profile_pic', formData, {
         headers: {
           'Authorization': 'Bearer ' + localStorage.getItem('token'),
           'Content-Type': 'multipart/form-data'
