@@ -39,4 +39,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/user/watch_history', [ProfileController::class, 'watchHistory']);
     Route::post('/user/delete_history_item', [ProfileController::class, 'deleteHistory']);
     Route::post('/user/upload_profile_pic', [ProfileController::class, 'uploadProfilePicture']);
+    Route::post('/user/upload_cover_image', [ProfileController::class, 'uploadCoverImage']);
+    Route::post('/video/upload', [VideoController::class, 'uploadVideo']);
+    Route::post('/user/update-bio', [ProfileController::class, 'updateBio']);
+    Route::post('/user/delete-user', [ProfileController::class, 'deleteUser']);
+    Route::post('/video/delete-video/{guid}', [VideoController::class, 'deleteVideo'])
+        ->whereUuid('guid');
 });

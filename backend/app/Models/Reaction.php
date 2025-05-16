@@ -10,6 +10,7 @@ class Reaction extends Model
     public static function getReactions(string $guid, string $userGuid): array
     {
         $reactions = DB::select("CALL video_reactions('$guid')");
+
         if ($userGuid) {
             return [
                 'useful' => $reactions[0]->upvote,

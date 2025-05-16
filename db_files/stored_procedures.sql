@@ -169,12 +169,13 @@ DELIMITER $$
 CREATE OR REPLACE PROCEDURE delete_comment(IN comm_guid CHAR(36), IN user_guid CHAR(36))
 BEGIN
     DECLARE comment_id INT;
-    DECLARE commenter_id CHAR(36);
+#     DECLARE commenter_id CHAR(36);
 
     SELECT id INTO comment_id FROM comments WHERE guid = comm_guid;
-    SELECT user_id INTO commenter_id FROM comments WHERE id = comment_id;
+    #     SELECT user_id INTO commenter_id FROM comments WHERE id = comment_id;
 
-    IF commenter_id = (SELECT id FROM users WHERE guid = user_guid) THEN
+#     IF commenter_id = (SELECT id FROM users WHERE guid = user_guid) THEN
+    IF (SELECT privilege_id FROM users WHERE guid = user_guid) = 1 THEN
         UPDATE comments SET is_deleted = 1 WHERE id = comment_id;
         SELECT 'Comment successfully deleted.' AS message;
     ELSE
@@ -528,7 +529,8 @@ BEGIN
              INNER JOIN watch_history wh ON videos.id = wh.video_id
              INNER JOIN users u ON wh.user_id = u.id
              INNER JOIN users u2 ON u2.id = videos.id
-    WHERE wh.user_id = usr_id AND wh.is_deleted = 0
+    WHERE wh.user_id = usr_id
+      AND wh.is_deleted = 0
     ORDER BY viewed_at DESC
     LIMIT 20;
 END;
@@ -556,7 +558,82 @@ BEGIN
     SELECT id INTO usr_id FROM users WHERE guid = usr_guid;
 
     UPDATE users SET profile_pic_url = filepath WHERE id = usr_id;
-END; $$
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE store_cover_img(IN filepath VARCHAR(200), IN usr_guid CHAR(36))
+BEGIN
+    DECLARE usr_id INT UNSIGNED;
+    SELECT id INTO usr_id FROM users WHERE guid = usr_guid;
+
+    UPDATE users SET bg_image_url = filepath WHERE id = usr_id;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE create_video(
+    IN usr_guid CHAR(36),
+    IN vtitle VARCHAR(50),
+    IN vdescription LONGTEXT,
+    IN categ_guid CHAR(36),
+    IN subcat_guid CHAR(36),
+    IN vid_url VARCHAR(200),
+    IN bg_url VARCHAR(200)
+)
+BEGIN
+    DECLARE usr_id INT UNSIGNED;
+    DECLARE cat_id INT UNSIGNED;
+    DECLARE sub_id INT UNSIGNED;
+
+    SELECT id INTO cat_id FROM categories WHERE guid = categ_guid;
+    SELECT id INTO sub_id FROM categories WHERE guid = subcat_guid;
+    SELECT id INTO usr_id FROM users WHERE guid = usr_guid;
+
+    INSERT INTO videos (title, description, url, base_image_url, user_id)
+    VALUES (vtitle, vdescription, vid_url, bg_url, usr_id);
+
+    INSERT INTO video_category (category_id, video_id) VALUES (sub_id, LAST_INSERT_ID());
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE update_bio(IN usr_guid CHAR(36), IN intext LONGTEXT)
+BEGIN
+    DECLARE usr_id INT UNSIGNED;
+    SELECT id INTO usr_id FROM users WHERE guid = usr_guid;
+
+    UPDATE users SET bio = intext WHERE id = usr_id;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE delete_video(IN vid_guid CHAR(36), IN usr_guid CHAR(36))
+BEGIN
+    DECLARE usr_id INT UNSIGNED;
+    DECLARE vid_id INT UNSIGNED;
+
+    SELECT id INTO usr_id FROM users WHERE guid = usr_guid;
+    SELECT id INTO vid_id FROM videos WHERE guid = vid_guid;
+
+    UPDATE videos SET is_deleted = 1 WHERE id = vid_id AND user_id = usr_id;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE delete_user(IN usr_guid CHAR(36))
+BEGIN
+    DECLARE usr_id INT UNSIGNED;
+    SELECT id INTO usr_id FROM users WHERE guid = usr_guid;
+
+    UPDATE users SET is_deleted = 1 WHERE id = usr_id;
+END;
+$$
 DELIMITER ;
 
 /*CREATE OR REPLACE PROCEDURE modify_user_profile(

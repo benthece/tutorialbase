@@ -29,7 +29,8 @@ class Video extends Model
         ];
     }
 
-    public static function getRecommendedVideos(string $guid, int $limit): array {
+    public static function getRecommendedVideos(string $guid, int $limit): array
+    {
         $response = DB::select("call get_videos_for_category(?, ?)", [$guid, $limit]);
         $toReturn = [];
 
@@ -50,12 +51,14 @@ class Video extends Model
         return $toReturn;
     }
 
-    public static function reaction(string $guid, string $userGuid, string $action) {
+    public static function reaction(string $guid, string $userGuid, string $action)
+    {
         $response = DB::select('CALL reaction(?, ?, ?)', [$guid, $userGuid, $action]);
         return $response[0]->message;
     }
 
-    public static function getCategoryVideos(string $guid, int $limit): array {
+    public static function getCategoryVideos(string $guid, int $limit): array
+    {
         $response = DB::select("call get_videos_for_category(?, ?)", [$guid, $limit]);
         $toReturn = [];
 
@@ -77,7 +80,8 @@ class Video extends Model
         return $toReturn;
     }
 
-    public static function getCategories(bool $isRandom): array {
+    public static function getCategories(bool $isRandom): array
+    {
         $response = DB::select("call get_maincategories(?)", [$isRandom]);
         $toReturn = [];
 
@@ -90,7 +94,8 @@ class Video extends Model
         return $toReturn;
     }
 
-    public static function searchVideos(string $text, int $limit): array {
+    public static function searchVideos(string $text, int $limit): array
+    {
         $response = DB::select("call search(?, ?)", [$text, $limit]);
         $toReturn = [];
 
@@ -113,7 +118,8 @@ class Video extends Model
         return $toReturn;
     }
 
-    public static function getMainCategories(bool $isRandom): array {
+    public static function getMainCategories(bool $isRandom): array
+    {
         $response = DB::select("call get_maincategories(?)", [$isRandom]);
         $categories = [];
 
@@ -126,7 +132,8 @@ class Video extends Model
         return $categories;
     }
 
-    public static function getSubCategories(string $mainCatId): array {
+    public static function getSubCategories(string $mainCatId): array
+    {
         $response = DB::select("call get_subcategories_for_main(?)", [$mainCatId]);
         $subcategories = [];
 
@@ -140,7 +147,8 @@ class Video extends Model
         return $subcategories;
     }
 
-    public static function getSubcatByMain(string $mainCatId): array {
+    public static function getSubcatByMain(string $mainCatId): array
+    {
         $response = DB::select("call get_subcategories_for_main(?)", [$mainCatId]);
         $subcategories = [];
 
@@ -153,19 +161,43 @@ class Video extends Model
         return $subcategories;
     }
 
-    public static function getReactionState(string $videoGuid, string $userGuid): string {
+    public static function getReactionState(string $videoGuid, string $userGuid): string
+    {
         $response = DB::select("call reaction_state(?, ?)", [$videoGuid, $userGuid]);
         return $response[0]->state;
     }
 
-    public static function getViews(string $videoGuid): string {
+    public static function getViews(string $videoGuid): string
+    {
         $response = DB::select("call get_views(?)", [$videoGuid]);
         return $response[0]->viewcount;
     }
 
-    public static function countView(string $videoGuid, string $userGuid): bool {
+    public static function countView(string $videoGuid, string $userGuid): bool
+    {
         $response = DB::select("call count_views(?, ?)", [$videoGuid, $userGuid]);
 
         return (bool)$response;
+    }
+
+    public static function storeVideo(string $path,
+                                      string $bgPath,
+                                      string $userGuid,
+                                      string $title,
+                                      string $description,
+                                      string $cat_guid,
+                                      string $sub_guid): int
+    {
+        $response = DB::affectingStatement('CALL create_video(?, ?, ?, ?, ?, ?, ?)', [
+            $userGuid, $title, $description,
+            $cat_guid, $sub_guid, $path, $bgPath
+        ]);
+
+        return (int)$response;
+    }
+
+    public static function deleteVideo(string $videoGuid, string $userGuid): bool
+    {
+        return DB::statement('CALL delete_video(?)', [$videoGuid, $userGuid]);
     }
 }

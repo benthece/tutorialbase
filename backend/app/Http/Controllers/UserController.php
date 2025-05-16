@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function getInfo() {
+    public function getInfo()
+    {
         $userData = Auth::getUser();
         return response()->json([
             "username" => $userData->username,
@@ -14,6 +15,6 @@ class UserController extends Controller
             "profileThumbnail" => $userData->base_image_url,
             "bio" => $userData->bio,
         ])->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'POST');
+          ->header('Access-Control-Allow-Methods', 'POST');
     }
 }

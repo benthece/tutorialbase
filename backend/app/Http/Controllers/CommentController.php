@@ -6,11 +6,11 @@ use App\Models\Comment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CommentController extends Controller
 {
-    public function createComment(Request $request, string $videoGuid): JsonResponse {
+    public function createComment(Request $request, string $videoGuid): JsonResponse
+    {
         $user = Auth::user();
         $response = Comment::createComment($videoGuid, $user->guid, $request->text);
 
@@ -21,7 +21,8 @@ class CommentController extends Controller
         }
     }
 
-    public function updateComment(Request $request, string $guid): JsonResponse {
+    public function updateComment(Request $request, string $guid): JsonResponse
+    {
         $user = Auth::user();
         $response = Comment::modifyComment($guid, $user->guid, $request->text);
 
@@ -32,7 +33,8 @@ class CommentController extends Controller
         }
     }
 
-    public function deleteComment(string $guid): JsonResponse {
+    public function deleteComment(string $guid): JsonResponse
+    {
         $user = Auth::user();
         $response = Comment::deleteComment($guid, $user->guid);
 

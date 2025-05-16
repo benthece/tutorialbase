@@ -37,8 +37,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function login(Request $request): JsonResponse {
-
+    public function login(Request $request): JsonResponse
+    {
         $request->validate([
             'username' => 'required|string|max:20|min:4',
             'password' => 'required|string',
@@ -66,7 +66,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout(): JsonResponse {
+    public function logout(): JsonResponse
+    {
         Auth::logout();
 
         return response()->json([
@@ -75,7 +76,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function refresh(): JsonResponse {
+    public function refresh(): JsonResponse
+    {
         return response()->json([
             "status" => "success",
             "user" => Auth::user()->only(['guid', 'username']),

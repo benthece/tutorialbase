@@ -7,20 +7,22 @@ use Illuminate\Support\Facades\DB;
 
 class Profile extends Model
 {
-    public static function getProfileData(string $username): array | bool {
+    public static function getProfileData(string $username): array|bool
+    {
         $profile = DB::select('CALL get_profile_data(?)', [$username]);
 
         if ($profile) {
             return [
                 'username' => $profile[0]->username,
                 'profilePicture' => env('APP_URL') . ':8000' . $profile[0]->profile_pic_url,
-                'profileThumbnail' => env('APP_URL') . ':8000' . $profile[0]-> bg_image_url,
+                'profileThumbnail' => env('APP_URL') . ':8000' . $profile[0]->bg_image_url,
                 'bio' => $profile[0]->bio,
             ];
         } else return false;
     }
 
-    public static function getWatchHistory(string $guid): array | bool {
+    public static function getWatchHistory(string $guid): array|bool
+    {
         $response = DB::select('CALL watch_history(?)', [$guid]);
         $videos = [];
 
@@ -40,7 +42,8 @@ class Profile extends Model
         return $videos;
     }
 
-    public static function getUserUploaded(string $username): array | bool {
+    public static function getUserUploaded(string $username): array|bool
+    {
         $response = DB::select('CALL get_user_uploaded(?)', [$username]);
         $videos = [];
 
@@ -66,5 +69,20 @@ class Profile extends Model
     public static function storeProfPic(string $path, string $userGuid): bool
     {
         return DB::statement('CALL store_prof_pic(?, ?)', [$path, $userGuid]);
+    }
+
+    public static function storeCovImg(string $path, string $userGuid): bool
+    {
+        return DB::statement('CALL store_cover_img(?, ?)', [$path, $userGuid]);
+    }
+
+    public static function updateBio(string $bio, string $userGuid): bool
+    {
+        return DB::statement('CALL update_bio(?, ?)', [$userGuid, $bio]);
+    }
+
+    public static function deleteUser(string $guid): bool
+    {
+        return DB::statement('CALL delete_user(?)', [$guid]);
     }
 }
