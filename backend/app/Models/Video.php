@@ -198,6 +198,6 @@ class Video extends Model
 
     public static function deleteVideo(string $videoGuid, string $userGuid): bool
     {
-        return DB::statement('CALL delete_video(?)', [$videoGuid, $userGuid]);
+        return DB::statement('CALL delete_video(?, ?)', [$videoGuid, $userGuid]);
     }
 }
