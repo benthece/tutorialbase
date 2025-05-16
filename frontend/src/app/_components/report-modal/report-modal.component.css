@@ -1,0 +1,208 @@
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #495057;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 350px;
+    text-align: center;
+    border: 1px solid #ADB5BD;
+}
+
+.close-button {
+    position: relative;
+    margin-left: 90%;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+h2 {
+    color: white;
+    font-size: 24px;
+    margin-bottom: 30px;
+    font-weight: normal;
+}
+
+form {
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-align: left;
+    margin-bottom: 8px;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #495057;
+    border-radius: 8px;
+    background: #e8e8e8e7;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 8px 10px;
+}
+
+.select-container {
+    position: relative;
+    width: 100%;
+}
+
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #495057;
+    border-radius: 8px;
+    background: #e8e8e8e7;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    min-height: 120px;
+    resize: vertical;
+}
+
+select:focus, textarea:focus {
+    outline: none;
+    border-color: #e8e8e8e7;
+}
+
+.error {
+    display: block;
+    color: #fc8181;
+    font-size: 0.75rem;
+    text-align: left;
+    margin-top: 5px;
+}
+
+.error-message {
+    background-color: #e8e8e8e7;
+    color: #c53030;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 10px;
+}
+
+select.invalid, textarea.invalid {
+    border-color: #fc8181;
+}
+
+.kuldes-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #7ecc70e7;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 30px;
+    transition: all 0.2s;
+}
+
+.kuldes-button:hover:not([disabled]) {
+    background-color: #a0ea93e7;
+}
+
+.kuldes-button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.kuldes-button.success {
+    background-color: #48bb78;
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        max-width: 40%;
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    label {
+        font-size: 0.8rem;
+    }
+
+    select,
+    textarea {
+        font-size: 15px;
+        padding: 10px;
+    }
+
+    .close-button {
+        font-size: 26px;
+    }
+
+    .error-message {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .kuldes-button {
+        font-size: 15px;
+        padding: 10px;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .modal-content {
+        max-width: 50%;
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    .kuldes-button {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        max-width: 60%;
+    }
+}

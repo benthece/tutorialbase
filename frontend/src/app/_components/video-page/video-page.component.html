@@ -6,11 +6,28 @@
 
         <div class="comment-section">
             <h3 class="section-title">Kommentek</h3>
-            <div *ngFor="let comment of comments" class="comment-item">
-                <app-comment [username]="comment.username"
-                [avatarSrc]="comment.avatarSrc" [commentText]="comment.commentText">
-            </app-comment>
+            <div>
+                <app-add-comment *ngIf="authService.isAuthenticated" [video]="video"
+                    (commentAdded)="loadComments(true)"></app-add-comment>
             </div>
+
+            <!-- Display comments based on expanded state -->
+            <div *ngFor="let comment of comments; let i = index" class="comment-item"
+                [class.hidden]="isMobileView && !commentsExpanded && i > 0">
+                <app-comment [commentId]="comment.id" [username]="comment.username" [avatarSrc]="comment.avatarSrc"
+                    [commentText]="comment.text" (commentDeleted)="onCommentDeleted($event)">
+                </app-comment>
+            </div>
+
+            <button *ngIf="hasMoreComments && ((!isMobileView) || (isMobileView && commentsExpanded))"
+                (click)="loadMoreComments()" class="show-more-comments">
+                Több komment betöltése
+            </button>
+
+            <button *ngIf="isMobileView && comments.length > 1" (click)="toggleCommentsExpanded()"
+                class="show-more-comments">
+                {{ commentsExpanded ? 'Kevesebb komment' : 'Mutass többet' }}
+            </button>
         </div>
     </div>
 
@@ -18,8 +35,8 @@
         <h3 class="section-title">Ajánlott videók</h3>
         <div class="video-list">
             <div *ngFor="let video of recommendedVideos" class="video-item">
-                <app-video-card [id]="video.id" [title]="video.title" [uploaderName]="video.uploaderName"
-                    [duration]="video.duration" [thumbnailSrc]="video.thumbnailSrc" [avatarSrc]="video.avatarSrc">
+                <app-video-card [id]="video.guid" [title]="video.title" [username]="video.username"
+                    [base_image_url]="video.base_image_url" [profile_pic_url]="video.profile_pic_url">
                 </app-video-card>
             </div>
         </div>

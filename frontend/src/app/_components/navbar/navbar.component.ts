@@ -1,37 +1,82 @@
-import { Component, Output, EventEmitter, OnInit, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, ElementRef, HostListener, ViewChild, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UserAuthService } from '../../_services/user-auth-service.service';
+import { SearchService } from '../../_services/search-service.service';
+import { Subscription } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { UserServiceService } from '../../_services/user-service.service';
+import { Category } from '../../_interfaces/category';
+import { VideoPageService } from '../../_services/video-page-service.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
 
-  @ViewChild('hamburgerMenu') hamburgerMenu!: ElementRef;
+  @ViewChild('categoryMenu') categoryMenu!: ElementRef;
 
-  dropdownVisible = false;
-  hamburgerMenuVisible = false;
+  profileMenuVisible = false;
+  categoryMenuVisible = false;
   isLoggedIn = false;
+  private authSubscription!: Subscription;
+  searchQuery: string = '';
+  limit: number = 30;
+  isSearching: boolean = false;
+  username: string = '';
+  profilePicture: string = 'assets/profilepic.jpg'; // fallback
+  clickedSearchIcon = false;
+  categories: Category[] = [];
 
-  @ViewChild('hamburgerButton', { static: false }) hamburgerButton!: ElementRef;
-  @ViewChild('dropdownButton', { static: false }) dropdownButtonButton!: ElementRef;
-  @ViewChild('dropdownMenu') dropdownMenu!: ElementRef;
-  @ViewChild('dropdownButton') dropdownButton!: ElementRef;
-
-  constructor(public userAuthService: UserAuthService) { }
-
-  ngOnInit(): void {
-    // Check if user is logged in on component initialization
-    this.checkLoginStatus();
-  }
+  @ViewChild('categoryButton', { static: false }) categoryButton!: ElementRef;
+  @ViewChild('profileButton', { static: false }) profileButtonButton!: ElementRef;
+  @ViewChild('profileMenu') profileMenu!: ElementRef;
+  @ViewChild('profileButton') profileButton!: ElementRef;
 
   @Output() showLoginModal = new EventEmitter<void>();
   @Output() showRegisterModal = new EventEmitter<void>();
+
+  constructor(public userAuthService: UserAuthService, private searchService: SearchService,
+    private router: Router, public userService: UserServiceService, public videoPageService: VideoPageService) { }
+
+async ngOnInit(): Promise<void> {
+  // Subscribe to authentication state changes
+  this.authSubscription = this.userAuthService.isAuthenticated$.subscribe(
+    async isAuthenticated => {
+      this.isLoggedIn = isAuthenticated;
+      if (isAuthenticated) {
+        await this.loadCurrentUser();
+      }
+    }
+  );
+
+  this.checkLoginStatus();
+  if (this.isLoggedIn) {
+    await this.loadCurrentUser();
+  }
+
+  await this.loadCategories();
+}
+
+  ngOnDestroy(): void {
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+  }
+
+  async loadCurrentUser(): Promise<void> {
+    try {
+      const userData = await this.userService.getCurrentUserInfo();
+      this.username = userData.username;
+      this.profilePicture = userData.profilePicture || 'assets/profilepic.jpg';
+    } catch (error) {
+      console.error('Error fetching current user info:', error);
+    }
+  }
 
   // Check if token exists and is not empty
   checkLoginStatus(): void {
@@ -39,61 +84,102 @@ export class NavbarComponent implements OnInit {
     this.isLoggedIn = !!token && token !== '';
   }
 
-  toggleDropdown(event: Event) {
-    event.stopPropagation();
-    this.dropdownVisible = !this.dropdownVisible;
-    // Refresh login status when dropdown is opened
-    if (this.dropdownVisible) {
-      this.checkLoginStatus();
-    }
+  async loadCategories(): Promise<void> {
+  try {
+    this.categories = await this.videoPageService.getCategories();
+  } catch (error) {
+    console.error('Kategóriák betöltése sikertelen:', error);
   }
-  toggleHamburgerMenu(event: Event) {
-    event.stopPropagation(); // Prevent the document click event from firing
-    this.hamburgerMenuVisible = !this.hamburgerMenuVisible;
+}
+
+  toggleProfileMenu(event: Event) {
+  event.stopPropagation();
+  this.profileMenuVisible = !this.profileMenuVisible;
+
+  if (this.profileMenuVisible) {
+    this.categoryMenuVisible = false;
   }
+}
+
+  toggleCategoryMenu(event: Event) {
+  event.stopPropagation();
+  this.categoryMenuVisible = !this.categoryMenuVisible;
+
+  if (this.categoryMenuVisible) {
+    this.profileMenuVisible = false;
+  }
+}
 
   close() {
-    this.dropdownVisible = false;
-    this.hamburgerMenuVisible = false;
+    this.profileMenuVisible = false;
+    this.categoryMenuVisible = false;
   }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     // Check if clicked element is outside the menu
-    if (this.hamburgerMenuVisible) {
-      const clickedInside = this.hamburgerMenu.nativeElement.contains(event.target);
-      const clickedOnButton = this.hamburgerButton?.nativeElement.contains(event.target);
+    if (this.categoryMenuVisible) {
+      const clickedInside = this.categoryMenu.nativeElement.contains(event.target);
+      const clickedOnButton = this.categoryButton?.nativeElement.contains(event.target);
 
       if (!clickedInside && !clickedOnButton) {
-        this.hamburgerMenuVisible = false;
+        this.categoryMenuVisible = false;
       }
     }
-    if (this.dropdownVisible) {
-      const clickedInsideDropdown = this.dropdownMenu.nativeElement.contains(event.target);
-      const clickedOnDropdownButton = this.dropdownButton?.nativeElement.contains(event.target);
+    if (this.profileMenuVisible && this.profileMenu) {
+      const clickedInsideProfileMenu = this.profileMenu.nativeElement.contains(event.target);
+      const clickedOnProfileButton = this.profileButton?.nativeElement.contains(event.target);
 
-      if (!clickedInsideDropdown && !clickedOnDropdownButton) {
-        this.dropdownVisible = false;
+      if (!clickedInsideProfileMenu && !clickedOnProfileButton) {
+        this.profileMenuVisible = false;
       }
     }
+  }
+
+  onSearch(): void {
+    if (this.searchQuery.trim() && !this.isSearching) {
+      this.isSearching = true;
+
+      this.searchService.search(this.searchQuery.trim(), 30)
+        .then(() => {
+          this.router.navigate(['/search'], {
+            queryParams: { text: this.searchQuery.trim(), limit: this.limit }
+          });
+        })
+        .catch(error => {
+          console.error('Search error:', error);
+        })
+        .finally(() => {
+          this.isSearching = false;
+          this.searchQuery = '';
+        });
+    }
+  }
+
+  onIconMouseDown(): void {
+  this.clickedSearchIcon = true;
+  }
+
+  onInputBlur(): void {
+  setTimeout(() => {
+    if (!this.clickedSearchIcon && this.searchQuery.trim()) {
+      this.searchQuery = '';
+    }
+    this.clickedSearchIcon = false;
+  })
   }
 
   onLoginClick(event: Event) {
     event.preventDefault();
     this.showLoginModal.emit();
-    this.dropdownVisible = false;
-    this.hamburgerMenuVisible = false;
+    this.close();
   }
 
   onLogoutClick() {
     this.userAuthService.logout().then(() => {
-      localStorage.setItem('token', "")
-      this.isLoggedIn = false;
       this.close();
     }).catch(() => {
-      localStorage.setItem('token', "")
-      this.isLoggedIn = false;
-      this.close()
-    })
+      this.close();
+    });
   }
 }

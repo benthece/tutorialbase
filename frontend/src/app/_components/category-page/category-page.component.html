@@ -1,0 +1,20 @@
+<div class="category-container">
+    <div *ngFor="let category of categoryVideos; let i = index" class="video-section">
+        <h2 class="section-title">{{ category.subcategory.name }}</h2>
+
+        <div class="video-container">
+            <div *ngIf="category.subcategory.videos.length > 0; else noVideos" class="video-row" #videoRow>
+                <div *ngFor="let video of category.subcategory.videos" class="video-card-wrapper">
+                    <app-video-card [id]="video.id" [title]="video.title" [username]="video.uploaderName"
+                        [base_image_url]="video.thumbnailSrc" [profile_pic_url]="video.avatarSrc">
+                    </app-video-card>
+                </div>
+            </div>
+
+            <ng-template #noVideos>
+                <p class="no-videos-text">Nincs videó az alkategóriához.</p>
+            </ng-template>
+        </div>
+
+    </div>
+</div>

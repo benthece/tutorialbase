@@ -1,50 +1,121 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { VideoComponent } from '../video/video.component';
 import { VideoCardComponent } from '../video-card/video-card.component';
 import { CommonModule } from '@angular/common';
 import { Video } from '../../_interfaces/video';
-import { VideoService } from '../../_services/video-service.service';
 import { CommentComponent } from "../comment/comment.component";
-import { CommentService } from '../../_services/comment-service.service';
-import { Comment as CommentModel } from '../../_interfaces/comment'; // Rename to avoid collision
+import { Comment as CommentModel } from '../../_interfaces/comment';
+import { AddCommentComponent } from '../add-comment/add-comment.component';
+import { UserAuthService } from '../../_services/user-auth-service.service';
+import { VideoPageService } from '../../_services/video-page-service.service';
+import { RecommendedVideo } from '../../_interfaces/recommended-video';
 
 @Component({
   selector: 'app-video-page',
   standalone: true,
-  imports: [VideoComponent, VideoCardComponent, CommonModule, CommentComponent],
+  imports: [VideoComponent, VideoCardComponent, CommonModule, CommentComponent, AddCommentComponent],
   templateUrl: './video-page.component.html',
   styleUrl: './video-page.component.css'
 })
 export class VideoPageComponent implements OnInit {
   currentVideo: Video | undefined;
-  recommendedVideos: Video[] = [];
-  comments: CommentModel[] = []; 
-  videoId: string = '1'; // Default to first video
+  recommendedVideos: RecommendedVideo[] = [];
+  comments: CommentModel[] = [];
+  videoId: string = '';
+  isMobileView = false;
+  commentsExpanded = false;
+  categ_id: string = '';
+
+  isLoading: boolean = true;
+  error: string | null = null;
+
+  video: Video | undefined;
+
+  hasMoreComments = true;
+
+  commentOffset = 0;
+  readonly COMMENT_PAGE_SIZE = 5;
 
   constructor(
     private route: ActivatedRoute,
-    private videoService: VideoService,
-    private commentService: CommentService,
+    public authService: UserAuthService,
+    private videoPageService: VideoPageService
   ) { }
 
   ngOnInit() {
+
+    this.checkScreenSize();
     // Subscribe to route parameters to get the video ID
     this.route.paramMap.subscribe((params: ParamMap) => {
-      this.videoId = params.get('id') || '1';
+      this.videoId = params.get('id') || '';
+      this.isLoading = true;
+      this.error = null;
+
       this.loadVideo();
-      this.loadComments();
+      this.loadComments(true);
     });
   }
 
-  loadComments(){
-    this.comments = this.commentService.getAllComments();
+  async loadComments(reset: boolean = false) {
+  try {
+    if (reset) {
+      this.comments = [];
+      this.commentOffset = 0;
+      this.hasMoreComments = true;
+    }
+
+    const newComments = await this.videoPageService.getVideoComments(this.videoId, this.commentOffset);
+
+    this.comments = [...this.comments, ...newComments];
+    this.commentOffset += this.COMMENT_PAGE_SIZE;
+
+    if (newComments.length < this.COMMENT_PAGE_SIZE) {
+      this.hasMoreComments = false;
+    }
+  } catch (error) {
+    console.error('Hiba kommentek betöltésekor:', error);
+    this.error = 'Nem sikerült a kommentek betöltése.';
+  }
+}
+
+  loadMoreComments() {
+    this.loadComments();
   }
 
-  loadVideo() {
-    this.currentVideo = this.videoService.getVideoById(this.videoId);
+  async loadVideo() {
+    try {
+      this.currentVideo = await this.videoPageService.getVideoById(this.videoId);
+      this.isLoading = false;
+      this.categ_id = this.currentVideo.categ_id;
 
-    // (all videos except current)
-    this.recommendedVideos = this.videoService.getRecommendedVideos(this.videoId);
+      this.recommendedVideos = await this.videoPageService.getRecommendedVideos(this.categ_id);
+    } catch (error) {
+      console.error('Error loading video:', error);
+      this.isLoading = false;
+      this.error = 'Failed to load video. Please try again later.';
+    }
   }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  private checkScreenSize() {
+    this.isMobileView = window.innerWidth <= 1200;
+
+    if (this.isMobileView) {
+      this.commentsExpanded = false;
+    }
+  }
+
+  toggleCommentsExpanded() {
+    this.commentsExpanded = !this.commentsExpanded;
+  }
+
+  onCommentDeleted(deletedCommentId: string) {
+    this.comments = this.comments.filter(comment => comment.id !== deletedCommentId);
+  }
+
 }

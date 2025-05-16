@@ -30,28 +30,28 @@
     font-size: 20px;
 }
 
-.hamburger {
+.category-button {
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
 }
 
-.hamburger svg {
+.category-button svg {
     width: 30px;
     height: 30px;
     transition: transform 0.3s ease;
 }
 
-.hamburger:hover svg {
+.category-button:hover svg {
     transform: scale(1.1);
 }
 
-.hamburger-menu {
+.category-menu {
     position: fixed;
     top: 75px;
     left: 10px;
-    width: 150px;
+    max-width: 200px;
     height: auto;
     background-color: #191c1f;
     color: #fff;
@@ -62,24 +62,24 @@
     border: 1px solid #343A40;
 }
 
-.hamburger-menu ul {
+.category-menu ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
 }
 
-.hamburger-menu ul li {
+.category-menu ul li {
     padding: 10px;
     text-align: left;
     border-radius: 5px;
 }
 
-.hamburger-menu a {
+.category-menu a {
     text-decoration: none;
     color: #fff;
 }
 
-.hamburger-menu ul li:hover {
+.category-menu ul li:hover {
     background-color: #495057;
 }
 
@@ -88,6 +88,7 @@
     align-items: center;
     width: 100%;
     max-width: 500px;
+    margin: 0 20px;
 }
 
 .search-field {
@@ -133,23 +134,20 @@
     height: 20px;
 }
 
-.star {
-    margin-left: 10px;
+.login-button {
+    background-color: #7ecc70e7;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
     cursor: pointer;
-    transition: 0.3 ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s;
 }
 
-.star-img {
-    width: 25px;
-    height: 25px;
-    transition: transform 0.2s ease;
-}
-
-.star :hover {
-    transform: scale(1.1);
+.login-button:hover {
+    background-color: #a0ea93e7;
 }
 
 .profile .profile-pic {
@@ -160,7 +158,7 @@
     cursor: pointer;
 }
 
-.dropdown-menu {
+.profile-menu {
     position: fixed;
     top: 75px;
     right: 10px;
@@ -173,24 +171,89 @@
     border: 1px solid #343A40;
 }
 
-.dropdown-menu ul {
+.profile-menu ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
     cursor: pointer;
 }
 
-.dropdown-menu ul li {
+.profile-menu ul li {
     padding: 10px;
     text-align: left;
     border-radius: 5px;
 }
 
-.dropdown-menu a {
+.profile-menu a {
     text-decoration: none;
     color: #fff;
 }
 
-.dropdown-menu ul li:hover {
+.profile-menu ul li:hover {
     background-color: #495057;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 6px 10px;
+    }
+
+    .logo {
+        font-size: 16px;
+    }
+
+    .category-button svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .nav-left {
+        gap: 10px;
+    }
+
+    .search-field {
+        height: 28px;
+        max-width: 300px;
+    }
+
+    .search-field-input {
+        padding: 6px 8px 6px 10px;
+        font-size: 14px;
+    }
+
+    .search-field-icon {
+        width: 28px;
+    }
+
+    .icon {
+        width: 16px;
+        height: 16px;
+    }
+
+    .profile .profile-pic {
+        width: 32px;
+        height: 32px;
+    }
+
+    .login-button {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .category-menu{
+        top: 60px;
+        max-width: 180px;
+        font-size: 14px;
+    }
+
+    .profile-menu {
+        top: 60px;
+        width: 130px;
+        font-size: 14px;
+    }
+
+    .category-menu ul li,
+    .profile-menu ul li {
+        padding: 8px;
+    }
 }

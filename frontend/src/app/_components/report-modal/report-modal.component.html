@@ -1,0 +1,51 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+    <div class="modal-content">
+        <button class="close-button" (click)="closeModal()">×</button>
+        <h2>Jelentés</h2>
+        <form [formGroup]="reportForm" (ngSubmit)="reportAction()">
+
+            <div class="form-group">
+                <label for="reason">Válaszd ki az indokot</label>
+                <div class="select-container">
+                    <select id="reason" formControlName="reason"
+                        [class.invalid]="reportForm.get('reason')?.invalid && reportForm.get('reason')?.touched">
+                        <option value="" disabled selected>Válaszd ki az indokot</option>
+                        @for (reason of reasons; track reason.id) {
+                            <option [value]="reason.id">{{reason.name}}</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            @if(reportForm.get('reason')?.invalid && reportForm.get('reason')?.touched){
+            <span class="error">Az indok kiválasztása kötelező</span>
+            }
+
+            <div class="form-group">
+                <label for="reasonText">Szöveges indoklás</label>
+                <textarea id="reasonText" formControlName="reasonText"
+                    [class.invalid]="reportForm.get('reasonText')?.invalid && reportForm.get('reasonText')?.touched"></textarea>
+            </div>
+            @if(reportForm.get('reasonText')?.invalid && reportForm.get('reasonText')?.touched){
+            <span class="error">A szöveges indoklás megadása kötelező</span>
+            }
+
+            <!-- Error messages for validation errors from the server -->
+            @if(validationErrors.length > 0){
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{validationErrors}}
+            </div>
+            }
+
+            <button type="submit" class="kuldes-button" [disabled]="!reportForm.valid || isSubmitting">
+                @if(isSubmitting){
+                    Küldés folyamatban...
+                } @else if(isSuccessful) {
+                    Sikeresen elküldve!
+                } @else {
+                    Email küldése
+                }
+            </button>
+        </form>
+    </div>
+</div>

@@ -1,6 +1,6 @@
 <nav class="navbar">
     <div class="nav-left">
-        <div class="hamburger" #hamburgerButton (click)="toggleHamburgerMenu($event)">
+        <div class="category-button" #categoryButton (click)="toggleCategoryMenu($event)">
             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -15,8 +15,9 @@
 
     <div class="nav-middle">
         <div class="search-field">
-            <input type="text" placeholder="search" class="search-field-input">
-            <div class="search-field-icon">
+            <input type="text" placeholder="Keresés" class="search-field-input" [(ngModel)]="searchQuery"
+                (keyup.enter)="onSearch()" (blur)="onInputBlur()">
+            <div class="search-field-icon" (click)="onSearch()" (mousedown)="onIconMouseDown()">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
                     <circle cx="11" cy="11" r="8" />
@@ -24,57 +25,47 @@
                 </svg>
             </div>
         </div>
-
-        <div class="star">
-            <img src="/assets/star.png" class="star-img">
-        </div>
     </div>
 
     <div class="profile">
-        <img src="assets/profilepic.jpg" alt="profile picture" class="profile-pic" #dropdownButton
-            (click)="toggleDropdown($event)" />
-        <div *ngIf="dropdownVisible" class="dropdown-menu" #dropdownMenu>
-            <ul>
-                <a [routerLink]="['/profile']" (click)="close()">
-                    <li>Profil</li>
-                </a>
-                <a [routerLink]="['/upload']" (click)="close()">
-                    <li>Videó feltöltés</li>
-                </a>
-                <a [routerLink]="['/history']" (click)="close()">
-                    <li>Előzmények</li>
-                </a>
-                <a [routerLink]="['/settings']" (click)="close()">
-                    <li>Beállítások</li>
-                </a>
-                <div *ngIf="!isLoggedIn">
-                    <a (click)="onLoginClick($event)">
-                        <li>Bejelentkezés</li>
+        <!-- Show profile picture and profile menu when logged in -->
+        <ng-container *ngIf="isLoggedIn; else loginButton">
+            <img [src]="profilePicture" alt="profilkép" class="profile-pic" #profileButton
+                (click)="toggleProfileMenu($event)" />
+            <div *ngIf="profileMenuVisible" class="profile-menu" #profileMenu>
+                <ul>
+                    <a [routerLink]="['/user', username]" (click)="close()">
+                        <li>Profil</li>
                     </a>
-                </div>
-                <div *ngIf="isLoggedIn">
+                    <a [routerLink]="['/upload']" (click)="close()">
+                        <li>Videó feltöltés</li>
+                    </a>
+                    <a [routerLink]="['/history']" (click)="close()">
+                        <li>Előzmények</li>
+                    </a>
+                    <a [routerLink]="['/settings']" (click)="close()">
+                        <li>Beállítások</li>
+                    </a>
                     <a (click)="onLogoutClick()">
                         <li>Kijelentkezés</li>
                     </a>
-                </div>
-            </ul>
-        </div>
+                </ul>
+            </div>
+        </ng-container>
+
+        <!-- Login button when not logged in -->
+        <ng-template #loginButton>
+            <button class="login-button" (click)="onLoginClick($event)">Bejelentkezés</button>
+        </ng-template>
     </div>
 </nav>
 
-<div *ngIf="hamburgerMenuVisible" class="hamburger-menu" #hamburgerMenu>
+<div *ngIf="categoryMenuVisible" class="category-menu" #categoryMenu>
     <ul>
-        <a href="/category1">
-            <li>Kategória1</li>
-        </a>
-        <a href="/category2">
-            <li>Kategória2</li>
-        </a>
-        <a href="/category3">
-            <li>Kategória3</li>
-        </a>
-        <a href="/category4">
-            <li>Kategória4</li>
-        </a>
+        <li *ngFor="let category of categories || []">
+            <a [routerLink]="['/category', category.guid]" (click)="close()">
+                {{ category.name }}
+            </a>
+        </li>
     </ul>
 </div>

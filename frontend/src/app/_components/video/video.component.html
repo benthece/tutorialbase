@@ -1,42 +1,60 @@
 <div class="video-container" *ngIf="video">
     <div class="video-player">
-        <video controls width="900" [src]="video.videoSrc">
+        <video controls width="900" [src]="video.url">
             A böngésződ nem támogatja a video taget.
         </video>
     </div>
 
     <div class="video-info">
         <div class="profile-section">
-            <img [src]="video.avatarSrc" class="profile-pic" />
+            <img [src]="video.avatarSrc" class="profile-pic" (click)="navigateToUser()" />
             <div class="title-views">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h2 class="video-title">{{ video.title }}</h2>
                     <div class="like-dislike">
                         <div class="counter">
-                            <button (click)="incrementLikes()">
-                                <i class="fa-solid fa-thumbs-up" style="color: #ffffffbc;"></i>
+                            <button (click)="reactToVideo('like')">
+                                <i class="fa-solid fa-thumbs-up" [style.color]="video.reactions.reactionState === 'liked' ? '#7ecc70e7' : '#ffffffbc'"></i>
                             </button>
-                            {{ likes }}
+                            {{video.reactions.useful}}
                         </div>
-                        <div class="counter">
-                            <button (click)="incrementDislikes()">
-                                <i class="fa-solid fa-thumbs-down" style="color: #ffffffbc;"></i>
+                        <div class="counter" (click)="reactToVideo('dislike')">
+                            <button>
+                                <i class="fa-solid fa-thumbs-down" [style.color]="video.reactions.reactionState === 'disliked' ? '#fc8181' : '#ffffffbc'"></i>
                             </button>
-                            {{ dislikes }}
+                            {{ video.reactions.notuseful }}
                         </div>
                     </div>
                 </div>
-                <span class="view-count">{{ video.views?.toLocaleString() || 0 }} views</span>
+                <span class="username" (click)="navigateToUser()">{{video.uploaderName}}</span>
+                <span class="view-count">{{ video.views.toLocaleString() || 0 }} megtekintés</span>
             </div>
         </div>
 
+        <button *ngIf="authService.isAuthenticated && authService.isAdmin" class="delete-button" (click)="deleteVideo()"
+            [disabled]="isDeleting">
+            <i class="fa-solid fa-trash"></i>
+        </button>
+
+        <button *ngIf="authService.isAuthenticated && !authService.isAdmin" class="report-button"
+            title="Videó jelentése" (click)="openReportModal()">
+            <i class="fa-solid fa-exclamation-circle"></i>
+        </button>
+
         <div class="description-container">
+            <p class="upload-date">
+                Feltöltés dátuma:
+                {{ video.uploadDate ? (video.uploadDate | date: 'yyyy.MM.dd.') : 'Ismeretlen dátum' }}
+            </p>
             <p class="description-text" [class.expanded]="isExpanded">
-                {{ video.description || 'No description available' }}
+                {{ video.description || 'Nincs leírás' }}
             </p>
             <button class="expand-button" (click)="toggleDescription()">
-                {{ isExpanded ? 'Show less' : 'Show more' }}
+                {{ isExpanded ? 'Mutass többet' : 'Mutass kevesebbet' }}
             </button>
         </div>
     </div>
 </div>
+
+<app-report-modal *ngIf="showReportModal" [itemId]="video?.id || ''" itemType="video" (close)="closeReportModal()">
+</app-report-modal>

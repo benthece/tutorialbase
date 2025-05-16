@@ -1,0 +1,21 @@
+<div class="video-history-card">
+    <button class="close-button" (click)="deleteHistory()">×</button>
+    <img class="video-thumbnail" [src]="video.thumbnail" alt="Video thumbnail" (click)="navigateToVideo()"/>
+
+    <div class="video-details">
+        <div class="video-info">
+            <h1 class="video-title" (click)="navigateToVideo()">{{ video.title }}</h1>
+            <p class="uploader-name" (click)="navigateToUser()">{{ video.username }}</p>
+        </div>
+
+        <div class="description-container">
+            <img class="avatar" [src]="video.userProfilePicture" alt="User avatar" (click)="navigateToUser()"/>
+            <div class="captions-text">
+                <p class="upload-date">Feltöltés dátuma: {{ video.uploadDate }}</p>
+                <p class="description-text" [class.expanded]="isExpanded" (click)="toggleDescription()">
+                    {{ video.description || 'Nincs leírás' }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

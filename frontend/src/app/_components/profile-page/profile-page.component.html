@@ -1,0 +1,38 @@
+<div class="profile-container">
+    <!-- Header with banner and profile image -->
+    <div class="profile-header">
+        <div class="banner-image">
+            <img [src]="profileThumbnail" />
+        </div>
+        <div class="profile-picture">
+            <!-- Profile picture thumbnail -->
+            <img [src]="profilePicture">
+        </div>
+        <div class="username">{{ username }}</div>
+    </div>
+
+    <!-- User bio section -->
+    <div class="user-bio" [class.expanded]="bioExpanded" [class.button-visible]="isMobile">
+        <p>{{ bio?.trim() ? bio : 'A felhasználó még nem töltött fel bemutatkozást.' }}</p>
+    </div>
+
+    <button class="toggle-bio" *ngIf="isMobile" (click)="bioExpanded = !bioExpanded">
+        {{ bioExpanded ? 'Show less' : 'Show more' }}
+    </button>
+
+    <!-- Videos section -->
+    <div class="videos-section">
+        <h1>Videók:</h1>
+        <ng-container *ngIf="videos && videos.length > 0; else noVideos">
+            <div class="videos-grid">
+                <div *ngFor="let video of videos">
+                    <app-video-card [id]="video.guid" [title]="video.title" [username]="video.uploader"
+                        [base_image_url]="video.base_image_url" [profile_pic_url]="video.uploader_pic"></app-video-card>
+                </div>
+            </div>
+        </ng-container>
+        <ng-template #noVideos>
+            <p class="no-videos-message">A felhasználó még nem töltött fel videót.</p>
+        </ng-template>
+    </div>
+</div>

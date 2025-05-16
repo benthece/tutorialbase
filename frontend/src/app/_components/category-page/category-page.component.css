@@ -1,0 +1,123 @@
+.category-container {
+    padding: 0 40px;
+    max-width: 1800px;
+    margin: 0 auto;
+}
+
+.video-section {
+    padding: 20px 0;
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    color: white;
+    margin-bottom: 16px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.video-container {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 10px;
+}
+
+.fade-left,
+.fade-right {
+    position: absolute;
+    top: 0;
+    width: 60px;
+    height: calc(100% - 20px);
+    z-index: 2;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.fade-left {
+    left: 0;
+    background: linear-gradient(to right, rgba(33, 37, 41, 0.9), rgba(33, 37, 41, 0));
+}
+
+.fade-right {
+    right: 0;
+    background: linear-gradient(to left, rgba(33, 37, 41, 0.9), rgba(33, 37, 41, 0));
+}
+
+.video-row {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 10px 0;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.video-row::-webkit-scrollbar {
+    height: 8px;
+}
+
+.video-row::-webkit-scrollbar-track {
+    background: #333;
+    border-radius: 4px;
+}
+
+.video-row::-webkit-scrollbar-thumb {
+    background: #495057;
+    border-radius: 4px;
+}
+
+.video-row::-webkit-scrollbar-thumb:hover {
+    background: #6C757D;
+}
+
+.video-card-wrapper {
+    flex: 0 0 360px;
+    max-width: 360px;
+}
+
+.no-videos-text {
+    font-size: 1.2rem;
+    padding: 20px;
+    color: #888;
+}
+
+@media (max-width: 1200px) {
+    .category-container {
+        padding: 0 30px;
+    }
+
+    .fade-left,
+    .fade-right {
+        width: 50px;
+    }
+}
+
+@media (max-width: 768px) {
+    .category-container {
+        padding: 0 20px;
+    }
+
+    .fade-left,
+    .fade-right {
+        width: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .category-container {
+        padding: 0 15px;
+    }
+
+    .fade-left,
+    .fade-right {
+        width: 30px;
+    }
+
+    .video-card-wrapper {
+        flex: 0 0 280px;
+    }
+}

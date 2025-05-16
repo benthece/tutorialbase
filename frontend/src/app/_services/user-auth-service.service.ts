@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 
@@ -10,7 +11,10 @@ export class UserAuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
-  constructor() {
+  private isAdminSubject = new BehaviorSubject<boolean>(false);
+  public isAdmin$ = this.isAdminSubject.asObservable();
+
+  constructor(private router: Router) {
     this.checkAuthStatus();
   }
 
@@ -21,6 +25,10 @@ export class UserAuthService {
 
   get isAuthenticated(): boolean {
     return this.isAuthenticatedSubject.value;
+  }
+
+  get isAdmin(): boolean {
+    return this.isAdminSubject.value;
   }
 
   private hashPassword(password: string): string {
@@ -37,6 +45,12 @@ export class UserAuthService {
     if (response.data && response.data.token) {
       this.isAuthenticatedSubject.next(true);
     }
+
+    if (response.data && response.data.token) {
+    this.isAuthenticatedSubject.next(true);
+    await this.checkAdminStatus();
+  }
+
     return response;
   }
 
@@ -54,20 +68,39 @@ export class UserAuthService {
     return response;
   }
 
-  getUser(): Promise<any> {
-    return axios.get('/api/user', { headers: { Authorization: 'Bearer ' + localStorage.getItem('token') } });
+  async checkAdminStatus(): Promise<boolean> {
+  try {
+    
+    const response = await axios.post('/api/user/is_admin', {}, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        'Content-Type': 'application/json'
+      }
+    });
+    const isAdmin = response.data.message === "true";
+    this.isAdminSubject.next(isAdmin);
+    return isAdmin;
+  } catch (error) {
+    this.isAdminSubject.next(false);
+    return false;
   }
+}
 
   async logout(): Promise<any> {
     try {
       const response = await axios.post('/api/logout', {}, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token') } });
       localStorage.removeItem('token');
       this.isAuthenticatedSubject.next(false);
+      this.router.navigateByUrl('/home');
       return response;
     } catch (error) {
       localStorage.removeItem('token');
       this.isAuthenticatedSubject.next(false);
       throw error;
     }
+  }
+
+  getUser(): Promise<any> {
+    return axios.get('/api/user', { headers: { Authorization: 'Bearer ' + localStorage.getItem('token') } });
   }
 }

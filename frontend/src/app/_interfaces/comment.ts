@@ -1,7 +1,7 @@
 export interface Comment {
-    id: string;
+    id: string; //guid
     username: string;
     avatarSrc: string;
-    commentText: string;
-
+    text: string;
+    date: Date;
 }

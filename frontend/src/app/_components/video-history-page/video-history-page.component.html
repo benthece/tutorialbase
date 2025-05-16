@@ -1,0 +1,11 @@
+<div class="title-space">
+  <h1 class="section-title">Előzmények</h1>
+</div>
+
+<p *ngIf="noHistory" class="no-history-text">Nincsenek megtekintési előzmények.</p>
+
+<ng-container *ngIf="!noHistory">
+  <ng-container *ngFor="let video of historyItems">
+    <app-history-card [video]="video" (historyDeleted)="onHistoryDeleted($event)"></app-history-card>
+  </ng-container>
+</ng-container>

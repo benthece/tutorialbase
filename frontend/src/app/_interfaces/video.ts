@@ -1,11 +1,17 @@
 export interface Video {
     id: string;
     title: string;
+    description: string;
     uploaderName: string;
-    duration: string;
     thumbnailSrc: string;
     avatarSrc: string;
-    videoSrc: string;
-    views?: number;
-    description?: string;
+    url: string;
+    categ_id: string;
+    views: string;
+    uploadDate: string;
+    reactions: {
+    useful: number;
+    notuseful: number;
+    reactionState: string;
+    };
 }
