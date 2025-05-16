@@ -15,7 +15,7 @@
             <div *ngFor="let comment of comments; let i = index" class="comment-item"
                 [class.hidden]="isMobileView && !commentsExpanded && i > 0">
                 <app-comment [commentId]="comment.id" [username]="comment.username" [avatarSrc]="comment.avatarSrc"
-                    [commentText]="comment.text">
+                    [commentText]="comment.text" (commentDeleted)="onCommentDeleted($event)">
                 </app-comment>
             </div>
 

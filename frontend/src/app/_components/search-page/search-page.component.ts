@@ -2,8 +2,9 @@ import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { SearchService, SearchResult } from '../../_services/search-service.service';
+import { SearchService } from '../../_services/search-service.service';
 import { SearchCardComponent } from '../search-card/search-card.component';
+import { SearchResult } from '../../_interfaces/search-result';
 
 @Component({
   selector: 'app-search-page',

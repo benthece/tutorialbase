@@ -3,37 +3,11 @@ import axios from 'axios';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Video } from '../_interfaces/video';
 import { Comment } from '../_interfaces/comment';
-
-export interface UserVideo {
-  guid: string;
-  title: string;
-  uploader: string;
-  uploader_pic: string;
-  base_image_url: string;
-}
-
-export interface VideoComment {
-  id: string;
-  username: string;
-  profilePicture: string;
-  text: string;
-}
-
-export interface RecommendedVideo {
-  guid: string;
-  title: string;
-  username: string;
-  profile_pic_url: string;
-  base_image_url: string;
-}
-
-export interface CategoryVideo {
-  guid: string;
-  title: string;
-  uploader: string;
-  uploader_pic: string;
-  base_image_url: string;
-}
+import { CategoryVideo } from '../_interfaces/category-video';
+import { Category } from '../_interfaces/category';
+import { UserVideo } from '../_interfaces/user-video';
+import { RecommendedVideo } from '../_interfaces/recommended-video';
+import { SimpleSubcategory } from '../_interfaces/simple-subcategory';
 
 export interface MainCategoryVideos {
   subcategory: {
@@ -49,19 +23,9 @@ export interface Subcategory {
   videos: Video[];
 }
 
-export interface SimpleSubcategory {
-  guid: string;
-  name: string;
-}
-
 interface ApiResponse {
   maincategory_name: string;
   subcategories: Subcategory[];
-}
-
-export interface Category {
-  guid: string;
-  name: string;
 }
 
 export interface HomeVideos {
@@ -99,14 +63,6 @@ export interface VideoDetails {
     created_at: string;
     modified_at: string | null;
   }>;
-}
-
-export interface UploadVideoRequest {
-  title: string;
-  description: string;
-  categoryId: string;
-  subcategoryId: string;
-  tagsText: string;
 }
 
 @Injectable({

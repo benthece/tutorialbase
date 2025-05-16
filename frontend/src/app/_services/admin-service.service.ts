@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import axios from 'axios';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +14,8 @@ export class AdminServiceService {
 
   async deleteVideo(videoId: string): Promise<any> {
     try {
-      const response = await axios.post(`/api/admin/videos/delete`, 
-        { videoId },
+      const response = await axios.post(`/api/video/delete-video/${videoId}`, 
+        { },
         {
           headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
         }
@@ -34,13 +34,12 @@ export class AdminServiceService {
 
   async deleteComment(commentId: string): Promise<any> {
     try {
-      const response = await axios.post(`/api/admin/comments/delete`, 
-        { commentId },
+      const response = await axios.post(`/api/delete-comment/${commentId}`, {},
         {
           headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
         }
       );
-      
+      console.log(response)
       if (response.status === 200) {
         this.deleteSuccessSubject.next({ type: 'comment', id: commentId });
       }

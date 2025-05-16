@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { VideoHistoryItem } from '../../_services/user-service.service';
+import { VideoHistoryItem } from '../../_interfaces/video-history-item';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserServiceService } from '../../_services/user-service.service';

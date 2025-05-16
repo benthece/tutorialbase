@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SearchResult } from '../../_services/search-service.service';
+import { SearchResult } from '../../_interfaces/search-result';
 import { Router } from '@angular/router';
 
 @Component({

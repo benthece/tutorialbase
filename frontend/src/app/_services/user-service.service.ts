@@ -1,22 +1,9 @@
 import { Injectable } from '@angular/core';
 import axios from 'axios';
+import { VideoHistoryItem } from '../_interfaces/video-history-item';
+import { UserProfile } from '../_interfaces/user-profile';
+import { UserAuthService } from './user-auth-service.service';
 
-export interface VideoHistoryItem {
-  id: string;
-  thumbnail: string;
-  title: string;
-  username: string;
-  userProfilePicture: string;
-  description: string;
-  uploadDate: string;
-}
-
-export interface UserProfile {
-  username: string;
-  profilePicture: string;
-  profileThumbnail: string;
-  bio: string;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -92,10 +79,10 @@ export class UserServiceService {
   async updateBio(bioText: string): Promise<any> {
     try {
       const bioData = {
-        bio: bioText
+        bioText: bioText
       };
 
-      const response = await axios.post('/api/user/bio', bioData, {
+      const response = await axios.post('/api/user/update-bio', bioData, {
         headers: {
           'Authorization': 'Bearer ' + localStorage.getItem('token'),
           'Content-Type': 'application/json'
@@ -112,7 +99,7 @@ export class UserServiceService {
   async deleteUser(): Promise<any> {
     try {
 
-      const response = await axios.post('/api/user/delete', {}, {
+      const response = await axios.post('/api/user/delete-user', {}, {
         headers: {
           'Authorization': 'Bearer ' + localStorage.getItem('token'),
           'Content-Type': 'application/json'
@@ -120,7 +107,6 @@ export class UserServiceService {
       });
 
       localStorage.removeItem('token');
-
       return response;
     } catch (error) {
       console.error('Error while deleting user account:', error);

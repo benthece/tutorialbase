@@ -8,7 +8,8 @@ import { CommentComponent } from "../comment/comment.component";
 import { Comment as CommentModel } from '../../_interfaces/comment';
 import { AddCommentComponent } from '../add-comment/add-comment.component';
 import { UserAuthService } from '../../_services/user-auth-service.service';
-import { VideoPageService, RecommendedVideo } from '../../_services/video-page-service.service';
+import { VideoPageService } from '../../_services/video-page-service.service';
+import { RecommendedVideo } from '../../_interfaces/recommended-video';
 
 @Component({
   selector: 'app-video-page',
@@ -113,5 +114,8 @@ export class VideoPageComponent implements OnInit {
     this.commentsExpanded = !this.commentsExpanded;
   }
 
+  onCommentDeleted(deletedCommentId: string) {
+    this.comments = this.comments.filter(comment => comment.id !== deletedCommentId);
+  }
 
 }

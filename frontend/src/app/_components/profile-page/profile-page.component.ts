@@ -3,7 +3,8 @@ import { VideoCardComponent } from '../video-card/video-card.component';
 import { CommonModule } from '@angular/common';
 import { UserServiceService } from '../../_services/user-service.service';
 import { ActivatedRoute } from '@angular/router';
-import { VideoPageService, UserVideo } from '../../_services/video-page-service.service';
+import { VideoPageService } from '../../_services/video-page-service.service';
+import { UserVideo } from '../../_interfaces/user-video';
 
 @Component({
   selector: 'app-profile-page',

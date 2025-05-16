@@ -3,8 +3,9 @@ import { VideoCardComponent } from '../video-card/video-card.component';
 import { CommonModule } from '@angular/common';
 import { fromEvent, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { CategoryVideo, VideoPageService } from '../../_services/video-page-service.service';
+import { VideoPageService } from '../../_services/video-page-service.service';
 import { HomeVideos } from '../../_services/video-page-service.service';
+import { CategoryVideo } from '../../_interfaces/category-video';
 
 @Component({
   selector: 'app-home',

@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Category, SimpleSubcategory, VideoPageService } from '../../_services/video-page-service.service';
+import { VideoPageService } from '../../_services/video-page-service.service';
+import { SimpleSubcategory } from '../../_interfaces/simple-subcategory';
+import { Category } from '../../_interfaces/category';
 
 @Component({
   selector: 'app-video-upload',

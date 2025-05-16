@@ -6,7 +6,7 @@ import { SearchService } from '../../_services/search-service.service';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { UserServiceService } from '../../_services/user-service.service';
-import { Category } from '../../_services/video-page-service.service';
+import { Category } from '../../_interfaces/category';
 import { VideoPageService } from '../../_services/video-page-service.service';
 
 @Component({
