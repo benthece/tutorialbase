@@ -17,7 +17,7 @@ class Comment extends Model
                 "guid" => $comment->guid,
                 "username" => $comment->username,
                 "user_guid" => $comment->user_guid,
-                "user_pic" => $comment->user_pic,
+                "user_pic" => env('APP_URL') . ":8000" . $comment->user_pic,
                 "text" => $comment->text,
                 "created_at" => $comment->created_at,
                 "modified_at" => $comment->modified_at,
@@ -26,17 +26,20 @@ class Comment extends Model
         return $result;
     }
 
-    public static function createComment(string $videoGuid, string $userGuid, string $text) {
+    public static function createComment(string $videoGuid, string $userGuid, string $text)
+    {
         $response = DB::select("CALL create_comment(?, ?, ?)", [$userGuid, $videoGuid, $text]);
         return $response[0]->message;
     }
 
-    public static function modifyComment(string $guid , string $userGuid, string $text): string {
+    public static function modifyComment(string $guid, string $userGuid, string $text): string
+    {
         $response = DB::select('CALL modify_comment(?, ?, ?)', [$guid, $userGuid, $text]);
         return $response[0]->message;
     }
 
-    public static function deleteComment(string $guid, string $userGuid) {
+    public static function deleteComment(string $guid, string $userGuid)
+    {
         $response = DB::select('CALL delete_comment(?, ?)', [$guid, $userGuid]);
         return $response[0]->message;
     }

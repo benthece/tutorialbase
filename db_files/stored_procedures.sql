@@ -61,6 +61,33 @@ $$
 DELIMITER ;
 
 DELIMITER $$
+CREATE OR REPLACE TRIGGER uuid_v4_cat
+    BEFORE INSERT
+    ON categories
+    FOR EACH ROW
+BEGIN
+    SET NEW.guid = uuid_v4();
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE is_admin(IN usr_guid CHAR(36))
+BEGIN
+    IF (SELECT privilege_id
+        FROM users
+        WHERE id = (SELECT id
+                    FROM users
+                    WHERE guid = usr_guid)) = 1 THEN
+        SELECT 'true' AS message;
+    ELSE
+        SELECT 'false' AS message;
+    END IF;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
 CREATE OR REPLACE PROCEDURE get_comments(
     IN vid_guid CHAR(36),
     IN offset_val INTEGER UNSIGNED
@@ -142,12 +169,13 @@ DELIMITER $$
 CREATE OR REPLACE PROCEDURE delete_comment(IN comm_guid CHAR(36), IN user_guid CHAR(36))
 BEGIN
     DECLARE comment_id INT;
-    DECLARE commenter_id CHAR(36);
+#     DECLARE commenter_id CHAR(36);
 
     SELECT id INTO comment_id FROM comments WHERE guid = comm_guid;
-    SELECT user_id INTO commenter_id FROM comments WHERE id = comment_id;
+    #     SELECT user_id INTO commenter_id FROM comments WHERE id = comment_id;
 
-    IF commenter_id = (SELECT id FROM users WHERE guid = user_guid) THEN
+#     IF commenter_id = (SELECT id FROM users WHERE guid = user_guid) THEN
+    IF (SELECT privilege_id FROM users WHERE guid = user_guid) = 1 THEN
         UPDATE comments SET is_deleted = 1 WHERE id = comment_id;
         SELECT 'Comment successfully deleted.' AS message;
     ELSE
@@ -161,14 +189,20 @@ DELIMITER $$
 CREATE OR REPLACE PROCEDURE video_reactions(IN vid_guid CHAR(36))
 BEGIN
     DECLARE vid_id INTEGER UNSIGNED;
+    DECLARE upvote INT UNSIGNED DEFAULT 0;
+    DECLARE downvote INT UNSIGNED DEFAULT 0;
+
     SELECT id INTO vid_id FROM videos WHERE guid = vid_guid;
 
-    SELECT COUNT(IF(is_useful = TRUE, 1, NULL))  AS upvote,
-           COUNT(IF(is_useful = FALSE, 1, NULL)) AS downvote
+    SELECT COUNT(IF(is_useful = TRUE, 1, NULL)),
+           COUNT(IF(is_useful = FALSE, 1, NULL))
+    INTO upvote, downvote
     FROM reactions
     WHERE video_id = vid_id
       AND is_removed = 0
     GROUP BY video_id;
+
+    SELECT upvote, downvote;
 END;
 $$
 DELIMITER ;
@@ -195,13 +229,29 @@ BEGIN
     IF present = 1 THEN
         CASE action
             WHEN 'like'
-                THEN UPDATE reactions SET is_useful = 1 WHERE (user_id = usr_id AND video_id = vid_id);
-                     UPDATE reactions SET is_removed = 0 WHERE (user_id = usr_id AND video_id = vid_id);
+                THEN IF (SELECT is_removed FROM reactions WHERE (video_id = vid_id AND user_id = usr_id)) = 0
+                THEN
+                    IF (SELECT is_useful FROM reactions WHERE (video_id = vid_id AND user_id = usr_id)) = 0 THEN
+                        UPDATE reactions SET is_useful = 1 WHERE (user_id = usr_id AND video_id = vid_id);
+                    ELSE
+                        UPDATE reactions SET is_removed = 1 WHERE (user_id = usr_id AND video_id = vid_id);
+                    END IF;
+                ELSE
+                    UPDATE reactions SET is_useful = 1 WHERE (user_id = usr_id AND video_id = vid_id);
+                    UPDATE reactions SET is_removed = 0 WHERE (user_id = usr_id AND video_id = vid_id);
+                END IF;
             WHEN 'dislike'
-                THEN UPDATE reactions SET is_useful = 0 WHERE (user_id = usr_id AND video_id = vid_id);
-                     UPDATE reactions SET is_removed = 0 WHERE (user_id = usr_id AND video_id = vid_id);
-            WHEN 'delete'
-                THEN UPDATE reactions SET is_removed = 1 WHERE (user_id = usr_id AND video_id = vid_id);
+                THEN IF (SELECT is_removed FROM reactions WHERE (video_id = vid_id AND user_id = usr_id)) = 0
+                THEN
+                    IF (SELECT is_useful FROM reactions WHERE (video_id = vid_id AND user_id = usr_id)) = 1 THEN
+                        UPDATE reactions SET is_useful = 0 WHERE (user_id = usr_id AND video_id = vid_id);
+                    ELSE
+                        UPDATE reactions SET is_removed = 1 WHERE (user_id = usr_id AND video_id = vid_id);
+                    END IF;
+                ELSE
+                    UPDATE reactions SET is_useful = 0 WHERE (user_id = usr_id AND video_id = vid_id);
+                    UPDATE reactions SET is_removed = 0 WHERE (user_id = usr_id AND video_id = vid_id);
+                END IF;
             END CASE;
         SELECT 'Reaction modified successfully.' AS message;
     ELSE
@@ -218,6 +268,27 @@ $$
 DELIMITER ;
 
 DELIMITER $$
+CREATE OR REPLACE PROCEDURE reaction_state(IN vid_guid CHAR(36), IN usr_guid CHAR(36))
+BEGIN
+    DECLARE vid_id INT UNSIGNED;
+    DECLARE usr_id INT UNSIGNED;
+    DECLARE state VARCHAR(8);
+
+    SELECT id INTO vid_id FROM videos WHERE guid = vid_guid;
+    SELECT id INTO usr_id FROM users WHERE guid = usr_guid;
+
+    CASE (SELECT is_useful FROM reactions WHERE ((user_id = usr_id AND video_id = vid_id) AND is_removed = 0))
+        WHEN 1 THEN SET state = 'liked';
+        WHEN 0 THEN SET state = 'disliked';
+        ELSE SET state = 'none';
+        END CASE;
+
+    SELECT state;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
 CREATE OR REPLACE PROCEDURE reset_wish()
 BEGIN
     UPDATE users SET wishes = 5 WHERE id != 0;
@@ -226,11 +297,30 @@ $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_maincategories()
+CREATE OR REPLACE PROCEDURE get_maincategories(IN is_rand BOOL)
 BEGIN
-    SELECT id, name
+    IF is_rand THEN
+        SELECT guid, name
+        FROM categories
+        WHERE parent_id IS NULL
+        ORDER BY RAND();
+    ELSE
+        SELECT guid, name
+        FROM categories
+        WHERE parent_id IS NULL
+        ORDER BY 2;
+    END IF;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_subcategories_for_main(IN main_guid CHAR(36))
+BEGIN
+    SELECT guid, (SELECT name FROM categories WHERE guid = main_guid) AS main_name, name
     FROM categories
-    WHERE parent_id IS NULL;
+    WHERE parent_id = (SELECT id FROM categories WHERE guid = main_guid)
+    ORDER BY 2;
 END;
 $$
 DELIMITER ;
@@ -241,22 +331,37 @@ BEGIN
     SELECT id, name
     FROM categories
     WHERE parent_id IS NOT NULL
+    ORDER BY RAND()
     LIMIT quantity;
 END;
 $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_videos_for_subcategory(
+CREATE OR REPLACE PROCEDURE get_videos_for_category(
     IN subcat_guid CHAR(36),
     -- IN offset INTEGER UNSIGNED,
     IN quantity INTEGER UNSIGNED)
 BEGIN
-    SELECT videos.id, title, url, base_image_url
+    DECLARE subcat_id INT;
+    SELECT id INTO subcat_id FROM categories WHERE guid = subcat_guid;
+
+    SELECT videos.guid,
+           title,
+           (SELECT IFNULL((SELECT name FROM categories WHERE id = c.parent_id), name))   AS category,
+           (SELECT NULLIF(name, category))                                               AS subcategory,
+           (SELECT IFNULL((SELECT guid FROM categories WHERE id = c.parent_id), c.guid)) AS categ_id,
+           (SELECT NULLIF(c.guid, categ_id))                                             AS subcateg_id,
+           username,
+           profile_pic_url,
+           url,
+           base_image_url
     FROM videos
              INNER JOIN video_category vc on videos.id = vc.video_id
              INNER JOIN categories c on vc.category_id = c.id
-    WHERE c.id = subcat_guid
+             INNER JOIN users u on u.id = videos.user_id
+    WHERE c.id = subcat_id
+       OR c.parent_id = subcat_id
     ORDER BY RAND()
     LIMIT quantity;
 END;
@@ -274,11 +379,48 @@ $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE get_user_uploaded(IN user_guid CHAR(36))
+CREATE OR REPLACE PROCEDURE get_user_uploaded(IN user_name VARCHAR(50))
 BEGIN
-    SELECT id, title, url, base_image_url
+    DECLARE usr_id INT UNSIGNED;
+    SELECT id INTO usr_id FROM users WHERE username = user_name;
+
+    SELECT videos.guid, title, username, profile_pic_url, base_image_url
     FROM videos
-    WHERE user_id = user_guid;
+             JOIN users u ON videos.user_id = u.id
+    WHERE user_id = usr_id;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_views(IN vid_guid CHAR(36))
+BEGIN
+    DECLARE vid_id INT UNSIGNED;
+    DECLARE viewcount BIGINT UNSIGNED DEFAULT 0;
+
+    SELECT id INTO vid_id FROM videos WHERE guid = vid_guid;
+    SELECT COUNT(DISTINCT user_id) INTO viewcount FROM watch_history WHERE video_id = vid_id GROUP BY video_id;
+    SET viewcount = viewcount + (SELECT views FROM videos WHERE id = vid_id);
+
+    SELECT viewcount;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE count_views(IN vid_guid CHAR(36), IN usr_guid CHAR(36))
+BEGIN
+    DECLARE vid_id INT UNSIGNED;
+    DECLARE usr_id INT UNSIGNED;
+
+    SELECT id INTO vid_id FROM videos WHERE guid = vid_guid;
+
+    IF usr_guid != '' THEN
+        SELECT id INTO usr_id FROM users WHERE guid = usr_guid;
+        INSERT INTO watch_history (video_id, user_id) VALUES (vid_id, usr_id);
+    ELSE
+        UPDATE videos SET views = views + 1 WHERE id = vid_id;
+    END IF;
 END;
 $$
 DELIMITER ;
@@ -320,16 +462,176 @@ BEGIN
     SELECT videos.guid,
            title,
            description,
+           (SELECT IFNULL((SELECT name FROM categories WHERE id = c.parent_id), name))   AS category,
+           (SELECT NULLIF(name, category))                                               AS subcategory,
+           (SELECT IFNULL((SELECT guid FROM categories WHERE id = c.parent_id), c.guid)) AS categ_id,
+           (SELECT NULLIF(c.guid, categ_id))                                             AS subcateg_id,
            url,
            base_image_url,
            views,
            uploaded_at,
-           users.guid      AS 'uploader_id',
-           username        AS 'uploader',
-           profile_pic_url AS 'uploader_pic'
+           users.guid                                                                    AS 'uploader_id',
+           username                                                                      AS 'uploader',
+           profile_pic_url                                                               AS 'uploader_pic'
     FROM videos
              JOIN users ON videos.user_id = users.id
+             JOIN video_category vc ON videos.id = vc.video_id
+             JOIN categories c ON vc.category_id = c.id
     WHERE videos.id = vid_id;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE search(IN srch_string VARCHAR(50), IN lim TINYINT)
+BEGIN
+    SELECT videos.guid,
+           title,
+           (SELECT IFNULL((SELECT name FROM categories WHERE id = c.parent_id), name))   AS category,
+           (SELECT NULLIF(name, category))                                               AS subcategory,
+           (SELECT IFNULL((SELECT guid FROM categories WHERE id = c.parent_id), c.guid)) AS categ_id,
+           (SELECT NULLIF(c.guid, categ_id))                                             AS subcateg_id,
+           username,
+           profile_pic_url,
+           description,
+           url,
+           base_image_url,
+           uploaded_at
+    FROM videos
+             INNER JOIN video_category vc on videos.id = vc.video_id
+             INNER JOIN categories c on vc.category_id = c.id
+             INNER JOIN users u on u.id = videos.user_id
+    WHERE title LIKE srch_string
+       OR (SELECT IFNULL((SELECT name FROM categories WHERE id = c.parent_id), name)) LIKE srch_string
+    ORDER BY 2 DESC
+    LIMIT lim;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE watch_history(IN user_guid CHAR(36))
+BEGIN
+    DECLARE usr_id INT UNSIGNED;
+
+    SELECT id INTO usr_id FROM users WHERE guid = user_guid;
+
+    SELECT DISTINCT videos.guid,
+                    title,
+                    u2.username,
+                    u2.profile_pic_url,
+                    description,
+                    url,
+                    base_image_url,
+                    uploaded_at,
+                    viewed_at
+    FROM videos
+             INNER JOIN watch_history wh ON videos.id = wh.video_id
+             INNER JOIN users u ON wh.user_id = u.id
+             INNER JOIN users u2 ON u2.id = videos.id
+    WHERE wh.user_id = usr_id
+      AND wh.is_deleted = 0
+    ORDER BY viewed_at DESC
+    LIMIT 20;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE delete_watch_history(IN vid_guid CHAR(36), IN usr_guid CHAR(36))
+BEGIN
+    DECLARE vid_id INT UNSIGNED;
+    DECLARE usr_id INT UNSIGNED;
+
+    SELECT id INTO vid_id FROM videos WHERE guid = vid_guid;
+    SELECT id INTO usr_id FROM users WHERE guid = usr_guid;
+
+    UPDATE watch_history SET is_deleted = 1 WHERE (video_id = vid_id AND user_id = usr_id);
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE store_prof_pic(IN filepath VARCHAR(200), IN usr_guid CHAR(36))
+BEGIN
+    DECLARE usr_id INT UNSIGNED;
+    SELECT id INTO usr_id FROM users WHERE guid = usr_guid;
+
+    UPDATE users SET profile_pic_url = filepath WHERE id = usr_id;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE store_cover_img(IN filepath VARCHAR(200), IN usr_guid CHAR(36))
+BEGIN
+    DECLARE usr_id INT UNSIGNED;
+    SELECT id INTO usr_id FROM users WHERE guid = usr_guid;
+
+    UPDATE users SET bg_image_url = filepath WHERE id = usr_id;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE create_video(
+    IN usr_guid CHAR(36),
+    IN vtitle VARCHAR(50),
+    IN vdescription LONGTEXT,
+    IN categ_guid CHAR(36),
+    IN subcat_guid CHAR(36),
+    IN vid_url VARCHAR(200),
+    IN bg_url VARCHAR(200)
+)
+BEGIN
+    DECLARE usr_id INT UNSIGNED;
+    DECLARE cat_id INT UNSIGNED;
+    DECLARE sub_id INT UNSIGNED;
+
+    SELECT id INTO cat_id FROM categories WHERE guid = categ_guid;
+    SELECT id INTO sub_id FROM categories WHERE guid = subcat_guid;
+    SELECT id INTO usr_id FROM users WHERE guid = usr_guid;
+
+    INSERT INTO videos (title, description, url, base_image_url, user_id)
+    VALUES (vtitle, vdescription, vid_url, bg_url, usr_id);
+
+    INSERT INTO video_category (category_id, video_id) VALUES (sub_id, LAST_INSERT_ID());
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE update_bio(IN usr_guid CHAR(36), IN intext LONGTEXT)
+BEGIN
+    DECLARE usr_id INT UNSIGNED;
+    SELECT id INTO usr_id FROM users WHERE guid = usr_guid;
+
+    UPDATE users SET bio = intext WHERE id = usr_id;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE delete_video(IN vid_guid CHAR(36), IN usr_guid CHAR(36))
+BEGIN
+    DECLARE usr_id INT UNSIGNED;
+    DECLARE vid_id INT UNSIGNED;
+
+    SELECT id INTO usr_id FROM users WHERE guid = usr_guid;
+    SELECT id INTO vid_id FROM videos WHERE guid = vid_guid;
+
+    UPDATE videos SET is_deleted = 1 WHERE id = vid_id AND user_id = usr_id;
+END;
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE delete_user(IN usr_guid CHAR(36))
+BEGIN
+    DECLARE usr_id INT UNSIGNED;
+    SELECT id INTO usr_id FROM users WHERE guid = usr_guid;
+
+    UPDATE users SET is_deleted = 1 WHERE id = usr_id;
 END;
 $$
 DELIMITER ;
@@ -356,3 +658,11 @@ DELIMITER ;
 
 -- MIT szeretne az Adri?
 -- /api/recommended?catId={category_guid}
+
+-- admin végpont
+-- email api
+-- search végpont
+-- report
+-- reaction visszajelzés user_reaction: liked disliked none
+-- video data adja a subcategory id-t is
+-- user profile CHARACTER SET
