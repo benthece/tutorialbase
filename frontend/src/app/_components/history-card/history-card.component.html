@@ -11,7 +11,7 @@
         <div class="description-container">
             <img class="avatar" [src]="video.userProfilePicture" alt="User avatar" (click)="navigateToUser()"/>
             <div class="captions-text">
-                <p class="upload-date">Feltöltés dátuma: {{ video.uploadDate }}</p>
+                <p class="upload-date">Feltöltés dátuma: {{ video.uploadDate ? (video.uploadDate | date: 'yyyy.MM.dd.') : 'Ismeretlen dátum' }} </p>
                 <p class="description-text" [class.expanded]="isExpanded" (click)="toggleDescription()">
                     {{ video.description || 'Nincs leírás' }}
                 </p>

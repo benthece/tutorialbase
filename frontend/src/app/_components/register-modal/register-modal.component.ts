@@ -14,15 +14,10 @@ import { Router } from '@angular/router';
 export class RegisterComponentModal implements OnInit {
 
   registerForm: FormGroup;
-  username: string = ''
-  email: string = ''
-  password: string = ''
-  confirmPassword: string = ''
-  isSubmitting: boolean = false
-  validationErrors: any = []
+  isSubmitting: boolean = false;
+  validationErrors: any = [];
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
-
 
   constructor(
     private fb: FormBuilder,
@@ -30,52 +25,45 @@ export class RegisterComponentModal implements OnInit {
     private router: Router
   ) {
     this.registerForm = this.fb.group({
-      email: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
       username: ['', Validators.required],
-      password: ['', [Validators.required]],
-      confirmPassword: ['', [Validators.required]]
+      password: ['', Validators.required],
+      confirmPassword: ['', Validators.required]
     }, {
       validators: this.passwordMatchValidator
     });
   }
 
+  ngOnInit(): void {
+    if (localStorage.getItem('token')) {
+      this.router.navigateByUrl('/home');
+    }
+  }
+
   passwordMatchValidator(control: FormGroup) {
     const password = control.get('password')?.value;
     const confirmPassword = control.get('confirmPassword')?.value;
-
-    return password && confirmPassword && password !== confirmPassword ?
-      { 'passwordMismatch': true } : null;
-  }
-
-
-  ngOnInit(): void {
-    if (localStorage.getItem('token') != "" && localStorage.getItem('token') != null) {
-      this.router.navigateByUrl('/home')
-    }
+    return password && confirmPassword && password !== confirmPassword
+      ? { passwordMismatch: true }
+      : null;
   }
 
   registerAction() {
     if (this.registerForm.valid) {
       this.isSubmitting = true;
-      let payload = {
-        username: this.registerForm.get('username')?.value,
-        email: this.registerForm.get('email')?.value,
-        password: this.registerForm.get('password')?.value,
-        confirmPassword: this.registerForm.get('confirmPassword')?.value
-      }
+      const payload = this.registerForm.value;
 
       this.userAuthService.register(payload)
         .then(({ data }) => {
-          localStorage.setItem('token', data.token)
+          localStorage.setItem('token', data.token);
           this.close.emit();
-          return data
-        }).catch(error => {
-          this.isSubmitting = false;
-          if (error.response.data.errors != undefined) {
-            this.validationErrors = error.response.data.errors
-          }
-          return error
         })
+        .catch(error => {
+          this.isSubmitting = false;
+          if (error.response?.data?.errors) {
+            this.validationErrors = error.response.data.errors;
+          }
+        });
     }
   }
 
@@ -105,5 +93,8 @@ export class RegisterComponentModal implements OnInit {
     this.close.emit();
   }
 
+  get email() { return this.registerForm.get('email'); }
+  get username() { return this.registerForm.get('username'); }
+  get password() { return this.registerForm.get('password'); }
+  get confirmPassword() { return this.registerForm.get('confirmPassword'); }
 }
-
